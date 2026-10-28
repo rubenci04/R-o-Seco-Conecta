@@ -56,8 +56,8 @@ CREATE TABLE events (
   description TEXT,
   starts_at   TEXT NOT NULL,
   ends_at     TEXT,
-  place_id    INTEGER REFERENCES places(id) ON DELETE SET NULL,
-  place_text  TEXT,
+  place_ref   TEXT,                                   -- id textual del catálogo de lugares (src/data/json/places.json), p. ej. 'comuna-rio-seco'
+  place_text  TEXT,                                   -- nombre del lugar tal como se muestra
   category    TEXT NOT NULL DEFAULT 'evento' CHECK (category IN ('evento','festividad','actividad')),
   source_label TEXT NOT NULL DEFAULT 'Comuna de Río Seco',
   source_url  TEXT NOT NULL,
@@ -65,7 +65,8 @@ CREATE TABLE events (
 );
 CREATE INDEX idx_events_start ON events (published, starts_at);
 
--- Referencia pública editable desde el panel (reemplaza a los JSON locales en producción).
+-- TABLAS PREPARADAS, INACTIVAS (radios, horarios, lugares): los datos vigentes siguen en JSON validado.
+-- No se siembran ni se exponen por API hasta migrar y validar su contrato.
 CREATE TABLE radios (
   id        TEXT PRIMARY KEY,
   name      TEXT NOT NULL,

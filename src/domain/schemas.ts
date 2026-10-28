@@ -75,14 +75,22 @@ export const transportDataSchema = z.object({
 
 // ---------- Contenido editorial ----------
 const contentSource = z.object({ label: z.string().min(1), url })
+/** Fuente con enlace opcional (p. ej. notas de la redacción sin enlace externo). */
+const optionalSource = z.object({ label: z.string().min(1), url: url.optional() })
 
 export const newsItemSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   summary: z.string().optional(),
   publishedAt: isoDateTime,
-  source: contentSource,
+  source: optionalSource,
+  /** true = la redacción revisó y aprobó el contenido. Lo importado sin revisión NO es verified. */
   verified: z.boolean(),
+  origin: z.enum(['api', 'assisted', 'manual']).optional(),
+  body: z.string().optional(),
+  categories: z.array(z.string()).optional(),
+  rectification: z.string().optional(),
+  rectifiedAt: isoDateTime.optional(),
 })
 export const alertSchema = z.object({
   id: z.string().min(1),
@@ -91,7 +99,7 @@ export const alertSchema = z.object({
   severity: z.enum(['info', 'aviso', 'urgente']),
   publishedAt: isoDateTime,
   expiresAt: isoDateTime.optional(),
-  source: contentSource,
+  source: optionalSource,
 })
 export const eventSchema = z.object({
   id: z.string().min(1),
@@ -108,7 +116,8 @@ export const obituarySchema = z.object({
   message: z.string().optional(),
   date: isoDate,
   service: z.string().optional(),
-  source: contentSource,
+  source: optionalSource,
+  rectification: z.string().optional(),
   /** Solo se publican comunicados verificados con consentimiento de la familia. */
   verified: z.literal(true),
 })

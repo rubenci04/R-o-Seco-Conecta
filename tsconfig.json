@@ -25,6 +25,9 @@
       "@testing-library/jest-dom"
     ],
     "paths": {
+      "@shared/*": [
+        "./shared/*"
+      ],
       "@/*": [
         "./src/*"
       ]

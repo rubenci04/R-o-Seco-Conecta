@@ -2,9 +2,11 @@ import { ExternalLink } from '@/components/shared/ExternalLink'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardTitle } from '@/components/ui/card'
 import type { AlertItem, EventItem, NewsItem, Obituary } from '@/domain/types'
+import { CATEGORY_LABEL, type CategoryId } from '@shared/categories'
 import { formatCivilDate, formatDateTime, formatShortDate } from '@/lib/format'
 
-function Source({ label, url }: { label: string; url: string }) {
+function Source({ label, url }: { label: string; url?: string }) {
+  if (!url) return <p className="text-sm font-semibold text-muted-foreground">Fuente: {label}</p>
   return (
     <ExternalLink href={url} className="text-sm font-semibold text-accent underline underline-offset-2">
       Fuente: {label}
@@ -13,13 +15,34 @@ function Source({ label, url }: { label: string; url: string }) {
 }
 
 export function NewsCard({ item }: { item: NewsItem }) {
+  const full = item.body && item.body.trim() !== (item.summary ?? '').trim() ? item.body : null
   return (
     <Card className="animate-rise space-y-2">
-      <time className="text-xs font-semibold text-muted-foreground" dateTime={item.publishedAt}>
-        {formatShortDate(item.publishedAt)}
-      </time>
+      <div className="flex flex-wrap items-center gap-2">
+        <time className="text-xs font-semibold text-muted-foreground" dateTime={item.publishedAt}>
+          {formatShortDate(item.publishedAt)}
+        </time>
+        {item.verified ? <Badge tone="info">Revisada por la redacción</Badge> : <Badge>Sin revisión editorial</Badge>}
+        {item.categories?.map((c) => (
+          <Badge key={c} tone="neutral">
+            {CATEGORY_LABEL[c as CategoryId] ?? c}
+          </Badge>
+        ))}
+      </div>
       <CardTitle className="text-lg">{item.title}</CardTitle>
-      {item.summary && <p className="text-sm text-muted-foreground">{item.summary}</p>}
+      {full ? (
+        <details className="text-sm">
+          <summary className="cursor-pointer text-muted-foreground">{item.summary}</summary>
+          <p className="mt-2 whitespace-pre-line">{full}</p>
+        </details>
+      ) : (
+        item.summary && <p className="whitespace-pre-line text-sm text-muted-foreground">{item.summary}</p>
+      )}
+      {item.rectification && (
+        <p className="rounded-xl bg-warning-soft p-2.5 text-sm text-warning">
+          <strong>Rectificación:</strong> {item.rectification}
+        </p>
+      )}
       <Source {...item.source} />
     </Card>
   )

@@ -1,5 +1,6 @@
 import { requirePermission } from '../auth'
 import { historyStatement } from '../history'
+import type { Features } from '../features'
 import { actorOf, HttpError, httpUrl, json, Router, str } from '../http'
 
 type ColType = 'text' | 'int' | 'bool' | 'url' | 'enum' | 'json' | 'datetime' | 'time' | 'date'
@@ -36,13 +37,16 @@ export const RESOURCES: Resource[] = [
       { name: 'description', type: 'text' },
       { name: 'starts_at', type: 'datetime', required: true },
       { name: 'ends_at', type: 'datetime' },
-      { name: 'place_id', type: 'int' },
+      { name: 'place_ref', type: 'text' },
       { name: 'place_text', type: 'text' },
       { name: 'category', type: 'enum', values: ['evento', 'festividad', 'actividad'], required: true },
       { name: 'source_label', type: 'text', required: true },
       { name: 'source_url', type: 'url', required: true },
       { name: 'published', type: 'bool' },
     ],
+    check(row) {
+      if (row.ends_at && String(row.ends_at) < String(row.starts_at)) throw new HttpError(400, 'El fin del evento no puede ser anterior al inicio')
+    },
   },
   {
     table: 'places',
@@ -177,8 +181,12 @@ const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
-export function crudRoutes(r: Router): void {
+/** Recursos con CRUD activo. En producción solo "events"; el resto (radios, lugares, transporte) está preparado pero inactivo. */
+export const ACTIVE_RESOURCES = ['events']
+
+export function crudRoutes(r: Router, features: Features = { push: true, staticModules: true, syncSources: true }): void {
   for (const res of RESOURCES) {
+    if (!features.staticModules && !ACTIVE_RESOURCES.includes(res.table)) continue
     const base = `/api/admin/${res.path}`
     const parseRow = (input: Record<string, unknown>, partial: boolean, existing?: Record<string, unknown>) => {
       const row: Record<string, unknown> = {}

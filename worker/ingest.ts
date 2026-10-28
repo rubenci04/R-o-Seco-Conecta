@@ -33,10 +33,12 @@ export interface RawPost {
   body: string
   publishedAt: string
   media?: string[]
+  /** Fuente citada por el editor (p. ej. un medio). Si falta se usa el nombre de la fuente configurada. */
+  sourceLabel?: string | null
 }
 
 export type IngestResult =
-  | { outcome: 'inserted'; postId: number; status: 'published' | 'pending'; categories: string[]; alertId: number | null; obituaryId: number | null }
+  | { outcome: 'inserted'; postId: number; status: 'published' | 'pending' | 'draft'; categories: string[]; alertId: number | null; obituaryId: number | null }
   | { outcome: 'duplicate'; reason: 'external-id' | 'url' | 'content-hash' | 'near-duplicate'; ofPostId: number }
 
 export interface IngestOptions {
@@ -45,6 +47,8 @@ export interface IngestOptions {
   actor: Actor
   now: Date
   classifier?: Classifier
+  /** Guardar como borrador (no visible). Los posibles obituarios igual quedan en la cola de revisión. */
+  draft?: boolean
 }
 
 /** Cuántas publicaciones recientes se comparan por similitud (acota el costo de lectura en D1). */
@@ -87,17 +91,17 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
 
   // ---- 3) visibilidad ----
   // Posibles obituarios y fuentes no confiables quedan ocultos hasta que una persona los apruebe.
-  const status: 'published' | 'pending' = isObituary || !source.trusted ? 'pending' : 'published'
+  const status: 'published' | 'pending' | 'draft' = isObituary ? 'pending' : opts.draft ? 'draft' : !source.trusted ? 'pending' : 'published'
   const reviewState = result.needsReview || status === 'pending' ? 'needs_review' : origin === 'manual' ? 'approved' : 'unreviewed'
 
   // ---- 4) persistencia ----
   const nowIso = now.toISOString()
   const insert = await db
     .prepare(
-      `INSERT INTO posts (source_id, external_id, url, title, body, media_json, published_at, imported_at, origin, content_hash, status, review_state, classifier, created_by)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO posts (source_id, external_id, url, source_label, title, body, media_json, published_at, imported_at, origin, content_hash, status, review_state, classifier, created_by)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
-    .bind(source.id, raw.externalId, raw.url ?? null, title, body, JSON.stringify(raw.media ?? []), raw.publishedAt, nowIso, origin, hash, status, reviewState, result.classifier, actor.id)
+    .bind(source.id, raw.externalId, raw.url ?? null, raw.sourceLabel?.trim() || null, title, body, JSON.stringify(raw.media ?? []), raw.publishedAt, nowIso, origin, hash, status, reviewState, result.classifier, actor.id)
     .run()
   const postId = Number(insert.meta.last_row_id)
 

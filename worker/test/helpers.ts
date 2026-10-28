@@ -15,10 +15,11 @@ export interface Harness {
 }
 
 /** Los usuarios de prueba existen SOLO en la base en memoria de cada test. */
-export async function harness(envExtra: Partial<Env> = {}, deps: AppDeps = {}): Promise<Harness> {
+/** Por defecto activa TODAS las funciones (para ejercitar el código preparado); usar `production: true` para la configuración real. */
+export async function harness(envExtra: Partial<Env> = {}, deps: AppDeps = {}, opts: { production?: boolean } = {}): Promise<Harness> {
   const db = freshDb()
   const env = { DB: db.asD1(), ASSETS: {} as Fetcher, ...envExtra } as Env
-  const app = createApp({ now: () => NOW, ...deps })
+  const app = createApp({ now: () => NOW, ...(opts.production ? {} : { features: { push: true, staticModules: true, syncSources: true } }), ...deps })
   const hash = await hashPassword('contraseña-de-prueba-1', 1000)
   for (const role of ['admin', 'editor', 'viewer']) {
     db.prepare('INSERT INTO admins (email, display_name, role, password_hash, created_at) VALUES (?,?,?,?,?)')

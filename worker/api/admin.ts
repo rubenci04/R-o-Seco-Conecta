@@ -1,6 +1,7 @@
 import { isCategoryId } from '../../shared/categories'
 import { can } from '../../shared/permissions'
-import { assertCsrf, clearCookie, hashPassword, login, logout, readCookie, requirePermission, SESSION_COOKIE, sessionCookie, SESSION_HOURS } from '../auth'
+import { assertCsrf, clearCookie, hashPassword, login, logout, readCookie, requirePermission, SESSION_COOKIE, sessionCookie, SESSION_HOURS, verifyPassword } from '../auth'
+import { sha256Hex } from '../../shared/text'
 import { buildAssistedPost } from '../connectors/assisted'
 import { defaultConnectors } from '../connectors/meta'
 import { SYSTEM_ACTOR } from '../env'
@@ -11,6 +12,7 @@ import { enqueueAlertNotification, enqueuePostNotification, processNotifications
 import { createVapidSender, pushConfigured } from '../push'
 import { syncSource, type SyncDeps } from '../sync'
 import { crudRoutes } from './crud'
+import type { Features } from '../features'
 
 interface Deps extends SyncDeps {
   now?: () => Date
@@ -34,7 +36,11 @@ function parseCategories(v: unknown): string[] {
   return ids
 }
 
-export function adminRoutes(r: Router, deps: Deps = {}): void {
+export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { push: true, staticModules: true, syncSources: true }): void {
+  // Las notificaciones solo se encolan si Web Push está habilitado (en producción todavía no).
+  const off = { queued: false as const, reason: 'notificaciones desactivadas' }
+  const enqueuePost = (...a: Parameters<typeof enqueuePostNotification>) => (features.push ? enqueuePostNotification(...a) : Promise.resolve(off))
+  const enqueueAlert = (...a: Parameters<typeof enqueueAlertNotification>) => (features.push ? enqueueAlertNotification(...a) : Promise.resolve(off))
   // ---------------------------------------------------------------- sesión
   r.post('/api/admin/login', async (ctx) => {
     const b = await ctx.body()
@@ -117,6 +123,8 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     const admin = requirePermission(ctx, 'content:write')
     const b = await ctx.body()
     const body = str(b.body, 'body', { max: 20_000 })
+    if (b.status !== undefined && !['draft', 'published'].includes(String(b.status))) throw new HttpError(400, 'El estado debe ser «draft» o «published»')
+    const wantsDraft = b.status === 'draft'
     const source = await getSource(ctx, MANUAL_SOURCE)
     const result = await ingestPost(
       ctx.env.DB,
@@ -125,13 +133,18 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
         title: b.title ? str(b.title, 'title', { max: 200 }) : undefined,
         body,
         url: httpUrl(b.url, 'url', true),
+        sourceLabel: b.sourceLabel ? str(b.sourceLabel, 'sourceLabel', { max: 120 }) : null,
         publishedAt: b.publishedAt ? isoDate(b.publishedAt, 'publishedAt') : ctx.now.toISOString(),
       },
-      { source, origin: 'manual', actor: actorOf(admin), now: ctx.now },
+      { source, origin: 'manual', actor: actorOf(admin), now: ctx.now, draft: wantsDraft },
     )
     if (result.outcome === 'duplicate') throw new HttpError(409, `Publicación duplicada (${result.reason}) de la #${result.ofPostId}`)
-    if (b.categories) await setCategories(ctx, result.postId, parseCategories(b.categories), admin)
-    if (result.status === 'published') await enqueuePostNotification(ctx.env.DB, result.postId, ctx.now)
+    if (b.categories) {
+      await setCategories(ctx, result.postId, parseCategories(b.categories), admin)
+      // El editor clasificó a mano: la revisión queda resuelta (salvo posibles obituarios, que siguen en su cola).
+      if (result.obituaryId === null) await ctx.env.DB.prepare("UPDATE posts SET review_state = 'approved' WHERE id = ?").bind(result.postId).run()
+    }
+    if (result.status === 'published') await enqueuePost(ctx.env.DB, result.postId, ctx.now)
     return json(result, { status: 201 })
   })
 
@@ -142,7 +155,7 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     const { sourceId, raw } = await buildAssistedPost({ url: str(b.url, 'url', { max: 2048 }), text: str(b.text, 'text', { max: 20_000 }), publishedAt: b.publishedAt ? String(b.publishedAt) : undefined }, ctx.now)
     const result = await ingestPost(ctx.env.DB, raw, { source: await getSource(ctx, sourceId), origin: 'assisted', actor: actorOf(admin), now: ctx.now })
     if (result.outcome === 'duplicate') throw new HttpError(409, `Ya importada (${result.reason}) como #${result.ofPostId}`)
-    if (result.status === 'published') await enqueuePostNotification(ctx.env.DB, result.postId, ctx.now)
+    if (result.status === 'published') await enqueuePost(ctx.env.DB, result.postId, ctx.now)
     return json(result, { status: 201 })
   })
 
@@ -165,6 +178,9 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     const binds: unknown[] = []
     if (b.title !== undefined) { sets.push('title = ?'); binds.push(str(b.title, 'title', { max: 200 })) }
     if (b.body !== undefined) { sets.push('body = ?'); binds.push(str(b.body, 'body', { max: 20_000 })) }
+    if (b.sourceLabel !== undefined) { sets.push('source_label = ?'); binds.push(b.sourceLabel ? str(b.sourceLabel, 'sourceLabel', { max: 120 }) : null) }
+    if (b.url !== undefined) { sets.push('url = ?'); binds.push(httpUrl(b.url, 'url', true)) }
+    if (b.publishedAt !== undefined) { sets.push('published_at = ?'); binds.push(isoDate(b.publishedAt, 'publishedAt')) }
     if (b.reviewState !== undefined) {
       if (!['approved', 'rejected', 'needs_review'].includes(String(b.reviewState))) throw new HttpError(400, 'Estado de revisión inválido')
       sets.push('review_state = ?'); binds.push(String(b.reviewState))
@@ -189,10 +205,10 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     const id = Number(ctx.params.id)
     const obit = await ctx.env.DB.prepare("SELECT 1 AS x FROM obituaries WHERE post_id = ? AND state = 'pending'").bind(id).first()
     if (obit) throw new HttpError(409, 'Es un posible obituario: debe aprobarse desde la cola de obituarios')
-    const res = await ctx.env.DB.prepare("UPDATE posts SET status = 'published', review_state = 'approved' WHERE id = ? AND status IN ('pending','rejected')").bind(id).run()
+    const res = await ctx.env.DB.prepare("UPDATE posts SET status = 'published', review_state = 'approved', deleted_at = NULL WHERE id = ? AND status IN ('draft','pending','rejected','deleted')").bind(id).run()
     if (!res.meta.changes) throw new HttpError(404, 'No hay publicación pendiente con ese id')
     await historyStatement(ctx.env.DB, { entityType: 'post', entityId: id, action: 'published', actor: actorOf(admin) }, ctx.now).run()
-    const n = await enqueuePostNotification(ctx.env.DB, id, ctx.now)
+    const n = await enqueuePost(ctx.env.DB, id, ctx.now)
     return json({ ok: true, notification: n })
   })
 
@@ -283,7 +299,7 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
       )
     }
     await ctx.env.DB.batch(stmts)
-    const n = o.post_id ? await enqueuePostNotification(ctx.env.DB, o.post_id, ctx.now) : null
+    const n = o.post_id ? await enqueuePost(ctx.env.DB, o.post_id, ctx.now) : null
     return json({ ok: true, notification: n })
   })
 
@@ -349,7 +365,16 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
       .run()
     const id = Number(res.meta.last_row_id)
     await historyStatement(ctx.env.DB, { entityType: 'alert', entityId: id, action: 'created', actor: actorOf(admin) }, ctx.now).run()
-    return json({ id }, { status: 201 })
+    // Publicar al crear exige el permiso de confirmación; las urgentes, el permiso específico (habilita avisos masivos).
+    if (b.confirm === true) {
+      requirePermission(ctx, severity === 'urgente' ? 'alert:confirm-urgent' : 'alert:confirm')
+      await ctx.env.DB.batch([
+        ctx.env.DB.prepare("UPDATE alerts SET confirmation = 'confirmed', confirmed_by = ?, confirmed_at = ? WHERE id = ?").bind(admin.id, ctx.now.toISOString(), id),
+        historyStatement(ctx.env.DB, { entityType: 'alert', entityId: id, action: 'confirmed', actor: actorOf(admin) }, ctx.now),
+      ])
+      await enqueueAlert(ctx.env.DB, id, ctx.now)
+    }
+    return json({ id, confirmed: b.confirm === true }, { status: 201 })
   })
 
   r.patch('/api/admin/alerts/:id', async (ctx) => {
@@ -389,7 +414,7 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
       ctx.env.DB.prepare("UPDATE alerts SET confirmation = 'confirmed', confirmed_by = ?, confirmed_at = ? WHERE id = ?").bind(admin.id, ctx.now.toISOString(), id),
       historyStatement(ctx.env.DB, { entityType: 'alert', entityId: id, action: 'confirmed', actor: actorOf(admin) }, ctx.now),
     ])
-    const n = await enqueueAlertNotification(ctx.env.DB, id, ctx.now)
+    const n = await enqueueAlert(ctx.env.DB, id, ctx.now)
     return json({ ok: true, notification: n })
   })
 
@@ -457,7 +482,7 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     return json((await ctx.env.DB.prepare(`SELECT * FROM sync_runs ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY id DESC LIMIT 100`).bind(...(src ? [src] : [])).all()).results)
   })
 
-  r.get('/api/admin/notifications', async (ctx) => {
+  if (features.push) r.get('/api/admin/notifications', async (ctx) => {
     requirePermission(ctx, 'content:read')
     const [log, subs] = await Promise.all([
       ctx.env.DB.prepare('SELECT * FROM notification_log ORDER BY id DESC LIMIT 100').all(),
@@ -466,7 +491,7 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     return json({ configured: pushConfigured(ctx.env), subscriptions: subs, log: log.results })
   })
 
-  r.post('/api/admin/notifications/process', async (ctx) => {
+  if (features.push) r.post('/api/admin/notifications/process', async (ctx) => {
     requirePermission(ctx, 'sources:manage')
     return json(await processNotifications(ctx.env.DB, createVapidSender(ctx.env), ctx.now))
   })
@@ -527,7 +552,58 @@ export function adminRoutes(r: Router, deps: Deps = {}): void {
     return json({ ok: true })
   })
 
-  crudRoutes(r)
+  // ---------------------------------------------------------------- cuenta y panel
+  // Cambio de contraseña propio (cualquier rol). Cierra las demás sesiones de la cuenta.
+  r.post('/api/admin/password', async (ctx) => {
+    const admin = requirePermission(ctx, 'content:read')
+    const b = await ctx.body()
+    const current = str(b.currentPassword, 'currentPassword', { max: 200 })
+    const next = str(b.newPassword, 'newPassword', { max: 200 })
+    const row = await ctx.env.DB.prepare('SELECT password_hash FROM admins WHERE id = ?').bind(admin.id).first<{ password_hash: string }>()
+    if (!row || !(await verifyPassword(current, row.password_hash))) throw new HttpError(403, 'La contraseña actual no es correcta')
+    if (next === current) throw new HttpError(400, 'La contraseña nueva debe ser distinta de la actual')
+    const hash = await hashPassword(next)
+    const token = readCookie(ctx.req, SESSION_COOKIE)
+    await ctx.env.DB.batch([
+      ctx.env.DB.prepare('UPDATE admins SET password_hash = ?, failed_attempts = 0, locked_until = NULL WHERE id = ?').bind(hash, admin.id),
+      ctx.env.DB.prepare('DELETE FROM admin_sessions WHERE admin_id = ? AND token_hash != ?').bind(admin.id, token ? await sha256Hex(token) : ''),
+      historyStatement(ctx.env.DB, { entityType: 'admin', entityId: admin.id, action: 'password-changed', actor: actorOf(admin) }, ctx.now),
+    ])
+    return json({ ok: true })
+  })
+
+  r.get('/api/admin/dashboard', async (ctx) => {
+    requirePermission(ctx, 'content:read')
+    const db = ctx.env.DB
+    const now = ctx.now.toISOString()
+    const [byStatus, review, alertsActive, alertsProposed, eventsUpcoming, nextEvents, obits, history, sources] = await Promise.all([
+      db.prepare('SELECT status, COUNT(*) AS n FROM posts GROUP BY status').all<{ status: string; n: number }>(),
+      db.prepare("SELECT COUNT(*) AS n FROM posts WHERE review_state = 'needs_review' AND status IN ('published','pending','draft')").first<{ n: number }>(),
+      db.prepare("SELECT COUNT(*) AS n FROM alerts WHERE confirmation = 'confirmed' AND starts_at <= ? AND (expires_at IS NULL OR expires_at > ?)").bind(now, now).first<{ n: number }>(),
+      db.prepare("SELECT COUNT(*) AS n FROM alerts WHERE confirmation = 'proposed'").first<{ n: number }>(),
+      db.prepare('SELECT COUNT(*) AS n FROM events WHERE published = 1 AND COALESCE(ends_at, starts_at) >= ?').bind(now).first<{ n: number }>(),
+      db.prepare('SELECT id, title, starts_at FROM events WHERE published = 1 AND COALESCE(ends_at, starts_at) >= ? ORDER BY starts_at LIMIT 5').bind(now).all(),
+      db.prepare("SELECT COUNT(*) AS n FROM obituaries WHERE state = 'pending'").first<{ n: number }>(),
+      db.prepare('SELECT entity_type, entity_id, action, actor_label, note, at FROM editorial_history ORDER BY id DESC LIMIT 10').all(),
+      db.prepare('SELECT * FROM sources ORDER BY id').all<SourceRow>(),
+    ])
+    const posts = Object.fromEntries(byStatus.results.map((r) => [r.status, r.n]))
+    return json({
+      posts: { published: posts.published ?? 0, draft: posts.draft ?? 0, pending: posts.pending ?? 0, rejected: posts.rejected ?? 0, withdrawn: posts.deleted ?? 0, needsReview: review?.n ?? 0 },
+      alerts: { active: alertsActive?.n ?? 0, proposed: alertsProposed?.n ?? 0 },
+      events: { upcoming: eventsUpcoming?.n ?? 0, next: nextEvents.results },
+      obituaries: { pending: obits?.n ?? 0 },
+      history: history.results,
+      sources: sources.results.map((s) => {
+        const connector = s.kind === 'manual' ? null : (deps.connectors ?? defaultConnectors)[s.kind]
+        const readiness = connector?.readiness(ctx.env, s) ?? { ready: s.kind === 'manual', missing: [] }
+        return { id: s.id, name: s.name, kind: s.kind, mode: s.mode, enabled: !!s.enabled, status: s.status, readiness, lastSuccessAt: s.last_success_at, lastCheckedAt: s.last_checked_at, nextAttemptAt: s.next_attempt_at, lastError: s.last_error }
+      }),
+      generatedAt: now,
+    })
+  })
+
+  crudRoutes(r, features)
 }
 
 export { assertCsrf, SYSTEM_ACTOR }

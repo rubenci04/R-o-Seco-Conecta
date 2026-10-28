@@ -12,7 +12,7 @@ import emergency from '../json/emergency.json'
 import heritage from '../json/heritage.json'
 import places from '../json/places.json'
 import radios from '../json/radios.json'
-import type { DataRepository } from './types'
+import type { DataRepository, NewsQuery } from './types'
 
 function parse<T>(schema: ZodType<T>, raw: unknown, name: string): T {
   const result = schema.safeParse(raw)
@@ -23,7 +23,10 @@ function parse<T>(schema: ZodType<T>, raw: unknown, name: string): T {
 }
 
 export class LocalJsonRepository implements DataRepository {
-  getNews = async () => parse(schemas.newsFileSchema, news, 'news.json')
+  getNews = async (q: NewsQuery = {}) =>
+    parse(schemas.newsFileSchema, news, 'news.json')
+      .filter((n) => (!q.category || n.categories?.includes(q.category)) && (!q.before || n.publishedAt < q.before))
+      .slice(0, q.limit ?? 50)
   getAlerts = async () => parse(schemas.alertsFileSchema, alerts, 'alerts.json')
   getEvents = async () => parse(schemas.eventsFileSchema, events, 'events.json')
   getObituaries = async () => parse(schemas.obituariesFileSchema, obituaries, 'obituaries.json')

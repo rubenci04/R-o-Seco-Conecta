@@ -26,13 +26,18 @@ export function LoadingState({ label = 'Cargando…' }: { label?: string }) {
   )
 }
 
-export function ErrorState({ error }: { error?: Error }) {
+export function ErrorState({ error, onRetry }: { error?: Error; onRetry?: () => void }) {
   return (
     <Card role="alert" className="flex gap-3 border-danger/40 bg-danger-soft text-danger">
       <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
-      <div>
+      <div className="space-y-2">
         <p className="font-bold">No pudimos cargar esta información</p>
-        <p className="text-sm opacity-90">Probá recargar la página. {error ? `Detalle: ${error.message}` : ''}</p>
+        <p className="text-sm">{error?.message ?? 'Probá recargar la página.'}</p>
+        {onRetry && (
+          <button type="button" onClick={onRetry} className="min-h-10 cursor-pointer rounded-full border border-current px-4 text-sm font-bold">
+            Reintentar
+          </button>
+        )}
       </div>
     </Card>
   )
@@ -51,6 +56,6 @@ export function Async<T>({
   children: (data: T) => ReactNode
 }) {
   if (state.status === 'loading') return <LoadingState />
-  if (state.status === 'error') return <ErrorState error={state.error} />
+  if (state.status === 'error') return <ErrorState error={state.error} onRetry={state.reload} />
   return <>{isEmpty(state.data) ? empty : children(state.data)}</>
 }

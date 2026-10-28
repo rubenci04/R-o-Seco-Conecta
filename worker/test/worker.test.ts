@@ -563,7 +563,7 @@ describe('I · administración de contenido, horarios y conectores', () => {
     expect((await h.call('POST', '/api/admin/radios', { cookie, body: { name: 'X', frequency: '1', site_url: 'javascript:alert(1)' } })).status).toBe(400)
     const place = await h.call('POST', '/api/admin/places', { cookie, body: { kind: 'institucion', name: 'Centro de salud', active: true } })
     expect(place.status).toBe(201)
-    await h.call('POST', '/api/admin/events', { cookie, body: { title: 'Fiesta', starts_at: '2026-11-01T20:00:00-03:00', place_id: place.json.id, category: 'festividad', source_label: 'Comuna', source_url: 'https://www.facebook.com/p/x', published: true } })
+    await h.call('POST', '/api/admin/events', { cookie, body: { title: 'Fiesta', starts_at: '2026-11-01T20:00:00-03:00', place_ref: 'comuna-rio-seco', place_text: 'Centro de salud', category: 'festividad', source_label: 'Comuna', source_url: 'https://www.facebook.com/p/x', published: true } })
     const ev = (await h.call('GET', '/api/public/events')).json
     expect(ev[0]).toMatchObject({ title: 'Fiesta', place: 'Centro de salud', category: 'festividad' })
     expect((await h.call('DELETE', `/api/admin/events/${ev[0].id}`, { cookie })).status).toBe(200)
@@ -573,6 +573,7 @@ describe('I · administración de contenido, horarios y conectores', () => {
     const h = await harness()
     const cookie = await h.loginAs('editor')
     await h.call('POST', '/api/admin/bus-companies', { cookie, body: { name: 'Empresa Prueba' } })
+    await h.call('POST', '/api/admin/bus-localities', { cookie, body: { id: 'concepcion', name: 'Concepción', status: 'sin-datos' } })
     await h.call('POST', '/api/admin/bus-stops', { cookie, body: { id: 'a', name: 'Plaza', locality_id: 'rio-seco' } })
     await h.call('POST', '/api/admin/bus-stops', { cookie, body: { id: 'b', name: 'Terminal', locality_id: 'concepcion' } })
     const svc = { id: 's1', company_id: 'empresa-prueba', locality_id: 'concepcion', direction: 'from-rio-seco', origin_stop_id: 'a', destination_stop_id: 'b', departure: '06:30', arrival: '07:15', day_types: ['weekday'], precision: 'confirmed', source_label: 'Fuente de prueba', source_url: 'https://example.com/h', reuse_authorized: true, last_verified: '2026-10-01' }

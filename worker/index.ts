@@ -5,10 +5,13 @@ import type { Env } from './env'
 import { HttpError, json, makeBody, Router, type Ctx } from './http'
 import { processNotifications } from './notify'
 import { createVapidSender } from './push'
+import { PRODUCTION_FEATURES, type Features } from './features'
 import { runSyncCycle, type SyncDeps } from './sync'
 
 export interface AppDeps extends SyncDeps {
   now?: () => Date
+  /** Por defecto, las de producción (push y módulos estáticos desactivados). */
+  features?: Partial<Features>
 }
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -18,9 +21,10 @@ const SECURITY_HEADERS: Record<string, string> = {
 }
 
 export function createApp(deps: AppDeps = {}) {
+  const features: Features = { ...PRODUCTION_FEATURES, ...deps.features }
   const router = new Router()
-  publicRoutes(router)
-  adminRoutes(router, deps)
+  publicRoutes(router, features)
+  adminRoutes(router, deps, features)
 
   /** Atiende solo /api/*. Devuelve null si la ruta no es de la API. */
   async function handleApi(req: Request, env: Env): Promise<Response | null> {

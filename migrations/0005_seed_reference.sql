@@ -1,4 +1,4 @@
--- Migración 0005: datos de referencia. No contiene publicaciones, horarios ni credenciales.
+-- Migración 0005: datos de referencia (categorías y fuentes). No contiene publicaciones, horarios, radios ni credenciales.
 
 INSERT INTO categories (id, name, description, sort_order) VALUES
   ('institucional',  'Noticias institucionales', 'Comunicados y novedades de la Comuna', 1),
@@ -20,11 +20,3 @@ INSERT INTO sources (id, kind, name, url, mode, enabled, status) VALUES
   ('instagram-comuna', 'instagram', 'Comuna de Río Seco · Instagram', 'https://www.instagram.com/comunaderioseco/', 'manual', 0, 'not-configured'),
   ('manual',           'manual',    'Redacción Río Seco Conecta',      NULL, 'manual', 1, 'ok');
 
-INSERT INTO radios (id, name, frequency, site_url, tagline) VALUES
-  ('activa-1031', 'Radio Activa', '103.1 FM', 'https://www.activa1031.fmmiradio.com/', 'Sitio oficial de la emisora'),
-  ('sudamericana-893', 'Radio Sudamericana', '89.3 FM', 'https://www.sudamericana893.com.ar/radio.php', 'Sitio oficial de la emisora');
-
-INSERT INTO bus_localities (id, name, status, reference_url) VALUES
-  ('concepcion', 'Concepción', 'sin-datos', 'https://colectivostucuman.com.ar/horarios/rio-seco/concepcion?dia=weekday'),
-  ('monteros', 'Monteros', 'sin-datos', NULL),
-  ('san-miguel-de-tucuman', 'San Miguel de Tucumán', 'sin-datos', NULL);

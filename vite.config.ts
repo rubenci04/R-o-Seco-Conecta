@@ -8,7 +8,7 @@ import { pwaOptions } from './pwa/pwa.config.ts'
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), VitePWA(pwaOptions)],
-  resolve: { alias: { '@': path.resolve(import.meta.dirname, 'src') } },
+  resolve: { alias: { '@shared': path.resolve(import.meta.dirname, 'shared'), '@': path.resolve(import.meta.dirname, 'src') } },
   test: {
     environment: 'jsdom',
     globals: true,

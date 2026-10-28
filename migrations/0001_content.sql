@@ -32,7 +32,8 @@ CREATE TABLE posts (
   id               INTEGER PRIMARY KEY AUTOINCREMENT,
   source_id        TEXT NOT NULL REFERENCES sources(id),
   external_id      TEXT NOT NULL,                         -- id estable en la plataforma de origen (o 'manual:<uuid>')
-  url              TEXT,                                  -- enlace a la publicación original
+  url              TEXT,                                  -- enlace a la publicación o fuente original
+  source_label     TEXT,                                  -- fuente citada por el editor (p. ej. «Radio Activa»); si falta se usa el nombre de la fuente
   title            TEXT NOT NULL,
   body             TEXT NOT NULL DEFAULT '',
   media_json       TEXT NOT NULL DEFAULT '[]',
@@ -40,8 +41,8 @@ CREATE TABLE posts (
   imported_at      TEXT NOT NULL,
   origin           TEXT NOT NULL CHECK (origin IN ('api','assisted','manual')),
   content_hash     TEXT NOT NULL,
-  -- pending: oculta, en cola · published: visible en el feed · rejected · deleted (retirada)
-  status           TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','published','rejected','deleted')),
+  -- draft: borrador del editor · pending: en cola de revisión · published: visible en el feed · rejected · deleted: retirada (se conserva el historial)
+  status           TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('draft','pending','published','rejected','deleted')),
   -- unreviewed: aceptada automáticamente · needs_review: confianza baja o dudosa · approved/rejected: decisión editorial
   review_state     TEXT NOT NULL DEFAULT 'unreviewed' CHECK (review_state IN ('unreviewed','needs_review','approved','rejected')),
   classifier       TEXT,                                  -- nombre/versión del clasificador que propuso las categorías
