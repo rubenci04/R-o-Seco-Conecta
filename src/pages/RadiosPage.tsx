@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { useData } from '@/data/repository/DataContext'
 import type { Radio } from '@/domain/types'
 
-const GRADIENTS = ['from-[#1769a8] to-[#0e1b2a]', 'from-[#b73b08] to-[#6b2203]']
+const GRADIENTS = ['from-[#0b6b97] to-[#073049]', 'from-[#b73b08] to-[#6b2203]']
 
 function RadioCard({ radio, index }: { radio: Radio; index: number }) {
   return (

@@ -63,7 +63,27 @@ test('PWA: manifiesto instalable e íconos accesibles', async ({ page, request }
   const href = await page.locator('link[rel="manifest"]').getAttribute('href')
   const manifest = await (await request.get(href!)).json()
   expect(manifest.display).toBe('standalone')
-  expect(manifest.theme_color).toBe('#1769a8')
+  expect(manifest.theme_color).toBe('#0b6b97')
   for (const icon of manifest.icons) expect((await request.get(icon.src)).ok()).toBe(true)
   expect((await request.get('/favicon.ico')).ok()).toBe(true)
+})
+
+test('el logo nuevo está en la cabecera y no queda el anterior', async ({ page }) => {
+  await page.goto('/')
+  const logo = page.locator('img[src="/brand/logo-mark-v2.png"]').locator('visible=true').first()
+  await expect(logo).toBeVisible()
+  expect(await logo.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(50)
+  expect(await page.content()).not.toContain('logo-sign')
+  await expect(page.locator('link[rel="icon"][href="/favicon-32-v2.png"]')).toHaveCount(1)
+})
+
+test('las rutas funcionan al abrirlas directamente y /nuestro-pueblo redirige', async ({ page }) => {
+  for (const p of ['/colectivos', '/radios', '/servicios', '/noticias']) {
+    const res = await page.goto(p)
+    expect(res?.status()).toBe(200)
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  }
+  await page.goto('/nuestro-pueblo')
+  await expect(page).toHaveURL(/\/pueblo$/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Nuestro pueblo' })).toBeVisible()
 })

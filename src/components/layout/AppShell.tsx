@@ -10,7 +10,7 @@ import { useTheme } from '@/services/theme'
 function Brand() {
   return (
     <NavLink to="/" className="flex items-center gap-2.5" aria-label="Río Seco Conecta, ir al inicio">
-      <img src="/brand/logo-sign.webp" alt="" className="h-9 w-auto rounded-md" width={104} height={36} />
+      <img src="/brand/logo-mark-v2.png" alt="" className="h-9 w-auto rounded-lg dark:bg-white dark:p-0.5" width={45} height={36} />
       <span className="font-display text-lg font-extrabold leading-none">
         Río Seco <span className="text-primary">Conecta</span>
       </span>

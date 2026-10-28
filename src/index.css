@@ -3,21 +3,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Identidad Río Seco: celeste y blanco (letras del cartel, #398fca en el logo), con naranja como acento
+ * Identidad Río Seco: celeste y blanco (logo «RS»: celeste #18b1e3 y azul oscuro #073049), con naranja como acento
  * complementario y azul noche como contraste. Los celestes de texto/botones se oscurecen para cumplir WCAG AA.
  */
 :root {
-  --background: #f4f9fd;
-  --foreground: #0f1b27;
+  --background: #f3fafd;
+  --foreground: #0a2433;
   --card: #ffffff;
-  --muted: #e7f0f8;
-  --muted-foreground: #46596b;
-  --border: #cfe0ee;
-  --brand: #398fca; /* celeste del logo: decorativo, no para texto pequeño */
-  --primary: #1769a8;
+  --muted: #e2f1f8;
+  --muted-foreground: #42596a;
+  --border: #c6e0ee;
+  --brand: #18b1e3; /* celeste del logo: decorativo, no para texto pequeño */
+  --primary: #0b6b97;
   --primary-foreground: #ffffff;
-  --accent: #14588c;
-  --accent-soft: #dcecf8;
+  --accent: #0a5a80;
+  --accent-soft: #d9eef8;
   --orange: #b73b08; /* naranja complementario */
   --orange-foreground: #ffffff;
   --orange-soft: #ffe8d2;
@@ -25,23 +25,23 @@
   --warning-soft: #ffe8d2;
   --danger: #a3261e;
   --danger-soft: #fbe0dc;
-  --night: #0e1b2a;
-  --ring: #1769a8;
+  --night: #073049;
+  --ring: #0b6b97;
   color-scheme: light;
 }
 
 .dark {
-  --background: #0b131b;
-  --foreground: #eaf3fa;
-  --card: #13202c;
-  --muted: #1a2a38;
-  --muted-foreground: #9db3c5;
-  --border: #27394a;
-  --brand: #5ab0ec;
-  --primary: #5ab0ec;
-  --primary-foreground: #04111c;
-  --accent: #86c6f3;
-  --accent-soft: #112b3f;
+  --background: #07151f;
+  --foreground: #e8f4fa;
+  --card: #0d2231;
+  --muted: #12303f;
+  --muted-foreground: #9bb7c6;
+  --border: #1f4256;
+  --brand: #3ec2ee;
+  --primary: #3ec2ee;
+  --primary-foreground: #03141d;
+  --accent: #7fd4f3;
+  --accent-soft: #0f2e40;
   --orange: #ff8a3d;
   --orange-foreground: #1d0c00;
   --orange-soft: #3a2412;
@@ -49,8 +49,8 @@
   --warning-soft: #3a2412;
   --danger: #ff9c92;
   --danger-soft: #451a16;
-  --night: #0e1b2a;
-  --ring: #86c6f3;
+  --night: #073049;
+  --ring: #7fd4f3;
   color-scheme: dark;
 }
 

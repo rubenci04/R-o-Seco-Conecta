@@ -177,18 +177,19 @@ describe('identidad visual y accesibilidad', () => {
     for (const [fg, bg] of pairs) expect(contrast(tokens[fg], tokens[bg]), `${fg} sobre ${bg}`).toBeGreaterThanOrEqual(4.5)
   })
   it('la paleta es celeste y blanco con naranja y azul noche, derivada del logo', () => {
-    expect(hue(light.brand)).toBeGreaterThanOrEqual(200)
+    expect(hue(light.brand)).toBeGreaterThanOrEqual(190)
     expect(hue(light.brand)).toBeLessThanOrEqual(215)
-    expect(hue(light.primary)).toBeGreaterThanOrEqual(200)
+    expect(hue(light.primary)).toBeGreaterThanOrEqual(195)
     expect(hue(light.primary)).toBeLessThanOrEqual(215)
     expect(light.card).toBe('#ffffff')
     expect(hue(light.orange)).toBeGreaterThanOrEqual(10)
     expect(hue(light.orange)).toBeLessThanOrEqual(30)
-    expect(lum(light.night)).toBeLessThan(0.02)
-    expect(light.brand).toBe('#398fca') // celeste dominante medido en las letras del logo
+    expect(lum(light.night)).toBeLessThan(0.04)
+    expect(light.brand).toBe('#18b1e3') // celeste dominante medido en el logo «RS» (npm run brand:palette)
+    expect(light.night).toBe('#073049') // azul oscuro del contorno del logo
   })
   it('no quedan restos de la paleta terracota/turquesa anterior', () => {
-    const old = ['#b4532a', '#a8481f', '#2f7f86', '#1f6f77', '#e8804f', '#fbf6ee', '#66bcc4']
+    const old = ['#b4532a', '#a8481f', '#2f7f86', '#1f6f77', '#e8804f', '#fbf6ee', '#66bcc4', '#1769a8', '#398fca', 'logo-sign', 'logo.jpg']
     const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => (statSync(path.join(dir, f)).isDirectory() ? walk(path.join(dir, f)) : [path.join(dir, f)]))
     const files = [...walk('src').filter((f) => /\.(tsx?|css)$/.test(f) && !f.endsWith('community.test.tsx')), 'index.html', 'pwa/pwa.config.ts']
     for (const f of files) for (const c of old) expect(readFileSync(f, 'utf8').toLowerCase(), `${f} ${c}`).not.toContain(c)
@@ -198,11 +199,13 @@ describe('identidad visual y accesibilidad', () => {
     expect(readFileSync('index.html', 'utf8')).toContain(`content="${light.primary}"`)
   })
   it('los recursos de marca y de PWA existen y derivan del logo', () => {
-    for (const f of ['public/brand/logo-sign.webp', 'public/brand/entrada.webp', 'public/favicon.ico', 'public/favicon-32.png', 'public/icons/icon-192.png', 'public/icons/icon-512.png', 'public/icons/icon-maskable-512.png', 'public/icons/apple-touch-icon.png']) {
+    for (const f of ['public/brand/logo-v2.png', 'public/brand/logo-mark-v2.png', 'public/brand/entrada.webp', 'public/favicon.ico', 'public/favicon-32-v2.png', 'public/icons/icon-192-v2.png', 'public/icons/icon-512-v2.png', 'public/icons/icon-maskable-512-v2.png', 'public/icons/apple-touch-icon-v2.png']) {
       expect(existsSync(f), f).toBe(true)
     }
-    expect(existsSync('src/logo.jpg')).toBe(true)
+    expect(existsSync('src/logo.png')).toBe(true)
+    expect(existsSync('src/logo.jpg')).toBe(false) // logo anterior descartado
     expect(existsSync('public/favicon.svg')).toBe(false)
+    expect(existsSync('public/brand/logo-sign.webp')).toBe(false)
   })
   it('todas las imágenes tienen texto alternativo y los botones nombre accesible', async () => {
     for (const p of ['/', '/colectivos', '/servicios', '/pueblo', '/radios']) {

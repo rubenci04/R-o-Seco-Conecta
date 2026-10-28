@@ -25,6 +25,7 @@ export function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="colectivos" element={<BusesPage />} />
         <Route path="pueblo" element={<HeritagePage />} />
+        <Route path="nuestro-pueblo" element={<Navigate to="/pueblo" replace />} />
         <Route path="pueblo/:id" element={<HeritageDetailPage />} />
         <Route path="servicios" element={<ServicesPage />} />
         <Route path="noticias" element={<NewsPage />} />

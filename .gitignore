@@ -1,12 +1,58 @@
-node_modules
-dist
-dev-dist
-.wrangler
+# Dependencias
+node_modules/
+
+# Build y generados
+dist/
+dev-dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Cloudflare / Wrangler
+.wrangler/
 .dev.vars
+.dev.vars.*
+.mf/
+
+# Variables de entorno, claves y credenciales (nunca versionar)
 .env
 .env.*
-playwright-report
-test-results
-*.local
-.claude/settings.local.json
+!.env.example
+*.pem
+*.key
 *.jwk
+*.jwk.json
+.vapid*
+secrets.*
+
+# Playwright y pruebas
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Bases de datos locales y temporales
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Cachés, logs y temporales
+.cache/
+.eslintcache
+.vite/
+*.log
+npm-debug.log*
+*.tmp
+*.temp
+tmp/
+scratch/
+
+# Editor / sistema
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.claude/settings.local.json
+.claude/worktrees/

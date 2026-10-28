@@ -26,7 +26,7 @@ npm run icons      # regenera los íconos de la PWA
 
 ## Sprint 02A
 - Horarios reales de colectivos importados (ver `docs/horarios-importacion.md`): `npm run schedules:import`.
-- Identidad celeste/blanca/naranja derivada del logo: `npm run brand:build` regenera favicon e íconos PWA desde `src/logo.jpg` y la portada desde `src/rio seco.jpeg`.
+- Identidad celeste/blanca/naranja derivada del logo: `npm run brand:build` regenera favicon e íconos PWA desde `src/logo.png` (fondo transparente automático, nombres con sufijo de versión contra cachés) y la portada desde `src/rio seco.jpeg`.
 - Secciones **Nuestro pueblo** (`src/data/json/heritage.json`) y **Servicios y lugares útiles** (`places.json`, `emergency.json`): datos estructurados y editables, con estado documentado / aporte del equipo / pendiente.
 - Trabajo adelantado del Sprint 02B (D1, API, sincronización, notificaciones), **sin conectar a la app ni desplegar**: carpetas `migrations/`, `worker/`, `shared/`, config `wrangler.worker.jsonc`.
 
