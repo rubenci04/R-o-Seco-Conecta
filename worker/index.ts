@@ -32,15 +32,18 @@ export function createApp(deps: AppDeps = {}) {
     if (!url.pathname.startsWith('/api/')) return null
     const now = deps.now?.() ?? new Date()
     try {
+      // La API administrativa exige sesión ANTES de resolver la ruta: sin sesión nunca se revela qué rutas existen.
+      let admin: Ctx['admin']
+      if (url.pathname.startsWith('/api/admin/')) {
+        assertCsrf(req)
+        admin = (await authenticate(env, req, now)) ?? undefined
+        // /me es la única ruta que responde sin sesión (con admin: null): así la aplicación sabe si mostrar el acceso sin generar un error 401 en la consola.
+        if (!admin && url.pathname !== '/api/admin/login' && url.pathname !== '/api/admin/me') throw new HttpError(401, 'Iniciá sesión para continuar')
+      }
       const match = router.match(req.method, url.pathname)
       if (match === null) throw new HttpError(404, 'No encontrado')
       if (match === 'method-not-allowed') throw new HttpError(405, 'Método no permitido')
-      const ctx: Ctx = { req, env, url, params: match.params, now, body: makeBody(req) }
-      if (url.pathname.startsWith('/api/admin/')) {
-        assertCsrf(req)
-        ctx.admin = (await authenticate(env, req, now)) ?? undefined
-        if (!ctx.admin && url.pathname !== '/api/admin/login') throw new HttpError(401, 'Iniciá sesión para continuar')
-      }
+      const ctx: Ctx = { req, env, url, params: match.params, now, body: makeBody(req), admin }
       const res = await match.handler(ctx)
       for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.headers.set(k, v)
       return res

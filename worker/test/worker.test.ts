@@ -96,7 +96,7 @@ describe('B · ingesta, persistencia y deduplicación', () => {
 describe('C · permisos y autenticación en el servidor', () => {
   it('sin sesión: 401 en todo /api/admin', async () => {
     const h = await harness()
-    for (const [m, p] of [['GET', '/api/admin/posts'], ['GET', '/api/admin/me'], ['POST', '/api/admin/obituaries/1/approve'], ['GET', '/api/admin/users']] as const) {
+    for (const [m, p] of [['GET', '/api/admin/posts'], ['POST', '/api/admin/obituaries/1/approve'], ['GET', '/api/admin/users']] as const) {
       expect((await h.call(m, p)).status, p).toBe(401)
     }
   })
@@ -147,7 +147,7 @@ describe('C · permisos y autenticación en el servidor', () => {
     const editorCookie = await h.loginAs('editor')
     const editorId = (h.db.raw.prepare("SELECT id FROM admins WHERE role='editor'").get() as { id: number }).id
     await h.call('PATCH', `/api/admin/users/${editorId}`, { cookie: adminCookie, body: { active: false } })
-    expect((await h.call('GET', '/api/admin/me', { cookie: editorCookie })).status).toBe(401)
+    expect((await h.call('GET', '/api/admin/me', { cookie: editorCookie })).json).toEqual({ admin: null })
     const adminId = (h.db.raw.prepare("SELECT id FROM admins WHERE role='admin'").get() as { id: number }).id
     expect((await h.call('PATCH', `/api/admin/users/${adminId}`, { cookie: adminCookie, body: { role: 'viewer' } })).status).toBe(409)
   })

@@ -16,8 +16,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let alive = true
-    api.get<{ admin: Admin }>('/me').then(
-      (r) => alive && setState({ status: 'authenticated', admin: r.admin }),
+    api.get<{ admin: Admin | null }>('/me').then(
+      (r) => alive && setState(r.admin ? { status: 'authenticated', admin: r.admin } : { status: 'anonymous', admin: null }),
       () => alive && setState({ status: 'anonymous', admin: null }),
     )
     return () => {

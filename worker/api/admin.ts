@@ -57,10 +57,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     return json({ ok: true }, { headers: { 'set-cookie': clearCookie() } })
   })
 
-  r.get('/api/admin/me', (ctx) => {
-    if (!ctx.admin) throw new HttpError(401, 'Sin sesión')
-    return json({ admin: ctx.admin })
-  })
+  r.get('/api/admin/me', (ctx) => json({ admin: ctx.admin ?? null }))
 
   // ---------------------------------------------------------- publicaciones
   r.get('/api/admin/posts', async (ctx) => {

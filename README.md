@@ -33,13 +33,16 @@ npm run icons      # regenera los íconos de la PWA
 ## Sprint 03M
 - Mapa interactivo **Explorá Río Seco** (`/mapa`): Leaflet + OpenStreetMap, carga diferida, capas por categoría compartibles por URL, ficha por lugar (`/servicios/:id`). Ver `docs/mapa.md`.
 
+## Sprint 04 — contenido dinámico y panel
+- Worker único (PWA + API sobre D1) y panel privado `/admin`: noticias, alertas, agenda y obituarios sin editar JSON ni redesplegar. Ver `docs/panel-administracion.md`, `docs/base-de-datos.md` y `docs/DESPLIEGUE.md`.
+- Repositorio híbrido: lo dinámico viene de la API; horarios, mapa, lugares, Nuestro pueblo y radios siguen en JSON validado.
+- Facebook/Instagram y Web Push: preparados, **no activos** (faltan credenciales y permisos).
+
 ## Datos y reglas editoriales
 - No se inventa contenido: `news/alerts/events/obituaries.json` están vacíos hasta tener fuentes verificadas.
 - `schedules.json` (generado, no editar a mano) contiene solo horarios con fuente y `reuseAuthorized: true`. Horas ≥ 24:00 (ej. `24:15`) indican servicios posteriores a la medianoche.
 - Datos sintéticos únicamente en `src/test/fixtures.ts`.
 - Feriados: `holidays.json` incluye solo los de fecha fija (MM-DD). Los trasladables se agregan por año con fecha completa AAAA-MM-DD.
 
-## GitHub y Cloudflare (pendiente de autorización)
-1. `git init && git add . && git commit` y crear el repo en GitHub (no se hizo push).
-2. Cloudflare → Workers & Pages → Create → Import from Git; build command `npm run build`, deploy command `npx wrangler deploy` (usa `wrangler.jsonc`, assets en `dist`, fallback SPA).
-3. Cada push aprobado a `main` publica una nueva versión. No hay secretos en el repo; usar variables del panel de Cloudflare.
+## GitHub y Cloudflare
+Ver `docs/DESPLIEGUE.md`.

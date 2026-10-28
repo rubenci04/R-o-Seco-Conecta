@@ -1,29 +1,29 @@
-# Despliegue (Cloudflare Workers Static Assets)
+# Despliegue (Cloudflare Workers: PWA + API sobre D1)
 
 - Producción: https://rio-seco-conecta.rea-04.workers.dev
 - Repositorio: https://github.com/rubenci04/R-o-Seco-Conecta (rama `main`)
-- Configuración usada: `wrangler.jsonc` (solo assets estáticos de `./dist`, modo SPA, sin Worker dinámico, sin D1, sin secretos).
-- `wrangler.worker.jsonc` es el backend del Sprint 02B: **no se usa** en el despliegue (solo con `-c wrangler.worker.jsonc`).
+- **Un solo Worker** (`rio-seco-conecta`) definido en `wrangler.jsonc`: assets de la PWA (`./dist`, fallback SPA) + código del Worker (`worker/index.ts`, solo atiende `/api/*`) + base D1 `DB`.
+- `wrangler.static.jsonc` es un **respaldo de emergencia** (solo assets estáticos). Para volver al modo estático: `npx wrangler deploy -c wrangler.static.jsonc` — y además poner `VITE_DATA_MODE=local` al compilar, porque el frontend de producción lee noticias/alertas/agenda/obituarios de la API.
+- Sin cron, sin secretos y sin variables en la configuración actual.
+
+## Despliegue automático (Workers Builds)
+Configurado en el panel de Cloudflare (Workers & Pages → `rio-seco-conecta` → Settings → Builds): rama `main`, build `npm run build`, deploy `npx wrangler deploy`, raíz `/`. Como `wrangler.jsonc` ya es el dinámico, **cada push a `main` publica la versión con API**. No usar GitHub Actions a la vez.
+
+Antes de un push que incluya una migración nueva:
+```bash
+npm run db:backup && npm run db:migrate:remote
+```
 
 ## Despliegue manual
 ```bash
-npm run build
-npx wrangler deploy
+npm run build && npx wrangler deploy
 ```
 
-## Despliegue automático (Workers Builds, integración nativa)
-Se configura una sola vez en el panel de Cloudflare (requiere autorizar la app de GitHub):
-
-1. Cloudflare Dashboard → **Workers & Pages** → **rio-seco-conecta** → **Settings** → **Builds** → **Connect**.
-2. Elegir **GitHub**, autorizar la app «Cloudflare Workers & Pages» y seleccionar el repositorio `rubenci04/R-o-Seco-Conecta`.
-3. Rama de producción: `main`. Directorio raíz: `/` (donde está `package.json`).
-4. Comando de build: `npm run build`. Comando de despliegue: `npx wrangler deploy`.
-5. Guardar. El nombre del Worker en Cloudflare debe ser `rio-seco-conecta` (coincide con `wrangler.jsonc`).
-6. Probar con un push a `main` y revisar **Builds** → historial.
-
-No usar a la vez GitHub Actions para desplegar: duplicaría las publicaciones. Node se fija en `.node-version` (22).
+## Verificaciones recomendadas tras publicar
+`/api/health` devuelve `database: ok` · `/api/admin/users` sin sesión → 401 · `/radios` y `/api/public/radios` (no existe, 404) · rutas React directas (`/mapa`, `/admin`) → 200 · el panel permite iniciar sesión.
 
 ## Cachés de la PWA
-Los íconos y el logo llevan sufijo de versión (`-v2`). Para cambiarlos: reemplazar `src/logo.png`, subir `V` en `scripts/brand/build-assets.ts` y en `pwa/pwa.config.ts`/`index.html`, y ejecutar `npm run brand:build`. El service worker se actualiza solo (`registerType: autoUpdate`).
+Íconos y logo con sufijo de versión (`-v2`); el service worker se actualiza solo. Para cambiar el logo: reemplazar `src/logo.png`, subir `V` en `scripts/brand/build-assets.ts`, `pwa/pwa.config.ts` e `index.html`, y ejecutar `npm run brand:build`. El código del mapa y del panel no se precachean; `/api/public/*` usa «red primero» con respaldo de 24 h; `/api/admin/*` nunca se guarda.
 
-> Última verificación del despliegue automático: push de prueba a `main` (Workers Builds).
+## Plan gratuito: límites y consumo estimado
+Workers (gratis): 100 000 solicitudes/día al código del Worker (solo la API cuenta; los assets estáticos no). D1 (gratis): 5 M filas leídas/día, 100 000 escritas/día, 5 GB. Con el tráfico de un pueblo (cientos de visitas/día, ~5 llamadas de API por visita, una consulta por llamada) el consumo es una fracción mínima. Las respuestas públicas usan ETag (304 sin cuerpo si no cambió). Sin cron no hay consumo en segundo plano.

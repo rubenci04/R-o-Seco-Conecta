@@ -25,5 +25,5 @@ export const nowLocalInput = (now = new Date()) => isoToLocalInput(now.toISOStri
 
 export function formatTucuman(iso: string | null | undefined): string {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('es-AR', { timeZone: TZ, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(iso))
+  return new Intl.DateTimeFormat('es-AR', { timeZone: TZ, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(iso))
 }

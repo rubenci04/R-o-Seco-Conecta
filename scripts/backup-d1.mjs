@@ -1,6 +1,6 @@
 // Respaldo de la base D1 de producción en un archivo SQL local (carpeta backups/, fuera de Git: contiene datos y hashes de contraseñas).
 //   npm run db:backup
-// Restauración: ver docs/base-de-datos.md (D1 Time Travel permite volver atrás hasta 30 días en el plan gratuito).
+// Restauración: ver docs/base-de-datos.md (D1 Time Travel permite volver atrás hasta 7 días atrás en el plan gratuito).
 import { execFileSync } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
