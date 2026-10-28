@@ -18,7 +18,7 @@ export const sourceRefSchema = z.object({
 })
 
 // ---------------------------------------------------------- Servicios y lugares
-export const PLACE_CATEGORIES = ['policia', 'salud', 'farmacias', 'comuna', 'educacion', 'clubes', 'iglesias', 'comunitarios', 'cultural'] as const
+export const PLACE_CATEGORIES = ['policia', 'salud', 'farmacias', 'comuna', 'educacion', 'clubes', 'iglesias', 'comunitarios', 'cultural', 'transporte'] as const
 export const placeCategorySchema = z.enum(PLACE_CATEGORIES)
 
 export const PLACE_CATEGORY_LABEL: Record<(typeof PLACE_CATEGORIES)[number], string> = {
@@ -31,7 +31,18 @@ export const PLACE_CATEGORY_LABEL: Record<(typeof PLACE_CATEGORIES)[number], str
   iglesias: 'Iglesias',
   comunitarios: 'Espacios comunitarios',
   cultural: 'Lugares culturales e históricos',
+  transporte: 'Paradas de colectivo',
 }
+
+export const locationSchema = z.object({
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  /** 'edificio' = punto sobre el inmueble; 'zona' = centro de un predio o espacio abierto. */
+  accuracy: z.enum(['edificio', 'zona']).default('edificio'),
+  /** Procedencia obligatoria de las coordenadas (p. ej. elemento de OpenStreetMap) y fecha de consulta. */
+  source: sourceRefSchema.extend({ url: z.url({ protocol: /^https?$/ }) }),
+  note: z.string().optional(),
+})
 
 export const placeSchema = z.object({
   id: z.string().min(1),
@@ -43,8 +54,11 @@ export const placeSchema = z.object({
   hours: z.string().optional(),
   description: z.string().optional(),
   links: z.array(z.object({ label: z.string(), url })).default([]),
-  /** Coordenadas, solo si están verificadas. */
-  location: z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).optional(),
+  /**
+   * Ubicación en el mapa. Solo se carga con coordenadas respaldadas por una fuente; si no, el lugar queda
+   * en su listado con la ubicación marcada como pendiente (campo `pending` con «location»).
+   */
+  location: locationSchema.optional(),
   sources: z.array(sourceRefSchema).default([]),
   /** Última verificación contra la fuente (AAAA-MM-DD). */
   verifiedAt: isoDate.optional(),
@@ -94,6 +108,7 @@ export const heritageFileSchema = z.array(heritageSectionSchema)
 
 export type EvidenceKind = z.infer<typeof evidenceKindSchema>
 export type Place = z.infer<typeof placeSchema>
+export type PlaceLocation = z.infer<typeof locationSchema>
 export type PlaceCategory = z.infer<typeof placeCategorySchema>
 export type EmergencyNumber = z.infer<typeof emergencyNumberSchema>
 export type HeritageSection = z.infer<typeof heritageSectionSchema>

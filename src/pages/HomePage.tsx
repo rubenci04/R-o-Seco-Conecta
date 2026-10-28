@@ -21,7 +21,7 @@ import { formatLongDate, greetingFor } from '@/lib/format'
 import { useFavorites } from '@/services/favorites'
 import { useNow } from '@/services/useNow'
 
-const QUICK = ['/colectivos', '/servicios', '/pueblo', '/radios', '/noticias', '/agenda']
+const QUICK = ['/colectivos', '/servicios', '/mapa', '/pueblo', '/radios', '/agenda']
 
 function SeeAll({ to, label = 'Ver todo' }: { to: string; label?: string }) {
   return (

@@ -1,5 +1,5 @@
-import { Landmark } from 'lucide-react'
-import { useSearchParams } from 'react-router'
+import { Landmark, Map } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router'
 import { PlaceCard, telHref } from '@/components/community/PlaceCard'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { Async, EmptyState } from '@/components/shared/States'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { useData } from '@/data/repository/DataContext'
 import { PLACE_CATEGORIES, PLACE_CATEGORY_LABEL, type PlaceCategory } from '@/domain/community'
+import { layerParamForCategory } from '@/features/map/layers'
 import { cn } from '@/lib/utils'
 
 const chip = (active: boolean) =>
@@ -51,6 +52,13 @@ export default function ServicesPage() {
   return (
     <>
       <PageHeader icon={Landmark} title="Servicios y lugares útiles" subtitle="Datos documentados, con su fuente. Lo que falta, figura como pendiente." />
+
+      <Button asChild variant="outline" className="mb-5">
+        <Link to={category ? `/mapa?capas=${layerParamForCategory(category)}` : "/mapa"}>
+          <Map className="size-4" aria-hidden />
+          {category ? `Ver «${PLACE_CATEGORY_LABEL[category]}» en el mapa` : "Explorá Río Seco en el mapa"}
+        </Link>
+      </Button>
 
       <section aria-label="Emergencias" className="mb-6">
         <h2 className="mb-3 font-display text-lg font-bold">Emergencias</h2>

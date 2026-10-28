@@ -30,6 +30,9 @@ npm run icons      # regenera los íconos de la PWA
 - Secciones **Nuestro pueblo** (`src/data/json/heritage.json`) y **Servicios y lugares útiles** (`places.json`, `emergency.json`): datos estructurados y editables, con estado documentado / aporte del equipo / pendiente.
 - Trabajo adelantado del Sprint 02B (D1, API, sincronización, notificaciones), **sin conectar a la app ni desplegar**: carpetas `migrations/`, `worker/`, `shared/`, config `wrangler.worker.jsonc`.
 
+## Sprint 03M
+- Mapa interactivo **Explorá Río Seco** (`/mapa`): Leaflet + OpenStreetMap, carga diferida, capas por categoría compartibles por URL, ficha por lugar (`/servicios/:id`). Ver `docs/mapa.md`.
+
 ## Datos y reglas editoriales
 - No se inventa contenido: `news/alerts/events/obituaries.json` están vacíos hasta tener fuentes verificadas.
 - `schedules.json` (generado, no editar a mano) contiene solo horarios con fuente y `reuseAuthorized: true`. Horas ≥ 24:00 (ej. `24:15`) indican servicios posteriores a la medianoche.

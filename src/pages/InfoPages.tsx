@@ -86,7 +86,22 @@ export function AboutPage() {
           <CardTitle>Privacidad</CardTitle>
           <p>
             No hay cuentas, rastreadores ni publicidad. Tus rutas favoritas y la preferencia de tema (claro/oscuro) se guardan solo en tu
-            dispositivo. Los enlaces externos abren sitios de terceros con sus propias políticas.
+            dispositivo. Los enlaces externos abren sitios de terceros con sus propias políticas. En el mapa, tu ubicación se pide solo si tocás «Mi ubicación»
+            y no se guarda ni se envía a ningún servidor; el mapa base se pide a OpenStreetMap, que puede ver tu dirección IP como cualquier sitio web.
+          </p>
+        </Card>
+        <Card className="space-y-2 text-sm">
+          <CardTitle>Créditos del mapa</CardTitle>
+          <p>
+            Mapa y datos de ubicación: © colaboradores de{' '}
+            <ExternalLink href="https://www.openstreetmap.org/copyright" className="text-accent underline">
+              OpenStreetMap
+            </ExternalLink>{' '}
+            (licencia ODbL), con las condiciones de uso de sus servidores de teselas. Biblioteca cartográfica:{' '}
+            <ExternalLink href="https://leafletjs.com/" className="text-accent underline">
+              Leaflet
+            </ExternalLink>
+            . Los datos colaborativos pueden tener errores: cada ficha indica su fuente y su estado de verificación.
           </p>
         </Card>
       </div>

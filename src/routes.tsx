@@ -8,6 +8,8 @@ const HomePage = lazy(() => import('@/pages/HomePage'))
 const BusesPage = lazy(() => import('@/pages/BusesPage'))
 const HeritagePage = lazy(() => import('@/pages/HeritagePages'))
 const HeritageDetailPage = lazy(() => import('@/pages/HeritagePages').then((m) => ({ default: m.HeritageDetailPage })))
+const MapPage = lazy(() => import('@/pages/MapPage'))
+const PlaceDetailPage = lazy(() => import('@/pages/PlaceDetailPage'))
 const ServicesPage = lazy(() => import('@/pages/ServicesPage'))
 const RadiosPage = lazy(() => import('@/pages/RadiosPage'))
 const NewsPage = lazy(() => import('@/pages/ContentPages').then((m) => ({ default: m.NewsPage })))
@@ -28,6 +30,8 @@ export function AppRoutes() {
         <Route path="nuestro-pueblo" element={<Navigate to="/pueblo" replace />} />
         <Route path="pueblo/:id" element={<HeritageDetailPage />} />
         <Route path="servicios" element={<ServicesPage />} />
+        <Route path="servicios/:id" element={<PlaceDetailPage />} />
+        <Route path="mapa" element={<MapPage />} />
         <Route path="noticias" element={<NewsPage />} />
         <Route path="alertas" element={<AlertsPage />} />
         <Route path="radios" element={<RadiosPage />} />

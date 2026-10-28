@@ -4,8 +4,9 @@ import { ExternalLink } from '@/components/shared/ExternalLink'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
-import { mapLinks } from '@/config/links'
+import { Link } from 'react-router'
 import { PLACE_CATEGORY_LABEL, type Place } from '@/domain/community'
+import { directionsUrl, mapHref, osmViewUrl } from '@/features/map/layers'
 import { formatCivilDate } from '@/lib/format'
 import { shareLink } from '@/services/share'
 
@@ -18,13 +19,13 @@ const PENDING_LABEL: Record<Place['pending'][number], string> = {
 }
 
 export const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`
-const mapQuery = (p: Place) => `${p.name}, ${p.address ?? ''}, Río Seco, Tucumán, Argentina`.replace(/, ,/g, ',')
 
-export function PlaceCard({ place: p }: { place: Place }) {
+export function PlaceCard({ place: p, headingLink = true }: { place: Place; headingLink?: boolean }) {
+  const directions = directionsUrl(p)
   const [msg, setMsg] = useState('')
   const share = async () => {
     const text = [p.name, p.address, p.phone && `Tel. ${p.phone}`].filter(Boolean).join(' · ')
-    const out = await shareLink({ title: p.name, text, url: `${location.origin}/servicios#${p.id}` })
+    const out = await shareLink({ title: p.name, text, url: `${location.origin}/servicios/${p.id}` })
     setMsg(out === 'copied' ? 'Enlace copiado' : out === 'failed' ? 'No se pudo compartir' : '')
   }
 
@@ -34,7 +35,7 @@ export function PlaceCard({ place: p }: { place: Place }) {
         <Badge tone="info">{PLACE_CATEGORY_LABEL[p.category]}</Badge>
         {p.verifiedAt && <span className="text-xs text-muted-foreground">Verificado el {formatCivilDate(p.verifiedAt)}</span>}
       </div>
-      <CardTitle className="text-lg">{p.name}</CardTitle>
+      <CardTitle className="text-lg">{headingLink ? <Link to={`/servicios/${p.id}`} className="underline-offset-2 hover:underline">{p.name}</Link> : p.name}</CardTitle>
       {p.description && <p className="text-sm">{p.description}</p>}
 
       <dl className="space-y-1.5 text-sm">
@@ -80,21 +81,30 @@ export function PlaceCard({ place: p }: { place: Place }) {
             </a>
           </Button>
         )}
-        {(p.address || p.location) && (
-          <>
-            <Button asChild size="sm" variant="outline">
-              <a href={mapLinks.directions(mapQuery(p))} target="_blank" rel="noopener noreferrer" aria-label={`Cómo llegar a ${p.name} (abre Google Maps)`}>
-                <Navigation className="size-4" aria-hidden />
-                Cómo llegar
-              </a>
-            </Button>
-            <Button asChild size="sm" variant="outline">
-              <a href={mapLinks.openStreetMap(mapQuery(p))} target="_blank" rel="noopener noreferrer" aria-label={`Ver ${p.name} en OpenStreetMap`}>
-                <MapPin className="size-4" aria-hidden />
-                Ver en mapa
-              </a>
-            </Button>
-          </>
+        {p.location ? (
+          <Button asChild size="sm" variant="outline">
+            <Link to={mapHref(p.id)} aria-label={`Ver ${p.name} en el mapa de Río Seco`}>
+              <MapPin className="size-4" aria-hidden />
+              Ver en el mapa
+            </Link>
+          </Button>
+        ) : (
+          <Badge tone="warning">Ubicación pendiente</Badge>
+        )}
+        {directions && (
+          <Button asChild size="sm" variant="outline">
+            <a href={directions} target="_blank" rel="noopener noreferrer" aria-label={`Cómo llegar a ${p.name} (abre una aplicación de mapas externa)`}>
+              <Navigation className="size-4" aria-hidden />
+              Cómo llegar
+            </a>
+          </Button>
+        )}
+        {p.location && (
+          <Button asChild size="sm" variant="outline">
+            <a href={osmViewUrl(p.location)} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${p.name} en OpenStreetMap (sitio externo)`}>
+              Abrir en OpenStreetMap
+            </a>
+          </Button>
         )}
         <Button size="sm" variant="outline" onClick={share}>
           <Share2 className="size-4" aria-hidden />

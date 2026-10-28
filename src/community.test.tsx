@@ -31,7 +31,8 @@ describe('Servicios y lugares útiles', () => {
     expect(screen.getByRole('link', { name: 'Llamar a Comisaría de Río Seco' })).toHaveAttribute('href', 'tel:03863471081')
     const way = screen.getByRole('link', { name: /Cómo llegar a Comisaría de Río Seco/ })
     expect(way.getAttribute('href')).toContain('https://www.google.com/maps/dir/')
-    expect(decodeURIComponent(way.getAttribute('href')!)).toContain('Av. Himno Patrio s/n')
+    // con ubicación verificada, las indicaciones usan las coordenadas y no solo el texto de la dirección
+    expect(decodeURIComponent(way.getAttribute('href')!)).toContain('-27.268584,-65.560203')
     expect(screen.getAllByRole('button', { name: /Compartir/ }).length).toBeGreaterThanOrEqual(3)
   })
   it('no inventa teléfonos ni horarios: los datos faltantes figuran como pendientes', async () => {
@@ -58,8 +59,8 @@ describe('Servicios y lugares útiles', () => {
     const user = userEvent.setup()
     renderApp('/servicios')
     await screen.findByText('Comisaría de Río Seco')
-    await user.click(screen.getByRole('button', { name: 'Clubes' }))
-    expect(await screen.findByText(/Todavía no relevamos: Clubes/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Paradas de colectivo' }))
+    expect(await screen.findByText(/Todavía no relevamos: Paradas de colectivo/)).toBeInTheDocument()
     expect(screen.queryByText('Comisaría de Río Seco')).not.toBeInTheDocument()
   })
   it('incluye los números de emergencia con enlace de llamada', async () => {

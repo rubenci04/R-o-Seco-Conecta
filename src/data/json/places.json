@@ -6,11 +6,34 @@
     "address": "Av. Himno Patrio s/n, Río Seco",
     "phone": "03863-471081",
     "description": "Figura en el listado de comisarías de la Unidad Regional Oeste de la Policía de Tucumán.",
-    "links": [{ "label": "Listado de comisarías (Policía de Tucumán)", "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm" }],
-    "sources": [{ "label": "Policía de Tucumán · Comisarías Unidad Regional Oeste", "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm", "date": "2026-10-28" }],
+    "links": [
+      {
+        "label": "Listado de comisarías (Policía de Tucumán)",
+        "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Policía de Tucumán · Comisarías Unidad Regional Oeste",
+        "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm",
+        "date": "2026-10-28"
+      }
+    ],
     "verifiedAt": "2026-10-28",
-    "pending": ["hours"],
-    "dataNote": "Dirección y teléfono tal como los publica la Policía de Tucumán. La página no indica fecha de actualización ni horarios."
+    "pending": [
+      "hours"
+    ],
+    "dataNote": "Dirección y teléfono tal como los publica la Policía de Tucumán. La página no indica fecha de actualización ni horarios. Ubicación en el mapa según OpenStreetMap (Comisaría Río Seco, Av. Himno Patrio), coherente con la dirección publicada.",
+    "location": {
+      "lat": -27.268584,
+      "lng": -65.560203,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863034640",
+        "url": "https://www.openstreetmap.org/node/12863034640",
+        "date": "2026-10-28"
+      }
+    }
   },
   {
     "id": "caps-rio-seco",
@@ -18,20 +41,58 @@
     "category": "salud",
     "address": "Av. Himno Patrio s/n, Río Seco",
     "description": "Centro de Atención Primaria de la Salud de Río Seco.",
-    "links": [{ "label": "Documento del Ministerio de Salud Pública (referencia inicial)", "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf" }],
-    "sources": [{ "label": "Referencia aportada por el equipo del proyecto", "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf" }],
-    "pending": ["phone", "hours"],
-    "dataNote": "Dirección aportada por el equipo del proyecto. El documento enlazado es un escaneo de la zona Sur (Graneros, Lamadrid, Taco Ralo…) y no menciona Río Seco, por lo que NO confirma este dato: falta verificarlo con el Ministerio de Salud o el propio CAPS."
+    "links": [
+      {
+        "label": "Documento del Ministerio de Salud Pública (referencia inicial)",
+        "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Referencia aportada por el equipo del proyecto",
+        "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf"
+      },
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863034641",
+        "url": "https://www.openstreetmap.org/node/12863034641",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "dataNote": "Dirección aportada por el equipo del proyecto. El documento enlazado es un escaneo de la zona Sur (Graneros, Lamadrid, Taco Ralo…) y no menciona Río Seco, por lo que NO confirma este dato: falta verificarlo con el Ministerio de Salud o el propio CAPS. Ubicación en OpenStreetMap (CAPS Río Seco, Av. Himno Patrio): coincide con la dirección aportada, pero es un dato colaborativo y no lo confirma el Ministerio.",
+    "location": {
+      "lat": -27.268378,
+      "lng": -65.560108,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863034641",
+        "url": "https://www.openstreetmap.org/node/12863034641",
+        "date": "2026-10-28"
+      }
+    }
   },
   {
     "id": "farmacia-santa-rita",
     "name": "Farmacia Santa Rita",
     "category": "farmacias",
     "address": "Av. Himno Patrio 211, Río Seco",
-    "sources": [{ "label": "Ahorro Farma · Farmacias Tucumán", "url": "https://sites.google.com/view/ahorrofarmaofertas/tucum%C3%A1n", "date": "2026-10-28" }],
+    "sources": [
+      {
+        "label": "Ahorro Farma · Farmacias Tucumán",
+        "url": "https://sites.google.com/view/ahorrofarmaofertas/tucum%C3%A1n",
+        "date": "2026-10-28"
+      }
+    ],
     "verifiedAt": "2026-10-28",
-    "pending": ["phone", "hours"],
-    "dataNote": "Nombre y dirección según el listado de Ahorro Farma (sitio de terceros). No publica teléfono ni horarios; no confirmado por la farmacia."
+    "pending": [
+      "phone",
+      "hours",
+      "location"
+    ],
+    "dataNote": "Nombre y dirección según el listado de Ahorro Farma (sitio de terceros). No publica teléfono ni horarios; no confirmado por la farmacia. Ubicación en el mapa pendiente: OpenStreetMap no registra esta farmacia y una dirección textual no alcanza para fijar coordenadas exactas."
   },
   {
     "id": "comuna-rio-seco",
@@ -39,11 +100,586 @@
     "category": "comuna",
     "description": "Gobierno local. Publica sus novedades en redes sociales.",
     "links": [
-      { "label": "Facebook de la Comuna", "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/" },
-      { "label": "Instagram de la Comuna", "url": "https://www.instagram.com/comunaderioseco/" }
+      {
+        "label": "Facebook de la Comuna",
+        "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/"
+      },
+      {
+        "label": "Instagram de la Comuna",
+        "url": "https://www.instagram.com/comunaderioseco/"
+      }
     ],
-    "sources": [{ "label": "Redes oficiales de la Comuna", "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/" }],
-    "pending": ["address", "phone", "hours"],
-    "dataNote": "Domicilio, teléfono y horarios de atención pendientes de confirmación con la Comuna."
+    "sources": [
+      {
+        "label": "Redes oficiales de la Comuna",
+        "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/"
+      },
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863034628",
+        "url": "https://www.openstreetmap.org/node/12863034628",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "dataNote": "Dirección y ubicación según OpenStreetMap (colaborativo); falta confirmarlas con la Comuna. Teléfono y horarios de atención pendientes.",
+    "address": "Inmaculada Concepción 230, Río Seco",
+    "location": {
+      "lat": -27.268375,
+      "lng": -65.557277,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863034628",
+        "url": "https://www.openstreetmap.org/node/12863034628",
+        "date": "2026-10-28"
+      }
+    }
+  },
+  {
+    "id": "centro-rehabilitacion-perito-moreno",
+    "name": "Centro de Rehabilitación (Perito Moreno)",
+    "category": "salud",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/371263503",
+        "url": "https://www.openstreetmap.org/way/371263503",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Perito Moreno 468, Río Seco",
+    "description": "En OpenStreetMap figura como centro de salud / rehabilitación.",
+    "location": {
+      "lat": -27.257617,
+      "lng": -65.548858,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · way/371263503",
+        "url": "https://www.openstreetmap.org/way/371263503",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap: confirmar nombre, tipo de servicio, teléfono y horarios."
+  },
+  {
+    "id": "escuela-quintana",
+    "name": "Escuela Doctor Manuel Quintana",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12862761359",
+        "url": "https://www.openstreetmap.org/node/12862761359",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Obispo Colombres 134, Río Seco",
+    "location": {
+      "lat": -27.267222,
+      "lng": -65.561508,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12862761359",
+        "url": "https://www.openstreetmap.org/node/12862761359",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Nombre y ubicación según OpenStreetMap (colaborativo)."
+  },
+  {
+    "id": "escuela-secundaria-rio-seco",
+    "name": "Escuela Secundaria de Río Seco",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863055884",
+        "url": "https://www.openstreetmap.org/node/12863055884",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Obispo Colombres 134, Río Seco",
+    "location": {
+      "lat": -27.267569,
+      "lng": -65.561611,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863055884",
+        "url": "https://www.openstreetmap.org/node/12863055884",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Nombre y ubicación según OpenStreetMap (colaborativo); comparte domicilio con la Escuela Doctor Manuel Quintana."
+  },
+  {
+    "id": "escuela-tecnica-1",
+    "name": "Escuela Técnica N.º 1 de Río Seco",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12862782392",
+        "url": "https://www.openstreetmap.org/node/12862782392",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Av. Himno Patrio, Río Seco",
+    "location": {
+      "lat": -27.276322,
+      "lng": -65.561978,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12862782392",
+        "url": "https://www.openstreetmap.org/node/12862782392",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Nombre y ubicación según OpenStreetMap (colaborativo)."
+  },
+  {
+    "id": "escuela-magnasco",
+    "name": "Escuela Osvaldo Magnasco",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/370502388",
+        "url": "https://www.openstreetmap.org/way/370502388",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Inmaculada Concepción 341, Río Seco",
+    "location": {
+      "lat": -27.269456,
+      "lng": -65.556242,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/370502388",
+        "url": "https://www.openstreetmap.org/way/370502388",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Nombre y ubicación según OpenStreetMap (colaborativo)."
+  },
+  {
+    "id": "nivel-inicial-magnasco",
+    "name": "Escuela de Nivel Inicial Osvaldo Magnasco",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863055885",
+        "url": "https://www.openstreetmap.org/node/12863055885",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Inmaculada Concepción 341, Río Seco",
+    "location": {
+      "lat": -27.26983,
+      "lng": -65.556111,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863055885",
+        "url": "https://www.openstreetmap.org/node/12863055885",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Nombre y ubicación según OpenStreetMap (colaborativo)."
+  },
+  {
+    "id": "fundacion-juan-xxiii",
+    "name": "Fundación Juan XXIII (anexo Río Seco)",
+    "category": "educacion",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863055886",
+        "url": "https://www.openstreetmap.org/node/12863055886",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Av. Himno Patrio, Río Seco",
+    "description": "En OpenStreetMap figura como establecimiento de educación superior.",
+    "location": {
+      "lat": -27.276555,
+      "lng": -65.561395,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863055886",
+        "url": "https://www.openstreetmap.org/node/12863055886",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap; confirmar la oferta educativa."
+  },
+  {
+    "id": "cic-rio-seco",
+    "name": "Centro Integrador Comunitario",
+    "category": "comunitarios",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/8736164232",
+        "url": "https://www.openstreetmap.org/node/8736164232",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours"
+    ],
+    "description": "Centro comunitario registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.265955,
+      "lng": -65.549177,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/8736164232",
+        "url": "https://www.openstreetmap.org/node/8736164232",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap; faltan dirección, teléfono y horarios."
+  },
+  {
+    "id": "plazoleta",
+    "name": "Plazoleta",
+    "category": "comunitarios",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/221872867",
+        "url": "https://www.openstreetmap.org/way/221872867",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "description"
+    ],
+    "description": "Espacio verde registrado como «Plazoleta» en OpenStreetMap.",
+    "location": {
+      "lat": -27.269271,
+      "lng": -65.554659,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/221872867",
+        "url": "https://www.openstreetmap.org/way/221872867",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap."
+  },
+  {
+    "id": "espacio-verde-central",
+    "name": "Espacio verde central (a confirmar si es la plaza principal)",
+    "category": "cultural",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/195121028",
+        "url": "https://www.openstreetmap.org/way/195121028",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "description"
+    ],
+    "description": "Parque sin nombre en OpenStreetMap, ubicado junto a la Comuna y la parroquia.",
+    "location": {
+      "lat": -27.267518,
+      "lng": -65.55923,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/195121028",
+        "url": "https://www.openstreetmap.org/way/195121028",
+        "date": "2026-10-28"
+      },
+      "note": "OpenStreetMap no lo nombra: falta confirmar si corresponde a la plaza principal."
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "No se afirma que sea «la plaza»: la ubicación es la del espacio verde mapeado, con el nombre pendiente de confirmación."
+  },
+  {
+    "id": "biblioteca-vergara",
+    "name": "Biblioteca Popular Carlos N. Vergara",
+    "category": "cultural",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12863034615",
+        "url": "https://www.openstreetmap.org/node/12863034615",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Inmaculada Concepción, Río Seco",
+    "description": "Registrada en OpenStreetMap como biblioteca pública.",
+    "location": {
+      "lat": -27.268064,
+      "lng": -65.559234,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12863034615",
+        "url": "https://www.openstreetmap.org/node/12863034615",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap; confirmar horarios y servicios."
+  },
+  {
+    "id": "cartel-entrada",
+    "name": "Entrada principal «Río Seco»",
+    "category": "cultural",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/221874035",
+        "url": "https://www.openstreetmap.org/way/221874035",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address"
+    ],
+    "description": "Espacio de la entrada al pueblo con el cartel «Río Seco», registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.270017,
+      "lng": -65.55321,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/221874035",
+        "url": "https://www.openstreetmap.org/way/221874035",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap."
+  },
+  {
+    "id": "ingenio",
+    "name": "El ingenio (ubicación pendiente)",
+    "category": "cultural",
+    "links": [
+      {
+        "label": "Cadena 3 · Río Seco, la capital del pesebre",
+        "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912"
+      }
+    ],
+    "sources": [
+      {
+        "label": "Cadena 3 (08/12/2023)",
+        "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912",
+        "date": "2023-12-08"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours",
+      "location"
+    ],
+    "description": "Según Cadena 3, el pueblo nació junto a un ingenio. Nombre, estado actual y ubicación exacta pendientes de documentación.",
+    "dataNote": "No se coloca en el mapa: OpenStreetMap solo muestra predios industriales sin nombre y no hay confirmación de cuál corresponde al ingenio."
+  },
+  {
+    "id": "parroquia-inmaculada-concepcion",
+    "name": "Parroquia Inmaculada Concepción",
+    "category": "iglesias",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/12862761360",
+        "url": "https://www.openstreetmap.org/node/12862761360",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours"
+    ],
+    "description": "Templo registrado en OpenStreetMap (nombre en el mapa: «Parroquía Inmaculada Concepción»).",
+    "location": {
+      "lat": -27.26679,
+      "lng": -65.562285,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/12862761360",
+        "url": "https://www.openstreetmap.org/node/12862761360",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap; confirmar horarios de misas con la parroquia."
+  },
+  {
+    "id": "capilla-virgen-del-valle",
+    "name": "Virgen del Valle",
+    "category": "iglesias",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/3840916459",
+        "url": "https://www.openstreetmap.org/node/3840916459",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours"
+    ],
+    "description": "Lugar de culto registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.258813,
+      "lng": -65.547762,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/3840916459",
+        "url": "https://www.openstreetmap.org/node/3840916459",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap."
+  },
+  {
+    "id": "virgen-del-rosario-de-nicolas",
+    "name": "Virgen del Rosario de Nicolás",
+    "category": "iglesias",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · node/3840916457",
+        "url": "https://www.openstreetmap.org/node/3840916457",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours"
+    ],
+    "description": "Lugar de culto registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.255204,
+      "lng": -65.547429,
+      "accuracy": "edificio",
+      "source": {
+        "label": "OpenStreetMap · node/3840916457",
+        "url": "https://www.openstreetmap.org/node/3840916457",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap."
+  },
+  {
+    "id": "club-san-ramon",
+    "name": "Club San Ramón",
+    "category": "clubes",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/220593533",
+        "url": "https://www.openstreetmap.org/way/220593533",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "phone",
+      "hours"
+    ],
+    "address": "Av. Libertador, Río Seco",
+    "description": "Centro deportivo registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.255772,
+      "lng": -65.545305,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/220593533",
+        "url": "https://www.openstreetmap.org/way/220593533",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap."
+  },
+  {
+    "id": "la-providencia",
+    "name": "La Providencia (club)",
+    "category": "clubes",
+    "links": [],
+    "sources": [
+      {
+        "label": "OpenStreetMap (colaborativo) · way/1389613940",
+        "url": "https://www.openstreetmap.org/way/1389613940",
+        "date": "2026-10-28"
+      }
+    ],
+    "pending": [
+      "address",
+      "phone",
+      "hours"
+    ],
+    "description": "Centro deportivo con cancha y pileta, registrado en OpenStreetMap.",
+    "location": {
+      "lat": -27.271767,
+      "lng": -65.558157,
+      "accuracy": "zona",
+      "source": {
+        "label": "OpenStreetMap · way/1389613940",
+        "url": "https://www.openstreetmap.org/way/1389613940",
+        "date": "2026-10-28"
+      }
+    },
+    "verifiedAt": "2026-10-28",
+    "dataNote": "Dato colaborativo de OpenStreetMap; confirmar nombre completo e institución."
   }
 ]

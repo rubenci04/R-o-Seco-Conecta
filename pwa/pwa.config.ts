@@ -30,5 +30,15 @@ export const pwaOptions: Partial<VitePWAOptions> = {
     globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
     navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
+    // El código del mapa (Leaflet, ~365 KB) NO se precachea: solo se guarda tras abrir el mapa por primera vez.
+    globIgnores: ['**/PlacesMap-*.{js,css}'],
+    runtimeCaching: [
+      {
+        urlPattern: ({ url, sameOrigin }: { url: URL; sameOrigin: boolean }) => sameOrigin && /\/assets\/PlacesMap-[^/]+\.(js|css)$/.test(url.pathname),
+        handler: 'CacheFirst',
+        options: { cacheName: 'rio-seco-map-code', expiration: { maxEntries: 4 } },
+      },
+      // Las teselas de OpenStreetMap NO se guardan (política de uso: sin descargas masivas ni mapas offline).
+    ],
   },
 }
