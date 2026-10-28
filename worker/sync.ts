@@ -3,6 +3,7 @@ import { defaultConnectors } from './connectors/meta'
 import type { SourceConnector } from './connectors/types'
 import { SYSTEM_ACTOR, type Env } from './env'
 import { ingestPost, type SourceRow } from './ingest'
+import { enrichLinkOnly, findLinkCard } from './linkOnly'
 import { enqueuePostNotification } from './notify'
 
 /** Publicaciones procesadas por fuente y ciclo: mantiene cada invocación dentro del límite de consultas del plan gratuito. */
@@ -20,6 +21,8 @@ export interface SourceSyncReport {
   fetched: number
   inserted: number
   duplicates: number
+  /** Tarjetas registradas solo con enlace que se completaron con el texto obtenido de la fuente. */
+  completed?: number
   detail?: string
 }
 
@@ -58,6 +61,15 @@ export async function syncSource(env: Env, source: SourceRow, now: Date, deps: S
     let cursor = source.cursor
     const inserted: number[] = []
     for (const raw of batch) {
+      // Si la persona ya había registrado esa publicación solo con el enlace, se COMPLETA esa tarjeta (no se crea otra noticia).
+      const card = await findLinkCard(env.DB, source.id, raw)
+      if (card !== null && raw.body.trim()) {
+        const e = await enrichLinkOnly(env.DB, card, { text: raw.body, title: raw.title, publishedAt: raw.publishedAt }, { actor: SYSTEM_ACTOR, now })
+        if (e.outcome === 'enriched') report.completed = (report.completed ?? 0) + 1
+        else report.duplicates++
+        cursor = !cursor || raw.publishedAt > cursor ? raw.publishedAt : cursor
+        continue
+      }
       const r = await ingestPost(env.DB, raw, { source, origin: 'api', actor: SYSTEM_ACTOR, now })
       if (r.outcome === 'inserted') inserted.push(r.postId)
       else report.duplicates++

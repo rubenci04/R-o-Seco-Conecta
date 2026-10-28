@@ -8,7 +8,10 @@ import { defaultConnectors } from '../connectors/meta'
 import { SYSTEM_ACTOR } from '../env'
 import { historyStatement } from '../history'
 import { actorOf, HttpError, httpUrl, isoDate, json, Router, str, type Ctx } from '../http'
+import { parsePostLink } from '../../shared/dedupe'
+import { contentTypeFromUrl, embedUrlFor, isContentType, isSensitiveCategory, type ContentType } from '../../shared/postLinks'
 import { findDuplicate, ingestPost, type SourceRow } from '../ingest'
+import { enrichLinkOnly, findLinkDuplicate, ingestLinkOnly } from '../linkOnly'
 import { enqueueAlertNotification, enqueuePostNotification, processNotifications } from '../notify'
 import { createVapidSender, pushConfigured } from '../push'
 import { syncSource, type SyncDeps } from '../sync'
@@ -87,6 +90,8 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
         binds.push(v)
       }
     }
+    if (sp.get('enlace') === '1') where.push('p.link_only = 1')
+    if (sp.get('historico') === '1') where.push('p.historical = 1')
     const cat = sp.get('categoria')
     if (cat) {
       where.push('EXISTS (SELECT 1 FROM post_categories pc WHERE pc.post_id = p.id AND pc.category_id = ?)')
@@ -99,7 +104,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     }
     const limit = Math.min(Number(sp.get('limite')) || 50, 200)
     const rows = await ctx.env.DB.prepare(
-      `SELECT p.id, p.title, p.body, p.url, p.status, p.review_state, p.origin, p.published_at, p.imported_at, p.rectification, p.source_id,
+      `SELECT p.id, p.title, p.body, p.url, p.status, p.review_state, p.origin, p.published_at, p.imported_at, p.rectification, p.source_id, p.link_only, p.date_verified, p.historical, p.content_type,
               (SELECT group_concat(category_id || ':' || confidence || ':' || confirmed) FROM post_categories WHERE post_id = p.id) AS cats
        FROM posts p ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY p.published_at DESC LIMIT ?`,
     )
@@ -203,6 +208,160 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     }
     return json({ items: out })
   })
+
+  // ------------------------------------------------ publicaciones solo con enlace / carga retroactiva
+  /** Interpreta un enlace: plataforma, fuente, id estable, URL normalizada, tipo sugerido y duplicado (sin guardar nada). */
+  async function describeLink(ctx: Ctx, rawUrl: string) {
+    const link = parsePostLink(rawUrl)
+    if (!link) throw new HttpError(400, 'El enlace debe ser una publicación de Facebook o Instagram')
+    // Una dirección de página (sin identificador de publicación) no es una publicación: se pide el enlace de la publicación misma.
+    if (link.platform === 'facebook' && !link.externalId && !new URL(rawUrl.trim()).pathname.startsWith('/share/')) throw new HttpError(400, 'Ese enlace parece ser el de una página, no el de una publicación concreta')
+    const sourceId = link.platform === 'instagram' ? 'instagram-comuna' : 'facebook-comuna'
+    const externalId = link.externalId ?? `url:${(await sha256Hex(link.canonicalUrl)).slice(0, 20)}`
+    const dup = await findLinkDuplicate(ctx.env.DB, sourceId, externalId, link.canonicalUrl)
+    const existing = dup ? await ctx.env.DB.prepare('SELECT id, status, link_only FROM posts WHERE id = ?').bind(dup.ofPostId).first<{ id: number; status: string; link_only: number }>() : null
+    return {
+      platform: link.platform,
+      sourceId,
+      externalId,
+      url: link.canonicalUrl,
+      contentType: contentTypeFromUrl(link.canonicalUrl),
+      embedUrl: embedUrlFor(link.canonicalUrl),
+      duplicate: existing ? { ofPostId: existing.id, status: existing.status, linkOnly: existing.link_only === 1, reason: dup!.reason } : null,
+    }
+  }
+
+  const parseContentType = (v: unknown, fallback: ContentType): ContentType => (v === undefined || v === '' ? fallback : isContentType(String(v)) ? (String(v) as ContentType) : fallback)
+  /** Las categorías de una tarjeta sin texto las decide una persona; los obituarios tienen su propia cola con datos verificados. */
+  function linkCategories(v: unknown): string[] {
+    if (v === undefined || (Array.isArray(v) && v.length === 0)) return []
+    const ids = parseCategories(v)
+    if (ids.includes('obituarios')) throw new HttpError(400, 'Los obituarios se cargan desde la cola de obituarios, con nombre y fecha verificados')
+    return ids
+  }
+  const optionalDate = (v: unknown, name: string) => (v ? isoDate(v, name) : undefined)
+
+  r.post('/api/admin/posts/link-preview', async (ctx) => {
+    requirePermission(ctx, 'content:write')
+    const b = await ctx.body()
+    const d = await describeLink(ctx, str(b.url, 'url', { max: 2048 }))
+    return json({ ...d, sourceId: undefined, externalId: undefined })
+  })
+
+  // «Registrar publicación de Facebook»: tarjeta individual solo con el enlace (sin texto ni análisis automático).
+  r.post('/api/admin/posts/register-link', async (ctx) => {
+    const admin = requirePermission(ctx, 'content:write')
+    const b = await ctx.body()
+    const d = await describeLink(ctx, str(b.url, 'url', { max: 2048 }))
+    if (d.duplicate) throw new HttpError(409, d.duplicate.linkOnly ? `Ya está registrada como la tarjeta #${d.duplicate.ofPostId}: podés completarla con el texto` : `Ya existe como la publicación #${d.duplicate.ofPostId}`)
+    const title = str(b.title, 'title', { max: 200 })
+    const categories = linkCategories(b.categories)
+    const reviewed = b.reviewed === true
+    const status = b.publish === true ? 'published' : 'draft'
+    const result = await ingestLinkOnly(
+      ctx.env.DB,
+      { sourceId: d.sourceId, externalId: d.externalId, url: d.url, title, contentType: parseContentType(b.contentType, d.contentType), publishedAt: optionalDate(b.publishedAt, 'publishedAt'), categories, reviewed },
+      { actor: actorOf(admin), now: ctx.now, status },
+    )
+    if (result.outcome === 'duplicate') throw new HttpError(409, `Ya existe como la publicación #${result.ofPostId}`)
+    return json(result, { status: 201 })
+  })
+
+  // Completar una tarjeta creada solo con enlace con el texto original, sin crear otra noticia.
+  r.post('/api/admin/posts/:id/enrich', async (ctx) => {
+    const admin = requirePermission(ctx, 'content:write')
+    const b = await ctx.body()
+    const result = await enrichLinkOnly(
+      ctx.env.DB,
+      Number(ctx.params.id),
+      { text: str(b.text, 'text', { max: 20_000 }), title: b.title ? str(b.title, 'title', { max: 200 }) : undefined, publishedAt: optionalDate(b.publishedAt, 'publishedAt') },
+      { actor: actorOf(admin), now: ctx.now },
+    )
+    if (result.outcome === 'not-found') throw new HttpError(404, 'No encontrada')
+    if (result.outcome === 'not-link-only') throw new HttpError(409, 'Esta publicación ya tiene texto')
+    if (result.outcome === 'duplicate') throw new HttpError(409, `Ese texto ya existe en la publicación #${result.ofPostId}`)
+    return json(result)
+  })
+
+  /**
+   * Recuperación de publicaciones anteriores (vista previa o importación). Cada elemento: enlace + (opcional) texto, fecha verificada,
+   * título y categorías confirmadas por la persona. Con texto se usa el clasificador existente; sin texto se crea una tarjeta enlazada.
+   * Todo lo importado queda marcado como histórico: no notifica ni propone avisos. Solo se publican solas las categorías seguras.
+   */
+  async function retro(ctx: Ctx, commit: boolean) {
+    const admin = requirePermission(ctx, 'content:write')
+    const b = await ctx.body()
+    if (!Array.isArray(b.items) || b.items.length === 0 || b.items.length > 25) throw new HttpError(400, 'Enviá entre 1 y 25 publicaciones')
+    const from = b.periodFrom ? Date.parse(`${String(b.periodFrom)}T00:00:00-03:00`) : null
+    const to = b.periodTo ? Date.parse(`${String(b.periodTo)}T23:59:59-03:00`) : null
+    if ((from !== null && Number.isNaN(from)) || (to !== null && Number.isNaN(to))) throw new HttpError(400, 'Período inválido (AAAA-MM-DD)')
+    const publishSafe = b.publishSafe === true
+    const out = []
+    for (const it of b.items as Array<Record<string, unknown>>) {
+      try {
+        const d = await describeLink(ctx, str(it.url, 'url', { max: 2048 }))
+        const publishedAt = optionalDate(it.publishedAt, 'publishedAt')
+        if (publishedAt && ((from !== null && Date.parse(publishedAt) < from) || (to !== null && Date.parse(publishedAt) > to))) {
+          out.push({ ok: false, url: d.url, error: 'La fecha está fuera del período elegido' })
+          continue
+        }
+        const text = typeof it.text === 'string' ? it.text.trim() : ''
+        const base = { ok: true as const, platform: d.platform, url: d.url, embedUrl: d.embedUrl, contentType: parseContentType(it.contentType, d.contentType), dateVerified: !!publishedAt, duplicate: d.duplicate }
+        if (d.duplicate && !(d.duplicate.linkOnly && text)) {
+          out.push({ ...base, outcome: 'duplicado', textSource: text ? 'texto' : 'enlace', categories: [], alert: null, obituary: null, safe: false })
+          continue
+        }
+        if (text) {
+          // Con texto: el clasificador existente propone categorías; los posibles obituarios y avisos nunca se publican en bloque.
+          const title = it.title ? str(it.title, 'title', { max: 200 }) : deriveTitle(text).slice(0, 200)
+          const c = defaultClassifier.classify({ title, body: text })
+          const safe = !c.obituary && !c.alert && !c.needsReview && c.categories.every((x) => !isSensitiveCategory(x.id))
+          const row = { ...base, title, textSource: 'texto' as const, categories: c.categories, alert: c.alert, obituary: c.obituary ? { nameSuggestion: c.obituary.nameSuggestion } : null, safe }
+          if (!commit) {
+            out.push({ ...row, outcome: c.obituary ? 'revision-obituario' : safe && publishSafe ? 'publicada' : 'revision' })
+            continue
+          }
+          if (d.duplicate) {
+            const e = await enrichLinkOnly(ctx.env.DB, d.duplicate.ofPostId, { text, title, publishedAt }, { actor: actorOf(admin), now: ctx.now })
+            out.push({ ...row, outcome: e.outcome === 'enriched' ? 'completada' : 'duplicado', postId: d.duplicate.ofPostId })
+            continue
+          }
+          const res = await ingestPost(
+            ctx.env.DB,
+            { externalId: d.externalId, url: d.url, title, body: text, publishedAt: publishedAt ?? ctx.now.toISOString(), dateVerified: !!publishedAt, contentType: row.contentType },
+            { source: await getSource(ctx, d.sourceId), origin: 'assisted', actor: actorOf(admin), now: ctx.now, historical: true, hold: !(safe && publishSafe) },
+          )
+          out.push(res.outcome === 'inserted' ? { ...row, outcome: res.status === 'published' ? 'publicada' : 'revision', postId: res.postId } : { ...row, outcome: 'duplicado' })
+          continue
+        }
+        // Sin texto: tarjeta enlazada. El título y las categorías los pone la persona; no se analiza nada.
+        const title = typeof it.title === 'string' ? it.title.trim() : ''
+        if (!title) {
+          out.push({ ...base, ok: false, error: 'Sin texto hay que escribir un título descriptivo (no se genera ningún resumen)' })
+          continue
+        }
+        const categories = linkCategories(it.categories)
+        const reviewed = it.reviewed === true
+        const safe = reviewed && categories.every((c) => !isSensitiveCategory(c))
+        const row = { ...base, title, textSource: 'enlace' as const, categories: categories.map((id) => ({ id, confidence: 1, reasons: ['asignada por la persona editora'] })), alert: null, obituary: null, safe }
+        if (!commit) {
+          out.push({ ...row, outcome: safe && publishSafe ? 'publicada' : 'revision' })
+          continue
+        }
+        const res = await ingestLinkOnly(
+          ctx.env.DB,
+          { sourceId: d.sourceId, externalId: d.externalId, url: d.url, title, contentType: row.contentType, publishedAt, categories, reviewed },
+          { actor: actorOf(admin), now: ctx.now, status: safe && publishSafe ? 'published' : 'pending', historical: true },
+        )
+        out.push(res.outcome === 'inserted' ? { ...row, outcome: res.status === 'published' ? 'publicada' : 'revision', postId: res.postId } : { ...row, outcome: 'duplicado' })
+      } catch (e) {
+        out.push({ ok: false, error: e instanceof HttpError ? e.message : 'No se pudo procesar' })
+      }
+    }
+    return json({ items: out })
+  }
+  r.post('/api/admin/posts/retro-preview', (ctx) => retro(ctx, false))
+  r.post('/api/admin/posts/retro-import', (ctx) => retro(ctx, true))
 
   async function setCategories(ctx: Ctx, postId: number, ids: string[], admin: { id: number; email: string }) {
     const db = ctx.env.DB

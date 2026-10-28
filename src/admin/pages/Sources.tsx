@@ -7,6 +7,7 @@ import { api, type SourceInfo } from '../api'
 import { canEdit, isAdmin, useAuth } from '../auth'
 import { Notice, PageTitle, useAction, useAdminData } from '../ui'
 import { ImportPosts } from './ImportPosts'
+import { RegisterLink } from './RegisterLink'
 
 const STATUS: Record<string, string> = {
   'not-configured': 'Sin credenciales',
@@ -85,7 +86,7 @@ export function SourcesAdmin() {
         ))}
       </ul>
 
-      {canEdit(admin) && <ImportPosts onDone={() => { reload(); runs.reload() }} />}
+      {canEdit(admin) && <div className="space-y-4"><RegisterLink onDone={() => { reload(); runs.reload() }} /><ImportPosts onDone={() => { reload(); runs.reload() }} /></div>}
 
       <Card className="mt-4 space-y-2">
         <CardTitle>Errores de sincronización recientes</CardTitle>

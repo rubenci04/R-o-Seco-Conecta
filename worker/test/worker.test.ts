@@ -16,7 +16,7 @@ const ingest = async (db: TestD1, sourceId: string, body: string, over: { extern
 describe('A · esquema D1 y migraciones', () => {
   it('aplica todas las migraciones y crea las tablas requeridas', () => {
     const db = new TestD1()
-    expect(migrate(db)).toHaveLength(7)
+    expect(migrate(db)).toHaveLength(8)
     const tables = (db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all as never as () => never)
     void tables
     const names = (db.raw.prepare("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]).map((t) => t.name)

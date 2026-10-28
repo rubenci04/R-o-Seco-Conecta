@@ -225,3 +225,57 @@ test('importación asistida: varias publicaciones con vista previa, duplicados y
   await expect(page.getByText('Duplicada: se omite')).toBeVisible()
   await expect(page.getByRole('button', { name: /Confirmar e importar 0 publicaciones/ })).toBeDisabled()
 })
+
+test('registrar publicación por enlace: tarjeta individual en el feed, sin inventar datos, con embed oficial opcional y recuperación retroactiva', async ({ page, request }, info) => {
+  const t = Date.now()
+  const reel = `https://www.facebook.com/reel/${t}${tag(info.project.name).length}/`
+  await login(page)
+  await page.goto('/admin/fuentes')
+  await page.locator('#reg-url').fill(reel)
+  await page.getByRole('button', { name: 'Validar enlace' }).click()
+  await expect(page.getByText('Enlace válido. Revisá la publicación y completá los datos.')).toBeVisible()
+  const title = `Reel de prueba ${t}`
+  await page.getByLabel('Título descriptivo (lo escribís vos)').fill(title)
+  await page.getByRole('button', { name: 'Publicar en el feed' }).click()
+  await expect(page.getByText('Tarjeta publicada en el feed.')).toBeVisible()
+
+  // Nada de lo no comprobado se inventa: sin categorías, fecha sin verificar y marcada como publicación externa.
+  const feed = (await (await request.get('/api/public/feed?limite=50')).json()) as Array<{ id: string; title: string; linkOnly?: boolean; dateVerified?: boolean; categories: string[]; body: string }>
+  const card = feed.find((p) => p.title === title)!
+  expect(card).toMatchObject({ linkOnly: true, dateVerified: false, categories: [], body: '' })
+
+  await page.goto('/noticias')
+  const article = page.locator('article, div').filter({ hasText: title }).filter({ has: page.getByText('Publicación externa enlazada') }).last()
+  await expect(article.getByText('Publicación externa enlazada')).toBeVisible()
+  await expect(article.getByText(/Registrada el/)).toBeVisible()
+  expect(await page.locator('iframe[src*="plugins/video.php"]').count()).toBe(0) // diferido: nada se pide a Meta sin que la persona lo pida
+  await article.getByRole('button', { name: 'Ver la publicación original' }).click()
+  await expect(page.locator('iframe[src*="plugins/video.php"]')).toHaveCount(1)
+  await expect(article.getByRole('link', { name: /Abrir la publicación en Facebook/ })).toHaveAttribute('href', reel)
+
+  // Duplicado: la misma publicación no se registra dos veces.
+  await page.goto('/admin/fuentes')
+  await page.locator('#reg-url').fill(reel)
+  await page.getByRole('button', { name: 'Validar enlace' }).click()
+  await expect(page.getByText(/Ya existe como la tarjeta/)).toBeVisible()
+
+  // Completar con el texto desde el editor: misma tarjeta, ahora clasificada.
+  await page.goto('/admin/noticias?enlace=1')
+  await page.getByRole('link', { name: new RegExp(title) }).click()
+  await page.getByLabel('Texto original').fill(`La Comuna invita al festival del pesebre con música en vivo y peña folclórica k${t}a k${t}b k${t}c.`)
+  await page.getByRole('button', { name: 'Completar y clasificar' }).click()
+  await expect(page.getByText(/Tarjeta completada con el texto y clasificada/)).toBeVisible()
+  const after = (await (await request.get('/api/public/feed?limite=50')).json()) as Array<{ title: string; linkOnly?: boolean; categories: string[] }>
+  expect(after.filter((p) => p.title === title)).toHaveLength(1)
+  expect(after.find((p) => p.title === title)!.linkOnly).toBe(false)
+
+  // Recuperar publicaciones anteriores: histórico, solo lo seguro se publica.
+  await page.goto('/admin/recuperar')
+  await page.getByLabel('Enlaces de las publicaciones (uno por línea, hasta 25)').fill(`https://www.facebook.com/reel/${t}77${tag(info.project.name).length}/`)
+  await page.getByRole('button', { name: 'Armar la lista' }).click()
+  await page.getByLabel('Título (obligatorio si no hay texto)').fill(`Histórico de prueba ${t}`)
+  await page.getByRole('button', { name: 'Revisar sin guardar' }).click()
+  await expect(page.getByText('Vista previa (no se guardó nada)')).toBeVisible()
+  await expect(page.getByText('Solo enlace')).toBeVisible()
+  await expect(page.getByText('Fecha sin verificar')).toBeVisible()
+})

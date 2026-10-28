@@ -69,14 +69,17 @@ async function insertLog(db: D1Database, now: Date, e: Entry, decision: Decision
 }
 
 export async function enqueuePostNotification(db: D1Database, postId: number, now: Date, importedThisRun = 1): Promise<Enqueue> {
-  const post = await db.prepare('SELECT id, title, body, status, published_at FROM posts WHERE id = ?').bind(postId).first<{ id: number; title: string; body: string; status: 'pending' | 'published' | 'rejected' | 'deleted'; published_at: string }>()
+  const post = await db
+    .prepare('SELECT id, title, body, status, published_at, link_only, historical FROM posts WHERE id = ?')
+    .bind(postId)
+    .first<{ id: number; title: string; body: string; status: 'pending' | 'published' | 'rejected' | 'deleted'; published_at: string; link_only: number; historical: number }>()
   if (!post) return { queued: false, reason: 'no existe' }
   const cats = await db.prepare('SELECT category_id FROM post_categories WHERE post_id = ?').bind(postId).all<{ category_id: CategoryId }>()
   const pendingObit = await db.prepare("SELECT 1 AS x FROM obituaries WHERE post_id = ? AND state = 'pending' LIMIT 1").bind(postId).first()
   // Solo una alerta ya CONFIRMADA cubre a la noticia (el aviso lo da la alerta); una alerta apenas propuesta no avisa a nadie.
   const alert = await db.prepare("SELECT 1 AS x FROM alerts WHERE post_id = ? AND confirmation = 'confirmed' LIMIT 1").bind(postId).first()
   const decision = decidePostNotification(
-    { status: post.status, publishedAt: post.published_at, categories: cats.results.map((c) => c.category_id), obituaryPending: !!pendingObit, coveredByAlert: !!alert },
+    { status: post.status, publishedAt: post.published_at, categories: cats.results.map((c) => c.category_id), obituaryPending: !!pendingObit, coveredByAlert: !!alert, linkOnly: !!post.link_only, historical: !!post.historical },
     now,
     importedThisRun,
   )

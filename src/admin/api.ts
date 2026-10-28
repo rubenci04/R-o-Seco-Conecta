@@ -64,6 +64,10 @@ export interface PostSummary {
   imported_at: string
   source_id: string
   rectification: string | null
+  link_only?: number
+  date_verified?: number
+  historical?: number
+  content_type?: string | null
   categories: { id: string; confidence: number; confirmed: boolean }[]
 }
 export interface PostDetail {

@@ -91,6 +91,12 @@ export const newsItemSchema = z.object({
   categories: z.array(z.string()).optional(),
   rectification: z.string().optional(),
   rectifiedAt: isoDateTime.optional(),
+  /** Tarjeta de una publicación externa creada solo con el enlace: no hay texto propio. */
+  linkOnly: z.boolean().optional(),
+  /** false = `publishedAt` es la fecha de registro, no la de publicación original. */
+  dateVerified: z.boolean().optional(),
+  historical: z.boolean().optional(),
+  contentType: z.enum(['publicacion', 'video', 'reel', 'foto']).optional(),
 })
 export const alertSchema = z.object({
   id: z.string().min(1),

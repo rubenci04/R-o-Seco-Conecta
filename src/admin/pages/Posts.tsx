@@ -18,13 +18,21 @@ const STATUS_FILTERS = [
   ['rejected', 'Rechazadas'],
   ['deleted', 'Retiradas'],
 ] as const
+/** Vistas del flujo editorial: cada una activa un único parámetro de la consulta. */
+const VIEW_FILTERS = [
+  ['revision', 'needs_review', 'Por clasificar'],
+  ['enlace', '1', 'Cargadas por enlace'],
+  ['historico', '1', 'Históricas'],
+] as const
 
 export function PostsList() {
   const { admin } = useAuth()
   const [params, setParams] = useSearchParams()
   const estado = params.get('estado') ?? ''
+  const view = VIEW_FILTERS.find(([k, v]) => params.get(k) === v)
   const q = params.get('q') ?? ''
-  const { data, error, loading } = useAdminData(() => api.get<PostSummary[]>(`/posts?${new URLSearchParams({ ...(estado ? { estado } : {}), ...(q ? { q } : {}) })}`), [estado, q])
+  const query = new URLSearchParams({ ...(estado ? { estado } : {}), ...(view ? { [view[0]]: view[1] } : {}), ...(q ? { q } : {}) })
+  const { data, error, loading } = useAdminData(() => api.get<PostSummary[]>(`/posts?${query}`), [query.toString()])
 
   return (
     <>
@@ -44,9 +52,20 @@ export function PostsList() {
             <button
               key={value}
               type="button"
-              aria-pressed={estado === value}
+              aria-pressed={!view && estado === value}
               onClick={() => setParams(value ? { estado: value } : {}, { replace: true })}
-              className={`min-h-10 cursor-pointer rounded-full border px-3.5 text-sm font-semibold ${estado === value ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-muted'}`}
+              className={`min-h-10 cursor-pointer rounded-full border px-3.5 text-sm font-semibold ${!view && estado === value ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-muted'}`}
+            >
+              {label}
+            </button>
+          ))}
+          {VIEW_FILTERS.map(([key, val, label]) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={view?.[0] === key}
+              onClick={() => setParams({ [key]: val }, { replace: true })}
+              className={`min-h-10 cursor-pointer rounded-full border px-3.5 text-sm font-semibold ${view?.[0] === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:bg-muted'}`}
             >
               {label}
             </button>
@@ -66,6 +85,8 @@ export function PostsList() {
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={p.status} />
                 {p.review_state === 'needs_review' && <Badge tone="warning">Revisar clasificación</Badge>}
+                {p.link_only ? <Badge tone="warning">Solo enlace</Badge> : null}
+                {p.historical ? <Badge>Histórica</Badge> : null}
                 <Badge>{p.origin === 'manual' ? 'Redacción' : p.origin === 'assisted' ? 'Importada por enlace' : 'Fuente conectada'}</Badge>
                 <span className="text-xs text-muted-foreground">{formatTucuman(p.published_at)}</span>
               </div>
@@ -121,6 +142,7 @@ function PostForm({ id, data, reload, act }: { id?: string; data: PostDetail | n
   const created = (location.state as { notice?: string[] } | null)?.notice
   const [form, setForm] = useState<FormState>(() => formFrom(data))
   const [rectNote, setRectNote] = useState('')
+  const linkOnly = !!data?.post.link_only
 
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }))
   const toggleCat = (c: string) => set('categories', form.categories.includes(c) ? form.categories.filter((x) => x !== c) : [...form.categories, c])
@@ -148,7 +170,7 @@ function PostForm({ id, data, reload, act }: { id?: string; data: PostDetail | n
     e.preventDefault()
     if (!id) return
     await act.run(async () => {
-      await api.patch(`/posts/${id}`, { title: form.title, body: form.body, sourceLabel: form.sourceLabel, url: form.url, publishedAt: localInputToIso(form.publishedAt) || undefined, ...(form.categories.length ? { categories: form.categories } : {}) })
+      await api.patch(`/posts/${id}`, { title: form.title, ...(linkOnly ? {} : { body: form.body }), sourceLabel: form.sourceLabel, url: form.url, publishedAt: localInputToIso(form.publishedAt) || undefined, ...(form.categories.length ? { categories: form.categories } : {}) })
       reload()
     }, 'Cambios guardados.')
   }
@@ -172,6 +194,12 @@ function PostForm({ id, data, reload, act }: { id?: string; data: PostDetail | n
 
   const post = data?.post
   const classifier = data?.categories ?? []
+  const [enrich, setEnrich] = useState({ text: '', publishedAt: '' })
+  const enrichPost = () =>
+    act.run(async () => {
+      await api.post(`/posts/${id}/enrich`, { text: enrich.text, publishedAt: localInputToIso(enrich.publishedAt) || undefined })
+      reload()
+    }, 'Tarjeta completada con el texto y clasificada. Revisá las categorías propuestas.')
 
   return (
     <>
@@ -195,9 +223,16 @@ function PostForm({ id, data, reload, act }: { id?: string; data: PostDetail | n
           <Field label="Título" htmlFor="title" hint="Si lo dejás vacío se usa la primera línea del texto.">
             <TextInput id="title" maxLength={200} value={form.title} disabled={!editable} onChange={(e) => set('title', e.target.value)} />
           </Field>
-          <Field label="Texto de la noticia" htmlFor="body">
-            <TextArea id="body" required rows={10} maxLength={20000} value={form.body} disabled={!editable} onChange={(e) => set('body', e.target.value)} />
-          </Field>
+          {linkOnly ? (
+            <Notice>
+              Tarjeta de una <strong>publicación externa enlazada</strong>: no tiene texto original ni se analizó automáticamente. Las categorías las asignó una persona.
+              Si conseguís el texto, completalo abajo: se clasifica con las reglas habituales y esta misma tarjeta se actualiza (no se crea otra).
+            </Notice>
+          ) : (
+            <Field label="Texto de la noticia" htmlFor="body">
+              <TextArea id="body" required rows={10} maxLength={20000} value={form.body} disabled={!editable} onChange={(e) => set('body', e.target.value)} />
+            </Field>
+          )}
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Fuente (cómo se cita)" htmlFor="sourceLabel" hint="Ej.: Comuna de Río Seco, Radio Activa. Si queda vacío: Redacción Río Seco Conecta.">
               <TextInput id="sourceLabel" maxLength={120} value={form.sourceLabel} disabled={!editable} onChange={(e) => set('sourceLabel', e.target.value)} />
@@ -268,6 +303,17 @@ function PostForm({ id, data, reload, act }: { id?: string; data: PostDetail | n
           </div>
         )}
       </form>
+
+      {post && editable && linkOnly && (
+        <Card className="mt-5 space-y-3">
+          <CardTitle>Completar con el texto original</CardTitle>
+          <p className="text-sm text-muted-foreground">Pegá el texto tal como figura en la publicación. No se descarga automáticamente. Un posible obituario o aviso seguirá su revisión habitual.</p>
+          {post.url && <p className="break-all text-xs"><a className="font-semibold text-accent underline" href={post.url} target="_blank" rel="noopener noreferrer">{post.url}</a></p>}
+          <Field label="Texto original" htmlFor="enrich-text"><TextArea id="enrich-text" rows={6} maxLength={20000} value={enrich.text} onChange={(e) => setEnrich({ ...enrich, text: e.target.value })} /></Field>
+          <Field label="Fecha original comprobada (Tucumán, opcional)" htmlFor="enrich-date"><TextInput id="enrich-date" type="datetime-local" value={enrich.publishedAt} onChange={(e) => setEnrich({ ...enrich, publishedAt: e.target.value })} /></Field>
+          <Button type="button" disabled={act.busy || !enrich.text.trim()} onClick={() => void enrichPost()}>Completar y clasificar</Button>
+        </Card>
+      )}
 
       {post && editable && post.status === 'published' && (
         <Card className="mt-5 space-y-3">

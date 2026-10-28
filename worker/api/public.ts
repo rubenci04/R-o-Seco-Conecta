@@ -18,6 +18,10 @@ interface PostRow {
   rectified_at: string | null
   rectification: string | null
   media_json: string
+  link_only: number
+  date_verified: number
+  historical: number
+  content_type: string | null
 }
 
 /**
@@ -38,6 +42,11 @@ export const postDto = (p: PostRow, categories: string[]) => ({
   rectification: p.rectification ?? undefined,
   rectifiedAt: p.rectified_at ?? undefined,
   media: JSON.parse(p.media_json) as string[],
+  // Tarjeta de una publicación externa: sin texto propio, con enlace y (opcionalmente) contenido embebido oficial.
+  linkOnly: p.link_only === 1,
+  dateVerified: p.date_verified === 1,
+  historical: p.historical === 1,
+  contentType: p.content_type ?? undefined,
 })
 
 async function categoriesFor(ctx: Ctx, ids: number[]): Promise<Map<number, string[]>> {
@@ -80,7 +89,7 @@ export function publicRoutes(r: Router, features: Features): void {
       binds.push(before)
     }
     const rows = await ctx.env.DB.prepare(
-      `SELECT p.id, p.title, p.body, p.url, p.source_label, p.published_at, p.origin, p.review_state, p.rectified_at, p.rectification, p.media_json,
+      `SELECT p.id, p.title, p.body, p.url, p.source_label, p.published_at, p.origin, p.review_state, p.rectified_at, p.rectification, p.media_json, p.link_only, p.date_verified, p.historical, p.content_type,
               s.name AS source_name, s.url AS source_url
        FROM posts p JOIN sources s ON s.id = p.source_id WHERE ${where.join(' AND ')} ORDER BY p.published_at DESC, p.id DESC LIMIT ?`,
     )
@@ -210,7 +219,7 @@ export function publicRoutes(r: Router, features: Features): void {
     const id = Number(ctx.params.id)
     if (!Number.isInteger(id) || id < 1) throw new HttpError(404, 'No encontrado')
     const row = await ctx.env.DB.prepare(
-      `SELECT p.id, p.title, p.body, p.url, p.source_label, p.published_at, p.origin, p.review_state, p.rectified_at, p.rectification, p.media_json,
+      `SELECT p.id, p.title, p.body, p.url, p.source_label, p.published_at, p.origin, p.review_state, p.rectified_at, p.rectification, p.media_json, p.link_only, p.date_verified, p.historical, p.content_type,
               s.name AS source_name, s.url AS source_url
        FROM posts p JOIN sources s ON s.id = p.source_id WHERE p.id = ? AND p.status = 'published'`,
     ).bind(id).first<PostRow>()

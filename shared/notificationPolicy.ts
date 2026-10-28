@@ -17,6 +17,10 @@ export interface NotifiablePost {
   obituaryPending: boolean
   /** Existe una alerta (propuesta o confirmada, no descartada) generada por esta publicación. */
   coveredByAlert?: boolean
+  /** Tarjeta creada solo con el enlace: nadie vio su texto, así que no se avisa. */
+  linkOnly?: boolean
+  /** Carga retroactiva: material histórico, nunca se notifica. */
+  historical?: boolean
 }
 
 export type Decision = { send: true; topics: PushTopic[] } | { send: false; reason: string }
@@ -24,6 +28,8 @@ export type Decision = { send: true; topics: PushTopic[] } | { send: false; reas
 export function decidePostNotification(post: NotifiablePost, now: Date, importedThisRun = 1): Decision {
   if (post.status !== 'published') return { send: false, reason: 'no publicada' }
   if (post.obituaryPending) return { send: false, reason: 'obituario pendiente de revisión' }
+  if (post.historical) return { send: false, reason: 'material histórico: no se notifica' }
+  if (post.linkOnly) return { send: false, reason: 'publicación enlazada sin texto: no se notifica' }
   if (importedThisRun > MAX_NOTIFY_PER_SYNC) return { send: false, reason: 'carga masiva: no se notifica el historial' }
   const ageHours = (now.getTime() - new Date(post.publishedAt).getTime()) / 3_600_000
   if (ageHours > MAX_NOTIFY_AGE_HOURS) return { send: false, reason: 'publicación antigua' }

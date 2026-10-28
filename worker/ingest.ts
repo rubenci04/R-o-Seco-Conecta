@@ -35,6 +35,9 @@ export interface RawPost {
   media?: string[]
   /** Fuente citada por el editor (p. ej. un medio). Si falta se usa el nombre de la fuente configurada. */
   sourceLabel?: string | null
+  /** false = `publishedAt` es la fecha de registro y no la original (no se muestra como fecha de publicación). */
+  dateVerified?: boolean
+  contentType?: string | null
 }
 
 export type IngestResult =
@@ -49,6 +52,10 @@ export interface IngestOptions {
   classifier?: Classifier
   /** Guardar como borrador (no visible). Los posibles obituarios igual quedan en la cola de revisión. */
   draft?: boolean
+  /** Carga retroactiva: nunca genera alertas ni notificaciones (los obituarios igual esperan a una persona). */
+  historical?: boolean
+  /** Fuerza el estado de revisión pendiente (la persona decidió no publicar todavía). */
+  hold?: boolean
 }
 
 /** Cuántas publicaciones recientes se comparan por similitud (acota el costo de lectura en D1). */
@@ -99,7 +106,7 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
 
   // ---- 3) visibilidad ----
   // Posibles obituarios y fuentes no confiables quedan ocultos hasta que una persona los apruebe.
-  const status: 'published' | 'pending' | 'draft' = isObituary ? 'pending' : opts.draft ? 'draft' : !source.trusted ? 'pending' : 'published'
+  const status: 'published' | 'pending' | 'draft' = isObituary ? 'pending' : opts.draft ? 'draft' : !source.trusted || opts.hold ? 'pending' : 'published'
   // Una nota publicada por la redacción cuenta como revisada (la persona la escribió y la vio publicada); la duda de clasificación
   // solo se marca en borradores, lo importado automáticamente y los posibles obituarios (que siempre pasan por la cola).
   const reviewState =
@@ -109,10 +116,10 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
   const nowIso = now.toISOString()
   const insert = await db
     .prepare(
-      `INSERT INTO posts (source_id, external_id, url, source_label, title, body, media_json, published_at, imported_at, origin, content_hash, status, review_state, classifier, created_by)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO posts (source_id, external_id, url, source_label, title, body, media_json, published_at, imported_at, origin, content_hash, status, review_state, classifier, created_by, date_verified, historical, content_type)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
-    .bind(source.id, raw.externalId, raw.url ?? null, raw.sourceLabel?.trim() || null, title, body, JSON.stringify(raw.media ?? []), raw.publishedAt, nowIso, origin, hash, status, reviewState, result.classifier, actor.id)
+    .bind(source.id, raw.externalId, raw.url ?? null, raw.sourceLabel?.trim() || null, title, body, JSON.stringify(raw.media ?? []), raw.publishedAt, nowIso, origin, hash, status, reviewState, result.classifier, actor.id, raw.dateVerified === false ? 0 : 1, opts.historical ? 1 : 0, raw.contentType ?? null)
     .run()
   const postId = Number(insert.meta.last_row_id)
 
@@ -126,7 +133,8 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
   let obituaryId: number | null = null
   const sourceUrl = raw.url ?? source.url
 
-  if (result.alert) {
+  // Lo histórico no propone avisos: un aviso vigente nace de una publicación actual, no de una recuperada.
+  if (result.alert && !opts.historical) {
     const a = result.alert
     const expires = new Date(new Date(raw.publishedAt).getTime() + a.suggestedHours * 3_600_000).toISOString()
     const r = await db
