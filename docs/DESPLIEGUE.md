@@ -25,3 +25,5 @@ No usar a la vez GitHub Actions para desplegar: duplicaría las publicaciones. N
 
 ## Cachés de la PWA
 Los íconos y el logo llevan sufijo de versión (`-v2`). Para cambiarlos: reemplazar `src/logo.png`, subir `V` en `scripts/brand/build-assets.ts` y en `pwa/pwa.config.ts`/`index.html`, y ejecutar `npm run brand:build`. El service worker se actualiza solo (`registerType: autoUpdate`).
+
+> Última verificación del despliegue automático: push de prueba a `main` (Workers Builds).
