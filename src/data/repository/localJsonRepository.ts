@@ -30,6 +30,9 @@ export class LocalJsonRepository implements DataRepository {
   getAlerts = async () => parse(schemas.alertsFileSchema, alerts, 'alerts.json')
   getEvents = async () => parse(schemas.eventsFileSchema, events, 'events.json')
   getObituaries = async () => parse(schemas.obituariesFileSchema, obituaries, 'obituaries.json')
+  getNewsItem = async (id: string) => parse(schemas.newsFileSchema, news, 'news.json').find((n) => n.id === id) ?? null
+  getAlertItem = async (id: string) => parse(schemas.alertsFileSchema, alerts, 'alerts.json').find((a) => a.id === id) ?? null
+  getObituaryItem = async (id: string) => parse(schemas.obituariesFileSchema, obituaries, 'obituaries.json').find((o) => o.id === id) ?? null
   getRadios = async () => parse(schemas.radiosFileSchema, radios, 'radios.json')
   getHolidays = async () => parse(schemas.holidaysFileSchema, holidays, 'holidays.json')
   getPlaces = async () => parse(placesFileSchema, places, 'places.json')

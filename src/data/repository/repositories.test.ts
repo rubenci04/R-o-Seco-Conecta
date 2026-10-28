@@ -57,6 +57,9 @@ describe('HybridRepository: dinámico por API, estático por JSON', () => {
     getAlerts: vi.fn(async () => []),
     getEvents: vi.fn(async () => []),
     getObituaries: vi.fn(async () => []),
+    getNewsItem: vi.fn(async () => null),
+    getAlertItem: vi.fn(async () => null),
+    getObituaryItem: vi.fn(async () => null),
   })
   it('noticias, alertas, agenda y obituarios salen de la API; el resto, del JSON', async () => {
     const a = api()

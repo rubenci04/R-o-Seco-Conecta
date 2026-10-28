@@ -1,7 +1,8 @@
-import { CATEGORY_IDS, isCategoryId, isPushTopic } from '../../shared/categories'
+import { isCategoryId } from '../../shared/categories'
+import { pushRoutes } from './push'
 import { truncate } from '../../shared/text'
 import type { Features } from '../features'
-import { etagJson, HttpError, json, Router, str, type Ctx } from '../http'
+import { etagJson, HttpError, json, Router, type Ctx } from '../http'
 
 interface PostRow {
   id: number
@@ -202,43 +203,60 @@ export function publicRoutes(r: Router, features: Features): void {
     })
   }
 
-  if (features.push) {
-    // ---- Web Push (consentimiento explícito del usuario: el navegador solo suscribe tras aceptar el permiso) ----
-    r.get('/api/public/push/config', (ctx) =>
-      json({ enabled: !!(ctx.env.VAPID_PUBLIC_KEY && ctx.env.VAPID_PRIVATE_KEY_JWK && ctx.env.VAPID_SUBJECT), publicKey: ctx.env.VAPID_PUBLIC_KEY ?? null, topics: [...CATEGORY_IDS, 'urgente'] }),
-    )
+  // ---- Detalle de un contenido: cada notificación abre EXACTAMENTE el contenido que la originó ----
+  r.get('/api/public/posts/:id', async (ctx) => {
+    const id = Number(ctx.params.id)
+    if (!Number.isInteger(id) || id < 1) throw new HttpError(404, 'No encontrado')
+    const row = await ctx.env.DB.prepare(
+      `SELECT p.id, p.title, p.body, p.url, p.source_label, p.published_at, p.origin, p.review_state, p.rectified_at, p.rectification, p.media_json,
+              s.name AS source_name, s.url AS source_url
+       FROM posts p JOIN sources s ON s.id = p.source_id WHERE p.id = ? AND p.status = 'published'`,
+    ).bind(id).first<PostRow>()
+    if (!row) throw new HttpError(404, 'La publicación no existe o ya no está disponible')
+    const cats = await categoriesFor(ctx, [id])
+    return etagJson(ctx, postDto(row, cats.get(id) ?? []))
+  })
 
-    r.post('/api/public/push/subscribe', async (ctx) => {
-      const b = await ctx.body()
-      const endpoint = str(b.endpoint, 'endpoint', { max: 1024 })
-      if (!endpoint.startsWith('https://')) throw new HttpError(400, 'Endpoint inválido')
-      const keys = (b.keys ?? {}) as Record<string, unknown>
-      const p256dh = str(keys.p256dh, 'keys.p256dh', { max: 256 })
-      const auth = str(keys.auth, 'keys.auth', { max: 128 })
-      const topics = Array.isArray(b.topics) ? [...new Set(b.topics.filter((t): t is string => typeof t === 'string' && isPushTopic(t)))] : []
-      if (!topics.length) throw new HttpError(400, 'Elegí al menos un tema')
-      await ctx.env.DB.prepare(
-        `INSERT INTO push_subscriptions (endpoint, p256dh, auth, topics_json, active, failure_count, created_at) VALUES (?,?,?,?,1,0,?)
-         ON CONFLICT(endpoint) DO UPDATE SET p256dh = excluded.p256dh, auth = excluded.auth, topics_json = excluded.topics_json, active = 1, failure_count = 0`,
-      )
-        .bind(endpoint, p256dh, auth, JSON.stringify(topics), ctx.now.toISOString())
-        .run()
-      return json({ ok: true, topics })
+  // Una alerta confirmada se puede abrir aunque haya vencido (se informa si sigue vigente).
+  r.get('/api/public/alerts/:id', async (ctx) => {
+    const id = Number(ctx.params.id)
+    if (!Number.isInteger(id) || id < 1) throw new HttpError(404, 'No encontrado')
+    const a = await ctx.env.DB.prepare(
+      "SELECT id, kind, severity, priority, title, body, source_url, starts_at, expires_at FROM alerts WHERE id = ? AND confirmation = 'confirmed'",
+    ).bind(id).first<{ id: number; kind: string; severity: 'info' | 'urgente'; priority: number; title: string; body: string; source_url: string | null; starts_at: string; expires_at: string | null }>()
+    if (!a) throw new HttpError(404, 'La alerta no existe o ya no está disponible')
+    return etagJson(ctx, {
+      id: String(a.id),
+      title: a.title,
+      body: a.body,
+      severity: a.severity === 'urgente' ? 'urgente' : 'info',
+      publishedAt: a.starts_at,
+      expiresAt: a.expires_at ?? undefined,
+      source: { label: 'Comuna de Río Seco', url: a.source_url ?? undefined },
+      kind: a.kind,
+      priority: a.priority,
+      active: a.starts_at <= ctx.now.toISOString() && (!a.expires_at || a.expires_at > ctx.now.toISOString()),
     })
+  })
 
-    r.post('/api/public/push/unsubscribe', async (ctx) => {
-      const b = await ctx.body()
-      await ctx.env.DB.prepare('DELETE FROM push_subscriptions WHERE endpoint = ?').bind(str(b.endpoint, 'endpoint', { max: 1024 })).run()
-      return json({ ok: true })
+  r.get('/api/public/obituaries/:id', async (ctx) => {
+    const id = Number(ctx.params.id)
+    if (!Number.isInteger(id) || id < 1) throw new HttpError(404, 'No encontrado')
+    const o = await ctx.env.DB.prepare(
+      "SELECT id, name, death_date, message, service_info, source_url, approved_at, rectification FROM obituaries WHERE id = ? AND state = 'approved'",
+    ).bind(id).first<{ id: number; name: string; death_date: string | null; message: string | null; service_info: string | null; source_url: string | null; approved_at: string; rectification: string | null }>()
+    if (!o) throw new HttpError(404, 'El comunicado no existe o ya no está disponible')
+    return etagJson(ctx, {
+      id: String(o.id),
+      name: o.name,
+      message: o.message ?? undefined,
+      date: o.death_date ?? o.approved_at.slice(0, 10),
+      service: o.service_info ?? undefined,
+      source: { label: 'Comuna de Río Seco', url: o.source_url ?? undefined },
+      verified: true,
+      rectification: o.rectification ?? undefined,
     })
+  })
 
-    r.get('/api/public/notifications/latest', async (ctx) => {
-      const row = await ctx.env.DB.prepare(
-        `SELECT title, body, url, urgent FROM notification_log WHERE state IN ('sending','done') AND created_at > ? ORDER BY id DESC LIMIT 1`,
-      )
-        .bind(new Date(ctx.now.getTime() - 24 * 3_600_000).toISOString())
-        .first<{ title: string; body: string; url: string; urgent: number }>()
-      return json(row ? { title: row.title, body: row.body, url: row.url, urgent: !!row.urgent } : { title: 'Río Seco Conecta', body: 'Hay novedades en tu comunidad.', url: '/', urgent: false })
-    })
-  }
+  if (features.push) pushRoutes(r)
 }

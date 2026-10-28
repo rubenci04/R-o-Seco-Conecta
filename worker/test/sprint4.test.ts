@@ -11,14 +11,13 @@ import { harness, NOW, TEXT } from './helpers'
 const prod = (env = {}) => harness(env, {}, { production: true })
 
 describe('configuración de producción: solo lo activo existe', () => {
-  it('lugares, radios, transporte y Web Push NO están expuestos', async () => {
+  it('lugares, radios y transporte NO están expuestos; el endpoint ambiguo de «última notificación» ya no existe', async () => {
     const h = await prod()
-    for (const p of ['/api/public/radios', '/api/public/places', '/api/public/transport', '/api/public/push/config', '/api/public/notifications/latest']) {
+    for (const p of ['/api/public/radios', '/api/public/places', '/api/public/transport', '/api/public/notifications/latest']) {
       expect((await h.call('GET', p)).status, p).toBe(404)
     }
-    expect((await h.call('POST', '/api/public/push/subscribe', { body: { endpoint: 'https://x.test', keys: { p256dh: 'a', auth: 'b' }, topics: ['agua'] } })).status).toBe(404)
     const cookie = await h.loginAs('admin')
-    for (const p of ['/api/admin/radios', '/api/admin/places', '/api/admin/bus-services', '/api/admin/bus-companies', '/api/admin/notifications']) {
+    for (const p of ['/api/admin/radios', '/api/admin/places', '/api/admin/bus-services', '/api/admin/bus-companies']) {
       expect((await h.call('GET', p, { cookie })).status, p).toBe(404)
     }
     expect((await h.call('GET', '/api/admin/events', { cookie })).status).toBe(200) // eventos sí
@@ -29,7 +28,7 @@ describe('configuración de producción: solo lo activo existe', () => {
     expect(r.json).toMatchObject({ ok: true, database: 'ok' })
     expect(Object.keys(r.json).sort()).toEqual(['database', 'now', 'ok'])
   })
-  it('publicar no encola notificaciones mientras Web Push esté desactivado', async () => {
+  it('publicar no encola notificaciones mientras no haya claves VAPID configuradas', async () => {
     const h = await prod()
     const cookie = await h.loginAs('editor')
     await h.call('POST', '/api/admin/posts', { cookie, body: { body: TEXT.torneo, status: 'published' } })

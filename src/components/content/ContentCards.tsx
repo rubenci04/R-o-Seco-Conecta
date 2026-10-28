@@ -14,7 +14,7 @@ function Source({ label, url }: { label: string; url?: string }) {
   )
 }
 
-export function NewsCard({ item }: { item: NewsItem }) {
+export function NewsCard({ item, expanded = false }: { item: NewsItem; expanded?: boolean }) {
   const full = item.body && item.body.trim() !== (item.summary ?? '').trim() ? item.body : null
   return (
     <Card className="animate-rise space-y-2">
@@ -31,7 +31,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
       </div>
       <CardTitle className="text-lg">{item.title}</CardTitle>
       {full ? (
-        <details className="text-sm">
+        <details className="text-sm" open={expanded || undefined}>
           <summary className="cursor-pointer text-muted-foreground">{item.summary}</summary>
           <p className="mt-2 whitespace-pre-line">{full}</p>
         </details>

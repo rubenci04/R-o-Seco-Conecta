@@ -19,6 +19,8 @@
 # Service worker y manifiesto: siempre revalidar para que las actualizaciones lleguen.
 /sw.js
   Cache-Control: no-cache
+/push-sw.js
+  Cache-Control: no-cache
 /manifest.webmanifest
   Cache-Control: no-cache
 /index.html

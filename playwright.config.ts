@@ -12,10 +12,12 @@ export default defineConfig({
     { command: 'npm run build && node e2e/worker-server.mjs', port: 8787, reuseExistingServer: false, timeout: 300_000 },
   ],
   projects: [
-    { name: 'movil', testIgnore: /admin\.spec\.ts/, use: { ...devices['Pixel 7'], baseURL: 'http://localhost:4173' } },
-    { name: 'escritorio', testIgnore: /admin\.spec\.ts/, use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:4173' } },
+    { name: 'movil', testIgnore: /(admin|push)\.spec\.ts/, use: { ...devices['Pixel 7'], baseURL: 'http://localhost:4173' } },
+    { name: 'escritorio', testIgnore: /(admin|push)\.spec\.ts/, use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:4173' } },
     // El panel comparte base de datos: los proyectos de administración se ejecutan de a uno.
     { name: 'admin-escritorio', testMatch: /admin\.spec\.ts/, use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:8787' } },
     { name: 'admin-movil', testMatch: /admin\.spec\.ts/, dependencies: ['admin-escritorio'], use: { ...devices['Pixel 7'], baseURL: 'http://localhost:8787' } },
+    // Notificaciones push de punta a punta (Worker real + servidor push simulado): después del panel, misma base de datos.
+    { name: 'push', testMatch: /push\.spec\.ts/, dependencies: ['admin-movil'], use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:8787' } },
   ],
 })

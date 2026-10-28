@@ -18,6 +18,11 @@ const NewsPage = lazy(() => import('@/pages/ContentPages').then((m) => ({ defaul
 const AlertsPage = lazy(() => import('@/pages/ContentPages').then((m) => ({ default: m.AlertsPage })))
 const AgendaPage = lazy(() => import('@/pages/ContentPages').then((m) => ({ default: m.AgendaPage })))
 const ObituariesPage = lazy(() => import('@/pages/ContentPages').then((m) => ({ default: m.ObituariesPage })))
+const NewsDetailPage = lazy(() => import('@/pages/DetailPages').then((m) => ({ default: m.NewsDetailPage })))
+const AlertDetailPage = lazy(() => import('@/pages/DetailPages').then((m) => ({ default: m.AlertDetailPage })))
+const ObituaryDetailPage = lazy(() => import('@/pages/DetailPages').then((m) => ({ default: m.ObituaryDetailPage })))
+const SettingsPage = lazy(() => import('@/pages/NotificationPages').then((m) => ({ default: m.SettingsPage })))
+const NotificationSettingsPage = lazy(() => import('@/pages/NotificationPages').then((m) => ({ default: m.NotificationSettingsPage })))
 const ComunaPage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.ComunaPage })))
 const MorePage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.MorePage })))
 const AboutPage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.AboutPage })))
@@ -43,10 +48,15 @@ export function AppRoutes() {
         <Route path="servicios/:id" element={<PlaceDetailPage />} />
         <Route path="mapa" element={<MapPage />} />
         <Route path="noticias" element={<NewsPage />} />
+        <Route path="noticias/:id" element={<NewsDetailPage />} />
         <Route path="alertas" element={<AlertsPage />} />
+        <Route path="alertas/:id" element={<AlertDetailPage />} />
         <Route path="radios" element={<RadiosPage />} />
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="obituarios" element={<ObituariesPage />} />
+        <Route path="obituarios/:id" element={<ObituaryDetailPage />} />
+        <Route path="configuracion" element={<SettingsPage />} />
+        <Route path="configuracion/notificaciones" element={<NotificationSettingsPage />} />
         <Route path="comuna" element={<ComunaPage />} />
         <Route path="acerca" element={<AboutPage />} />
         <Route path="mas" element={<MorePage />} />

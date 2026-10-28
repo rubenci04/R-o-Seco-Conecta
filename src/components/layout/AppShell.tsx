@@ -1,6 +1,7 @@
 import { Moon, Sun } from 'lucide-react'
 import { Suspense } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { useEffect } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { LoadingState } from '@/components/shared/States'
 import { APP } from '@/config/app'
 import { BOTTOM_NAV, NAV_ITEMS } from '@/config/nav'
@@ -38,8 +39,25 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-muted',
   )
 
+/** Una notificación tocada con la app ya abierta pide al router ir al contenido exacto (mensaje del service worker). */
+function useNotificationNavigation() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return
+    const onMessage = (e: MessageEvent) => {
+      const d = e.data as { type?: string; url?: string } | null
+      if (d?.type !== 'rsc-open' || typeof d.url !== 'string') return
+      const u = new URL(d.url, window.location.origin)
+      if (u.origin === window.location.origin) void navigate(u.pathname + u.search)
+    }
+    navigator.serviceWorker.addEventListener('message', onMessage)
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage)
+  }, [navigate])
+}
+
 export function AppShell() {
   const { pathname } = useLocation()
+  useNotificationNavigation()
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[17rem_1fr]">
       <aside className="hidden border-r border-border bg-card/60 p-5 md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:gap-6">

@@ -30,6 +30,8 @@ export const pwaOptions: Partial<VitePWAOptions> = {
     globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
     navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
+    // Notificaciones push dentro del MISMO service worker (sin un segundo SW): public/push-sw.js.
+    importScripts: ['push-sw.js'],
     // El código del mapa (Leaflet, ~365 KB) NO se precachea: solo se guarda tras abrir el mapa por primera vez.
     globIgnores: ['**/PlacesMap-*.{js,css}', '**/AdminApp-*.js'],
     // Nunca interceptar la API con el fallback de navegación de la PWA.

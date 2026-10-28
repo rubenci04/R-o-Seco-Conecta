@@ -1,4 +1,4 @@
-import { Bell, Building2, Bus, CalendarDays, Flower2, House, Info, Landmark, MapPinned, Map, Menu, Newspaper, Radio, type LucideIcon } from 'lucide-react'
+import { Bell, Building2, Bus, CalendarDays, Flower2, House, Info, Landmark, MapPinned, Map, Menu, Newspaper, Radio, Settings, type LucideIcon } from 'lucide-react'
 
 export interface NavItem {
   to: string
@@ -21,6 +21,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/agenda', label: 'Agenda', icon: CalendarDays, description: 'Eventos, festividades y actividades' },
   { to: '/obituarios', label: 'Obituarios', icon: Flower2, description: 'Comunicados verificados' },
   { to: '/comuna', label: 'Comuna', icon: Building2, description: 'Información institucional' },
+  { to: '/configuracion', label: 'Configuración', icon: Settings, description: 'Notificaciones y preferencias' },
   { to: '/acerca', label: 'Acerca de la app', icon: Info, description: 'Fuentes, privacidad y versión' },
 ]
 

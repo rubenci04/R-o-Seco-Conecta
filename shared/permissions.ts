@@ -10,6 +10,7 @@ export const PERMISSIONS = [
   'sources:read',
   'sources:manage', // activar conectores, sincronizar manualmente
   'users:manage',
+  'notifications:manage', // dispositivos de prueba y reintentos de envío (solo administración)
 ] as const
 export type Permission = (typeof PERMISSIONS)[number]
 

@@ -145,13 +145,18 @@ describe('política de notificaciones', () => {
     expect(decidePostNotification(post(), now, 10).send).toBe(false)
   })
   it('las alertas urgentes requieren confirmación editorial y vigencia', () => {
-    const base = { severity: 'urgente' as const, confirmation: 'proposed' as const, expiresAt: null }
+    const base = { kind: 'agua' as const, severity: 'urgente' as const, confirmation: 'proposed' as const, expiresAt: null }
     expect(decideAlertNotification(base, now).send).toBe(false)
-    expect(decideAlertNotification({ ...base, confirmation: 'confirmed' }, now)).toEqual({ send: true, topics: ['urgente'] })
+    expect(decideAlertNotification({ ...base, confirmation: 'confirmed' }, now)).toEqual({ send: true, topics: ['urgente', 'agua'] })
     expect(decideAlertNotification({ ...base, confirmation: 'confirmed', expiresAt: '2026-10-28T10:00:00Z' }, now).send).toBe(false)
+    expect(decideAlertNotification({ ...base, confirmation: 'dismissed' }, now).send).toBe(false)
   })
-  it('un aviso informativo confirmado no genera notificación masiva', () => {
-    expect(decideAlertNotification({ severity: 'info', confirmation: 'confirmed', expiresAt: null }, now).send).toBe(false)
+  it('un aviso informativo confirmado llega solo a quien eligió el tema de su tipo', () => {
+    expect(decideAlertNotification({ kind: 'calles', severity: 'info', confirmation: 'confirmed', expiresAt: null }, now)).toEqual({ send: true, topics: ['calles'] })
+  })
+  it('un obituario aprobado solo va al tema obituarios y una noticia cubierta por alerta no se duplica', () => {
+    expect(decidePostNotification(post({ categories: ['obituarios', 'salud'] }), now)).toEqual({ send: true, topics: ['obituarios'] })
+    expect(decidePostNotification(post({ coveredByAlert: true }), now).send).toBe(false)
   })
   it('las suscripciones reciben solo los temas elegidos', () => {
     expect(subscriptionMatches(['agua', 'salud'], ['agua'])).toBe(true)

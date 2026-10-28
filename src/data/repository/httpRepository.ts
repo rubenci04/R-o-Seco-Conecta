@@ -1,5 +1,5 @@
 import { z, type ZodType } from 'zod'
-import { alertsFileSchema, eventsFileSchema, newsFileSchema, obituariesFileSchema } from '@/domain/schemas'
+import { alertSchema, alertsFileSchema, eventsFileSchema, newsFileSchema, newsItemSchema, obituariesFileSchema, obituarySchema } from '@/domain/schemas'
 import type { AlertItem, EventItem, NewsItem, Obituary } from '@/domain/types'
 import type { NewsQuery } from './types'
 
@@ -27,7 +27,9 @@ export class HttpRepository {
     private readonly timeoutMs = DEFAULT_TIMEOUT_MS,
   ) {}
 
-  private async get<T>(path: string, schema: ZodType<T>): Promise<T> {
+  private async get<T>(path: string, schema: ZodType<T>): Promise<T>
+  private async get<T>(path: string, schema: ZodType<T>, opts: { notFoundIsNull: true }): Promise<T | null>
+  private async get<T>(path: string, schema: ZodType<T>, opts: { notFoundIsNull?: boolean } = {}): Promise<T | null> {
     const ctrl = new AbortController()
     const timer = setTimeout(() => ctrl.abort(), this.timeoutMs)
     let res: Response
@@ -38,6 +40,7 @@ export class HttpRepository {
     } finally {
       clearTimeout(timer)
     }
+    if (res.status === 404 && opts.notFoundIsNull) return null
     if (!res.ok) throw new ApiError(res.status >= 500 ? 'El servidor tuvo un problema. Probá de nuevo en unos minutos.' : `No se pudo obtener la información (error ${res.status}).`, res.status)
     let data: unknown
     try {
@@ -66,6 +69,15 @@ export class HttpRepository {
   }
   getObituaries(): Promise<Obituary[]> {
     return this.get('/api/public/obituaries', obituariesFileSchema)
+  }
+  getNewsItem(id: string): Promise<NewsItem | null> {
+    return this.get(`/api/public/posts/${encodeURIComponent(id)}`, newsItemSchema, { notFoundIsNull: true })
+  }
+  getAlertItem(id: string): Promise<AlertItem | null> {
+    return this.get(`/api/public/alerts/${encodeURIComponent(id)}`, alertSchema, { notFoundIsNull: true })
+  }
+  getObituaryItem(id: string): Promise<Obituary | null> {
+    return this.get(`/api/public/obituaries/${encodeURIComponent(id)}`, obituarySchema, { notFoundIsNull: true })
   }
   health(): Promise<{ ok: boolean; database: string }> {
     return this.get('/api/health', z.object({ ok: z.boolean(), database: z.string(), now: z.string().optional() }))

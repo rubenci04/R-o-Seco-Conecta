@@ -184,7 +184,7 @@ const slug = (s: string) =>
 /** Recursos con CRUD activo. En producción solo "events"; el resto (radios, lugares, transporte) está preparado pero inactivo. */
 export const ACTIVE_RESOURCES = ['events']
 
-export function crudRoutes(r: Router, features: Features = { push: true, staticModules: true, syncSources: true }): void {
+export function crudRoutes(r: Router, features: Features = { push: true, staticModules: true, syncSources: true, scheduledSync: true }): void {
   for (const res of RESOURCES) {
     if (!features.staticModules && !ACTIVE_RESOURCES.includes(res.table)) continue
     const base = `/api/admin/${res.path}`

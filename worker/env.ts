@@ -11,6 +11,8 @@ export interface Env {
   VAPID_PUBLIC_KEY?: string
   VAPID_PRIVATE_KEY_JWK?: string // secreto
   VAPID_SUBJECT?: string // mailto: o https: de contacto
+  /** Solo pruebas: hosts (host:puerto) de un servidor push simulado. En producción NO se define. */
+  PUSH_TEST_HOSTS?: string
 
   // Meta Graph API. Todos opcionales: sin ellos los conectores quedan en "not-configured".
   META_GRAPH_VERSION?: string

@@ -12,10 +12,12 @@ import { enqueueAlertNotification, enqueuePostNotification, processNotifications
 import { createVapidSender, pushConfigured } from '../push'
 import { syncSource, type SyncDeps } from '../sync'
 import { crudRoutes } from './crud'
+import { notificationAdminRoutes } from './notifications'
 import type { Features } from '../features'
 
 interface Deps extends SyncDeps {
   now?: () => Date
+  pushFetch?: typeof fetch
 }
 
 const MANUAL_SOURCE = 'manual'
@@ -36,11 +38,23 @@ function parseCategories(v: unknown): string[] {
   return ids
 }
 
-export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { push: true, staticModules: true, syncSources: true }): void {
-  // Las notificaciones solo se encolan si Web Push está habilitado (en producción todavía no).
+export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { push: true, staticModules: true, syncSources: true, scheduledSync: true }): void {
+  // Las notificaciones solo se encolan si Web Push está habilitado Y configurado (claves VAPID). Tras encolar, se envía
+  // una primera tanda en segundo plano (después de responder); el resto y los reintentos los continúa el cron.
   const off = { queued: false as const, reason: 'notificaciones desactivadas' }
-  const enqueuePost = (...a: Parameters<typeof enqueuePostNotification>) => (features.push ? enqueuePostNotification(...a) : Promise.resolve(off))
-  const enqueueAlert = (...a: Parameters<typeof enqueueAlertNotification>) => (features.push ? enqueueAlertNotification(...a) : Promise.resolve(off))
+  const kick = (ctx: Ctx) => ctx.after(processNotifications(ctx.env.DB, createVapidSender(ctx.env, () => ctx.now, deps.pushFetch), ctx.now))
+  const enqueuePost = async (ctx: Ctx, postId: number) => {
+    if (!features.push || !pushConfigured(ctx.env)) return off
+    const n = await enqueuePostNotification(ctx.env.DB, postId, ctx.now)
+    if (n.queued) kick(ctx)
+    return n
+  }
+  const enqueueAlert = async (ctx: Ctx, alertId: number) => {
+    if (!features.push || !pushConfigured(ctx.env)) return off
+    const n = await enqueueAlertNotification(ctx.env.DB, alertId, ctx.now)
+    if (n.queued) kick(ctx)
+    return n
+  }
   // ---------------------------------------------------------------- sesión
   r.post('/api/admin/login', async (ctx) => {
     const b = await ctx.body()
@@ -141,7 +155,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
       // El editor clasificó a mano: la revisión queda resuelta (salvo posibles obituarios, que siguen en su cola).
       if (result.obituaryId === null) await ctx.env.DB.prepare("UPDATE posts SET review_state = 'approved' WHERE id = ?").bind(result.postId).run()
     }
-    if (result.status === 'published') await enqueuePost(ctx.env.DB, result.postId, ctx.now)
+    if (result.status === 'published') await enqueuePost(ctx, result.postId)
     return json(result, { status: 201 })
   })
 
@@ -152,7 +166,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     const { sourceId, raw } = await buildAssistedPost({ url: str(b.url, 'url', { max: 2048 }), text: str(b.text, 'text', { max: 20_000 }), publishedAt: b.publishedAt ? String(b.publishedAt) : undefined }, ctx.now)
     const result = await ingestPost(ctx.env.DB, raw, { source: await getSource(ctx, sourceId), origin: 'assisted', actor: actorOf(admin), now: ctx.now })
     if (result.outcome === 'duplicate') throw new HttpError(409, `Ya importada (${result.reason}) como #${result.ofPostId}`)
-    if (result.status === 'published') await enqueuePost(ctx.env.DB, result.postId, ctx.now)
+    if (result.status === 'published') await enqueuePost(ctx, result.postId)
     return json(result, { status: 201 })
   })
 
@@ -205,7 +219,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     const res = await ctx.env.DB.prepare("UPDATE posts SET status = 'published', review_state = 'approved', deleted_at = NULL WHERE id = ? AND status IN ('draft','pending','rejected','deleted')").bind(id).run()
     if (!res.meta.changes) throw new HttpError(404, 'No hay publicación pendiente con ese id')
     await historyStatement(ctx.env.DB, { entityType: 'post', entityId: id, action: 'published', actor: actorOf(admin) }, ctx.now).run()
-    const n = await enqueuePost(ctx.env.DB, id, ctx.now)
+    const n = await enqueuePost(ctx, id)
     return json({ ok: true, notification: n })
   })
 
@@ -296,7 +310,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
       )
     }
     await ctx.env.DB.batch(stmts)
-    const n = o.post_id ? await enqueuePost(ctx.env.DB, o.post_id, ctx.now) : null
+    const n = o.post_id ? await enqueuePost(ctx, o.post_id) : null
     return json({ ok: true, notification: n })
   })
 
@@ -369,7 +383,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
         ctx.env.DB.prepare("UPDATE alerts SET confirmation = 'confirmed', confirmed_by = ?, confirmed_at = ? WHERE id = ?").bind(admin.id, ctx.now.toISOString(), id),
         historyStatement(ctx.env.DB, { entityType: 'alert', entityId: id, action: 'confirmed', actor: actorOf(admin) }, ctx.now),
       ])
-      await enqueueAlert(ctx.env.DB, id, ctx.now)
+      await enqueueAlert(ctx, id)
     }
     return json({ id, confirmed: b.confirm === true }, { status: 201 })
   })
@@ -411,7 +425,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
       ctx.env.DB.prepare("UPDATE alerts SET confirmation = 'confirmed', confirmed_by = ?, confirmed_at = ? WHERE id = ?").bind(admin.id, ctx.now.toISOString(), id),
       historyStatement(ctx.env.DB, { entityType: 'alert', entityId: id, action: 'confirmed', actor: actorOf(admin) }, ctx.now),
     ])
-    const n = await enqueueAlert(ctx.env.DB, id, ctx.now)
+    const n = await enqueueAlert(ctx, id)
     return json({ ok: true, notification: n })
   })
 
@@ -479,19 +493,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     return json((await ctx.env.DB.prepare(`SELECT * FROM sync_runs ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY id DESC LIMIT 100`).bind(...(src ? [src] : [])).all()).results)
   })
 
-  if (features.push) r.get('/api/admin/notifications', async (ctx) => {
-    requirePermission(ctx, 'content:read')
-    const [log, subs] = await Promise.all([
-      ctx.env.DB.prepare('SELECT * FROM notification_log ORDER BY id DESC LIMIT 100').all(),
-      ctx.env.DB.prepare('SELECT COUNT(*) AS total, SUM(active) AS active FROM push_subscriptions').first(),
-    ])
-    return json({ configured: pushConfigured(ctx.env), subscriptions: subs, log: log.results })
-  })
-
-  if (features.push) r.post('/api/admin/notifications/process', async (ctx) => {
-    requirePermission(ctx, 'sources:manage')
-    return json(await processNotifications(ctx.env.DB, createVapidSender(ctx.env), ctx.now))
-  })
+  if (features.push) notificationAdminRoutes(r, deps.pushFetch)
 
   r.get('/api/admin/history', async (ctx) => {
     requirePermission(ctx, 'content:read')

@@ -5,7 +5,6 @@ import { mapGraphError, parseUsageHeaders, FacebookPageConnector, InstagramConne
 import type { SourceConnector } from '../connectors/types'
 import { SYSTEM_ACTOR } from '../env'
 import { ingestPost, type SourceRow } from '../ingest'
-import { enqueueAlertNotification, enqueuePostNotification, processNotifications, PUSH_BATCH_SIZE } from '../notify'
 import { syncSource, runSyncCycle, MAX_POSTS_PER_RUN } from '../sync'
 import { freshDb, migrate, TestD1 } from './d1shim'
 import { harness, NOW, TEXT } from './helpers'
@@ -17,11 +16,11 @@ const ingest = async (db: TestD1, sourceId: string, body: string, over: { extern
 describe('A · esquema D1 y migraciones', () => {
   it('aplica todas las migraciones y crea las tablas requeridas', () => {
     const db = new TestD1()
-    expect(migrate(db)).toHaveLength(5)
+    expect(migrate(db)).toHaveLength(6)
     const tables = (db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all as never as () => never)
     void tables
     const names = (db.raw.prepare("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]).map((t) => t.name)
-    for (const t of ['posts', 'sources', 'categories', 'alerts', 'obituaries', 'events', 'places', 'admins', 'editorial_history', 'sync_runs', 'notification_log', 'push_subscriptions', 'post_categories', 'admin_sessions']) {
+    for (const t of ['posts', 'sources', 'categories', 'alerts', 'obituaries', 'events', 'places', 'admins', 'editorial_history', 'sync_runs', 'notification_log', 'push_subscriptions', 'post_categories', 'admin_sessions', 'notification_deliveries', 'rate_limits']) {
       expect(names, t).toContain(t)
     }
   })
@@ -438,122 +437,6 @@ describe('G · alertas', () => {
   })
 })
 
-describe('H · notificaciones Web Push', () => {
-  const sub = (db: TestD1, n: number, topics: string[]) =>
-    db.prepare('INSERT INTO push_subscriptions (endpoint, p256dh, auth, topics_json, created_at) VALUES (?,?,?,?,?)').bind(`https://push.test/${n}`, 'k', 'a', JSON.stringify(topics), NOW.toISOString()).runSync()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sender = () => vi.fn(async (_target: unknown, _opts: { urgent: boolean }) => ({ status: 201 }))
-
-  it('no duplica: la misma publicación solo se encola una vez', async () => {
-    const h = await harness()
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.torneo)
-    const id = r.outcome === 'inserted' ? r.postId : 0
-    expect((await enqueuePostNotification(h.db.asD1(), id, NOW)).queued).toBe(true)
-    expect(await enqueuePostNotification(h.db.asD1(), id, NOW)).toEqual({ queued: false, reason: 'ya notificada' })
-    expect((h.db.raw.prepare('SELECT COUNT(*) n FROM notification_log').get() as { n: number }).n).toBe(1)
-  })
-  it('envía solo a suscriptores del tema, registra intentos y resultados', async () => {
-    const h = await harness()
-    sub(h.db, 1, ['deportes']); sub(h.db, 2, ['salud']); sub(h.db, 3, ['deportes', 'urgente'])
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.torneo)
-    await enqueuePostNotification(h.db.asD1(), r.outcome === 'inserted' ? r.postId : 0, NOW)
-    const send = sender()
-    const out = await processNotifications(h.db.asD1(), send, NOW)
-    expect(out).toMatchObject({ attempted: 2, succeeded: 2, failed: 0 })
-    expect(send).toHaveBeenCalledTimes(2)
-    expect(send.mock.calls.every(([, o]) => (o as { urgent: boolean }).urgent === false)).toBe(true) // noticias comunes nunca urgentes
-    expect(h.db.raw.prepare('SELECT state, attempted, succeeded FROM notification_log').get()).toEqual({ state: 'done', attempted: 2, succeeded: 2 })
-    expect((await processNotifications(h.db.asD1(), send, NOW)).processed).toBe(false)
-  })
-  it('desactiva suscripciones vencidas (410) y cuenta los fallos con su error', async () => {
-    const h = await harness()
-    sub(h.db, 1, ['deportes']); sub(h.db, 2, ['deportes'])
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.torneo)
-    await enqueuePostNotification(h.db.asD1(), r.outcome === 'inserted' ? r.postId : 0, NOW)
-    const send = vi.fn(async (t: { endpoint: string }) => (t.endpoint.endsWith('/1') ? { status: 410, error: 'HTTP 410' } : { status: 201 }))
-    expect(await processNotifications(h.db.asD1(), send, NOW)).toMatchObject({ succeeded: 1, failed: 1 })
-    expect(h.db.raw.prepare('SELECT active FROM push_subscriptions WHERE id = 1').get()).toEqual({ active: 0 })
-    expect((h.db.raw.prepare('SELECT last_error FROM notification_log').get() as { last_error: string }).last_error).toBe('HTTP 410')
-  })
-  it('procesa por lotes (límite por invocación) y continúa en el ciclo siguiente', async () => {
-    const h = await harness()
-    for (let i = 1; i <= PUSH_BATCH_SIZE + 5; i++) sub(h.db, i, ['deportes'])
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.torneo)
-    await enqueuePostNotification(h.db.asD1(), r.outcome === 'inserted' ? r.postId : 0, NOW)
-    const send = sender()
-    expect((await processNotifications(h.db.asD1(), send, NOW)).attempted).toBe(PUSH_BATCH_SIZE)
-    expect((h.db.raw.prepare('SELECT state FROM notification_log').get() as { state: string }).state).toBe('sending')
-    expect((await processNotifications(h.db.asD1(), send, NOW)).attempted).toBe(5)
-    expect((h.db.raw.prepare('SELECT state FROM notification_log').get() as { state: string }).state).toBe('done')
-    expect(send).toHaveBeenCalledTimes(PUSH_BATCH_SIZE + 5)
-  })
-  it('sin claves VAPID: nada se marca como enviado', async () => {
-    const h = await harness()
-    sub(h.db, 1, ['deportes'])
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.torneo)
-    await enqueuePostNotification(h.db.asD1(), r.outcome === 'inserted' ? r.postId : 0, NOW)
-    await processNotifications(h.db.asD1(), null, NOW)
-    expect(h.db.raw.prepare('SELECT state, suppressed_reason, succeeded FROM notification_log').get()).toMatchObject({ state: 'suppressed', succeeded: 0 })
-  })
-  it('las alertas urgentes solo notifican tras la confirmación editorial', async () => {
-    const h = await harness()
-    sub(h.db, 1, ['urgente']); sub(h.db, 2, ['deportes'])
-    await ingest(h.db, 'facebook-comuna', TEXT.alertaUrgente)
-    expect((await enqueueAlertNotification(h.db.asD1(), 1, NOW)).queued).toBe(false)
-    expect((h.db.raw.prepare('SELECT COUNT(*) n FROM notification_log').get() as { n: number }).n).toBe(0)
-    const cookie = await h.loginAs('editor')
-    const confirm = await h.call('POST', '/api/admin/alerts/1/confirm', { cookie })
-    expect(confirm.json.notification.queued).toBe(true)
-    const send = sender()
-    expect(await processNotifications(h.db.asD1(), send, NOW)).toMatchObject({ attempted: 1 })
-    expect(send.mock.calls[0][1]).toEqual({ urgent: true })
-    // Reconfirmar o reprocesar no vuelve a notificar.
-    expect((await enqueueAlertNotification(h.db.asD1(), 1, NOW)).queued).toBe(false)
-  })
-  it('un aviso informativo confirmado no genera notificación masiva', async () => {
-    const h = await harness()
-    await ingest(h.db, 'facebook-comuna', TEXT.agua)
-    const c = await h.call('POST', '/api/admin/alerts/1/confirm', { cookie: await h.loginAs('editor') })
-    expect(c.json.notification.queued).toBe(false)
-  })
-  it('un obituario pendiente no notifica; al aprobarse sí (a su tema)', async () => {
-    const h = await harness()
-    sub(h.db, 1, ['obituarios'])
-    const r = await ingest(h.db, 'facebook-comuna', TEXT.obit)
-    expect((await enqueuePostNotification(h.db.asD1(), r.outcome === 'inserted' ? r.postId : 0, NOW)).queued).toBe(false)
-    const cookie = await h.loginAs('editor')
-    await h.call('PATCH', '/api/admin/obituaries/1', { cookie, body: { name: 'Juan Pérez', deathDate: '2026-10-28' } })
-    const ok = await h.call('POST', '/api/admin/obituaries/1/approve', { cookie })
-    expect(ok.json.notification.queued).toBe(true)
-  })
-  it('importaciones masivas y publicaciones antiguas no notifican', async () => {
-    const h = await harness()
-    const old = await ingest(h.db, 'facebook-comuna', TEXT.torneo, { publishedAt: '2026-10-01T10:00:00Z' })
-    expect(await enqueuePostNotification(h.db.asD1(), old.outcome === 'inserted' ? old.postId : 0, NOW)).toEqual({ queued: false, reason: 'publicación antigua' })
-    const recent = await ingest(h.db, 'facebook-comuna', 'Festival folclórico con peña en la plaza central este sábado, entrada libre para todos los vecinos.')
-    expect((await enqueuePostNotification(h.db.asD1(), recent.outcome === 'inserted' ? recent.postId : 0, NOW, 10)).queued).toBe(false)
-  })
-  it('suscripción pública: requiere temas válidos, es idempotente y se puede cancelar', async () => {
-    const h = await harness()
-    const body = { endpoint: 'https://push.test/abc', keys: { p256dh: 'k', auth: 'a' }, topics: ['agua', 'urgente', 'inventado'] }
-    expect((await h.call('POST', '/api/public/push/subscribe', { body })).json.topics).toEqual(['agua', 'urgente'])
-    await h.call('POST', '/api/public/push/subscribe', { body: { ...body, topics: ['salud'] } })
-    expect(h.db.raw.prepare('SELECT COUNT(*) n, topics_json FROM push_subscriptions').get()).toMatchObject({ n: 1, topics_json: '["salud"]' })
-    expect((await h.call('POST', '/api/public/push/subscribe', { body: { ...body, topics: [] } })).status).toBe(400)
-    expect((await h.call('POST', '/api/public/push/subscribe', { body: { ...body, endpoint: 'http://inseguro' } })).status).toBe(400)
-    await h.call('POST', '/api/public/push/unsubscribe', { body: { endpoint: body.endpoint } })
-    expect((h.db.raw.prepare('SELECT COUNT(*) n FROM push_subscriptions').get() as { n: number }).n).toBe(0)
-  })
-  it('la configuración pública indica si Web Push está activo, sin exponer la clave privada', async () => {
-    const h = await harness()
-    expect((await h.call('GET', '/api/public/push/config')).json).toMatchObject({ enabled: false, publicKey: null })
-    const h2 = await harness({ VAPID_PUBLIC_KEY: 'PUB', VAPID_PRIVATE_KEY_JWK: '{"secret":1}', VAPID_SUBJECT: 'mailto:a@b.c' })
-    const cfg = (await h2.call('GET', '/api/public/push/config')).json
-    expect(cfg.enabled).toBe(true)
-    expect(JSON.stringify(cfg)).not.toContain('secret')
-  })
-})
-
 describe('I · administración de contenido, horarios y conectores', () => {
   it('CRUD de radios, lugares y eventos con historial; solo contenido público activo', async () => {
     const h = await harness()
@@ -616,6 +499,6 @@ describe('I · administración de contenido, horarios y conectores', () => {
     const h = await harness()
     const r = await h.app.scheduled(h.env, NOW)
     expect(r.sync).toEqual([])
-    expect(r.push.processed).toBe(false)
+    expect(r.push?.processed).toBe(false)
   })
 })

@@ -1,4 +1,4 @@
-import { Bell, CalendarDays, FileText, Flower2, LayoutDashboard, LogOut, Plug, ShieldCheck, UserCog, Users } from 'lucide-react'
+import { Bell, BellRing, CalendarDays, FileText, Flower2, LayoutDashboard, LogOut, Plug, ShieldCheck, UserCog, Users } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link, NavLink, Route, Routes } from 'react-router'
 import { LoadingState } from '@/components/shared/States'
@@ -10,6 +10,7 @@ import { AlertsAdmin } from './pages/Alerts'
 import { Dashboard } from './pages/Dashboard'
 import { EventsAdmin } from './pages/Events'
 import { LoginPage } from './pages/Login'
+import { NotificationsAdmin } from './pages/Notifications'
 import { ObituariesAdmin } from './pages/Obituaries'
 import { PostEditor, PostsList } from './pages/Posts'
 import { SourcesAdmin } from './pages/Sources'
@@ -34,6 +35,7 @@ const NAV = [
   { to: '/admin/alertas', label: 'Alertas', icon: Bell },
   { to: '/admin/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/admin/obituarios', label: 'Obituarios', icon: Flower2 },
+  { to: '/admin/notificaciones', label: 'Notificaciones', icon: BellRing },
   { to: '/admin/fuentes', label: 'Fuentes', icon: Plug },
 ]
 
@@ -92,6 +94,7 @@ function Shell() {
           <Route path="alertas" element={<AlertsAdmin />} />
           <Route path="agenda" element={<EventsAdmin />} />
           <Route path="obituarios" element={<ObituariesAdmin />} />
+          <Route path="notificaciones" element={<NotificationsAdmin />} />
           <Route path="fuentes" element={<SourcesAdmin />} />
           <Route path="usuarios" element={isAdmin(admin) ? <UsersAdmin /> : <p>No tenés permiso para esta sección.</p>} />
           <Route path="cuenta" element={<AccountPage />} />

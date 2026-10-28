@@ -3,7 +3,7 @@ import { publicRoutes } from './api/public'
 import { assertCsrf, authenticate } from './auth'
 import type { Env } from './env'
 import { HttpError, json, makeBody, Router, type Ctx } from './http'
-import { processNotifications } from './notify'
+import { cleanupPush, processNotifications } from './notify'
 import { createVapidSender } from './push'
 import { PRODUCTION_FEATURES, type Features } from './features'
 import { runSyncCycle, type SyncDeps } from './sync'
@@ -12,6 +12,8 @@ export interface AppDeps extends SyncDeps {
   now?: () => Date
   /** Por defecto, las de producción (push y módulos estáticos desactivados). */
   features?: Partial<Features>
+  /** Solo pruebas: reemplaza `fetch` en el envío de notificaciones (servidor push simulado). */
+  pushFetch?: typeof fetch
 }
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -27,7 +29,7 @@ export function createApp(deps: AppDeps = {}) {
   adminRoutes(router, deps, features)
 
   /** Atiende solo /api/*. Devuelve null si la ruta no es de la API. */
-  async function handleApi(req: Request, env: Env): Promise<Response | null> {
+  async function handleApi(req: Request, env: Env, waitUntil?: (p: Promise<unknown>) => void): Promise<Response | null> {
     const url = new URL(req.url)
     if (!url.pathname.startsWith('/api/')) return null
     const now = deps.now?.() ?? new Date()
@@ -43,7 +45,8 @@ export function createApp(deps: AppDeps = {}) {
       const match = router.match(req.method, url.pathname)
       if (match === null) throw new HttpError(404, 'No encontrado')
       if (match === 'method-not-allowed') throw new HttpError(405, 'Método no permitido')
-      const ctx: Ctx = { req, env, url, params: match.params, now, body: makeBody(req), admin }
+      const after = (work: Promise<unknown>) => (waitUntil ? waitUntil(work.catch((e) => console.error('Tarea posterior fallida', e))) : void work.catch(() => undefined))
+      const ctx: Ctx = { req, env, url, params: match.params, now, body: makeBody(req), admin, after }
       const res = await match.handler(ctx)
       for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.headers.set(k, v)
       return res
@@ -54,10 +57,14 @@ export function createApp(deps: AppDeps = {}) {
     }
   }
 
-  /** Tarea programada (cada minuto): sincroniza fuentes habilitadas y envía notificaciones pendientes. */
+  /**
+   * Tarea programada (cada 5 minutos): continúa y reintenta envíos pendientes y limpia datos viejos.
+   * La sincronización con fuentes solo corre si `scheduledSync` está activo (hoy no: Sprint 06).
+   */
   async function scheduled(env: Env, now = deps.now?.() ?? new Date()) {
-    const sync = await runSyncCycle(env, now, deps)
-    const push = await processNotifications(env.DB, createVapidSender(env, () => now), now)
+    const sync = features.scheduledSync ? await runSyncCycle(env, now, deps) : null
+    const push = features.push ? await processNotifications(env.DB, createVapidSender(env, () => now, deps.pushFetch), now) : null
+    if (features.push && now.getUTCMinutes() < 5) await cleanupPush(env.DB, now)
     return { sync, push }
   }
 
@@ -67,8 +74,8 @@ export function createApp(deps: AppDeps = {}) {
 const app = createApp()
 
 export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
-    return (await app.handleApi(req, env)) ?? env.ASSETS.fetch(req)
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return (await app.handleApi(req, env, (p) => ctx.waitUntil(p))) ?? env.ASSETS.fetch(req)
   },
   async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(app.scheduled(env).then(() => undefined))

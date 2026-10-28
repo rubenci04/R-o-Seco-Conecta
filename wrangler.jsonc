@@ -19,8 +19,12 @@
       "migrations_dir": "migrations"
     }
   ],
-  // Sin "triggers.crons": la sincronización automática con Facebook/Instagram NO se activa todavía
-  // (faltan credenciales de Meta). Se agregará cuando haya una fuente configurada y una justificación operativa.
+  // Cron cada 5 minutos: continúa lotes grandes de notificaciones, reintenta envíos fallidos y limpia datos viejos.
+  // NO sincroniza Facebook/Instagram (`scheduledSync` sigue desactivado hasta el Sprint 06). Sin avisos pendientes
+  // solo consulta una fila de D1 (≈288 consultas/día).
+  "triggers": { "crons": ["*/5 * * * *"] },
+  // Contacto VAPID (RFC 8292): URL pública, no secreta. Los servicios push la usan para contactar al operador.
+  "vars": { "VAPID_SUBJECT": "https://rio-seco-conecta.rea-04.workers.dev" },
   "observability": { "enabled": true }
-  // Secretos (NO van acá): wrangler secret put META_PAGE_ACCESS_TOKEN | META_INSTAGRAM_ACCESS_TOKEN | VAPID_* (sprints posteriores)
+  // Secretos (NO van acá): wrangler secret put META_PAGE_ACCESS_TOKEN | META_INSTAGRAM_ACCESS_TOKEN | VAPID_PUBLIC_KEY | VAPID_PRIVATE_KEY_JWK (ver docs/NOTIFICACIONES.md)
 }

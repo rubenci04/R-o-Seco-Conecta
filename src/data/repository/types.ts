@@ -18,6 +18,10 @@ export interface DataRepository {
   getAlerts(): Promise<AlertItem[]>
   getEvents(): Promise<EventItem[]>
   getObituaries(): Promise<Obituary[]>
+  /** Contenido puntual (lo abre una notificación). `null` si no existe o ya no está disponible. */
+  getNewsItem(id: string): Promise<NewsItem | null>
+  getAlertItem(id: string): Promise<AlertItem | null>
+  getObituaryItem(id: string): Promise<Obituary | null>
   getRadios(): Promise<Radio[]>
   getHolidays(): Promise<Holiday[]>
   getTransport(): Promise<TransportData>

@@ -25,10 +25,11 @@ describe('despliegue dinámico: wrangler.jsonc', () => {
     expect(db.database_id).not.toBe('00000000-0000-0000-0000-000000000000')
     expect(existsSync(db.migrations_dir)).toBe(true)
   })
-  it('no activa cron ni variables sensibles: la sincronización con Meta y Web Push siguen apagados', () => {
-    expect(cfg.triggers).toBeUndefined()
-    expect(cfg.vars).toBeUndefined()
-    expect(JSON.stringify(cfg).toLowerCase()).not.toMatch(/token|secret|password|private|vapid|api[_-]?key/)
+  it('el cron es solo de notificaciones (cada 5 min) y no hay secretos ni variables sensibles en el archivo', () => {
+    expect(cfg.triggers).toEqual({ crons: ['*/5 * * * *'] })
+    expect(Object.keys(cfg.vars)).toEqual(['VAPID_SUBJECT']) // contacto público; las claves VAPID son secretos de Cloudflare
+    expect(cfg.vars.VAPID_SUBJECT).toMatch(/^https:\/\//)
+    expect(JSON.stringify(cfg).toLowerCase().replace(/vapid_subject/g, '')).not.toMatch(/token|secret|password|private|vapid|api[_-]?key/)
   })
   it('la configuración estática anterior se conserva solo como respaldo y no tiene Worker ni D1', () => {
     const fallback = jsonc('wrangler.static.jsonc')
@@ -58,7 +59,7 @@ describe('el Worker solo atiende /api/*; lo demás lo sirven los assets (fallbac
     }
   })
   it('las funciones preparadas pero no activas están apagadas en producción', () => {
-    expect(PRODUCTION_FEATURES).toEqual({ push: false, staticModules: false, syncSources: true })
+    expect(PRODUCTION_FEATURES).toEqual({ push: true, staticModules: false, syncSources: true, scheduledSync: false })
   })
 })
 

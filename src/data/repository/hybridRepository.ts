@@ -10,7 +10,7 @@ import type { DataRepository, NewsQuery } from './types'
  */
 export class HybridRepository implements DataRepository {
   constructor(
-    private readonly api: Pick<HttpRepository, 'getNews' | 'getAlerts' | 'getEvents' | 'getObituaries'> = new HttpRepository(),
+    private readonly api: Pick<HttpRepository, 'getNews' | 'getAlerts' | 'getEvents' | 'getObituaries' | 'getNewsItem' | 'getAlertItem' | 'getObituaryItem'> = new HttpRepository(),
     private readonly local: DataRepository = new LocalJsonRepository(),
   ) {}
 
@@ -18,6 +18,9 @@ export class HybridRepository implements DataRepository {
   getAlerts = () => this.api.getAlerts()
   getEvents = () => this.api.getEvents()
   getObituaries = () => this.api.getObituaries()
+  getNewsItem = (id: string) => this.api.getNewsItem(id)
+  getAlertItem = (id: string) => this.api.getAlertItem(id)
+  getObituaryItem = (id: string) => this.api.getObituaryItem(id)
 
   getRadios = () => this.local.getRadios()
   getHolidays = () => this.local.getHolidays()

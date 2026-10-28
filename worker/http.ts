@@ -15,6 +15,8 @@ export interface Ctx {
   params: Record<string, string>
   now: Date
   admin?: AdminSession
+  /** Trabajo posterior a la respuesta (envío de notificaciones): no demora al editor. */
+  after: (work: Promise<unknown>) => void
   /** Cuerpo JSON ya leído (solo en métodos con cuerpo). */
   body: () => Promise<Record<string, unknown>>
 }
