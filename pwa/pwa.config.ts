@@ -15,6 +15,9 @@ export const manifest = {
   background_color: '#f3fafd',
   theme_color: '#0b6b97',
   categories: ['news', 'travel', 'utilities'],
+  // Compartir un enlace (p. ej. desde la app de Facebook) hacia la PWA instalada abre la importación asistida del panel.
+  // Requiere sesión: sin ella se muestra el acceso al panel y, al ingresar, los datos compartidos siguen en la dirección.
+  share_target: { action: '/admin/fuentes', method: 'GET', params: { title: 'title', text: 'text', url: 'url' } },
   icons: [
     { src: '/icons/icon-192-v2.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
     { src: '/icons/icon-512-v2.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

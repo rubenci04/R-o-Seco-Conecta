@@ -100,6 +100,9 @@ export const alertSchema = z.object({
   publishedAt: isoDateTime,
   expiresAt: isoDateTime.optional(),
   source: optionalSource,
+  /** Categorías de la publicación que originó el aviso (p. ej. «residuos»): permite mostrarlo en su sección. */
+  categories: z.array(z.string()).optional(),
+  kind: z.string().optional(),
 })
 export const eventSchema = z.object({
   id: z.string().min(1),

@@ -16,7 +16,7 @@ const ingest = async (db: TestD1, sourceId: string, body: string, over: { extern
 describe('A · esquema D1 y migraciones', () => {
   it('aplica todas las migraciones y crea las tablas requeridas', () => {
     const db = new TestD1()
-    expect(migrate(db)).toHaveLength(6)
+    expect(migrate(db)).toHaveLength(7)
     const tables = (db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all as never as () => never)
     void tables
     const names = (db.raw.prepare("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]).map((t) => t.name)
@@ -24,9 +24,9 @@ describe('A · esquema D1 y migraciones', () => {
       expect(names, t).toContain(t)
     }
   })
-  it('siembra 12 categorías y fuentes oficiales deshabilitadas y sin configurar', () => {
+  it('siembra 13 categorías y fuentes oficiales deshabilitadas y sin configurar', () => {
     const db = freshDb()
-    expect((db.raw.prepare('SELECT COUNT(*) n FROM categories').get() as { n: number }).n).toBe(12)
+    expect((db.raw.prepare('SELECT COUNT(*) n FROM categories').get() as { n: number }).n).toBe(13)
     const sources = db.raw.prepare("SELECT id, enabled, status FROM sources WHERE kind != 'manual'").all() as { id: string; enabled: number; status: string }[]
     expect(sources.map((s) => s.id).sort()).toEqual(['facebook-comuna', 'instagram-comuna'])
     expect(sources.every((s) => s.enabled === 0 && s.status === 'not-configured')).toBe(true)

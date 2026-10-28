@@ -64,7 +64,7 @@ export function createApp(deps: AppDeps = {}) {
   async function scheduled(env: Env, now = deps.now?.() ?? new Date()) {
     const sync = features.scheduledSync ? await runSyncCycle(env, now, deps) : null
     const push = features.push ? await processNotifications(env.DB, createVapidSender(env, () => now, deps.pushFetch), now) : null
-    if (features.push && now.getUTCMinutes() < 5) await cleanupPush(env.DB, now)
+    if (features.push && now.getUTCMinutes() === 0) await cleanupPush(env.DB, now)
     return { sync, push }
   }
 

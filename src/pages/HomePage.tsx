@@ -2,6 +2,7 @@ import { ArrowDownUp, ArrowRight, Bell, BusFront, CalendarDays, Headphones, MapP
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertCard, EventCard, NewsCard } from '@/components/content/ContentCards'
+import { FacebookTimeline } from '@/components/community/FacebookTimeline'
 import { telHref } from '@/components/community/PlaceCard'
 import { ExternalLink } from '@/components/shared/ExternalLink'
 import { Section } from '@/components/shared/PageHeader'
@@ -275,8 +276,9 @@ export default function HomePage() {
 
       <Section title="Alertas" action={<SeeAll to="/alertas" />}>
         <Async state={alerts} isEmpty={(d) => d.length === 0} empty={<EmptyState icon={Bell} title="Sin alertas vigentes" />}>
-          {(items) => <div className="space-y-3">{items.slice(0, 2).map((i) => <AlertCard key={i.id} item={i} />)}</div>}
+          {(items) => <div className="space-y-3">{items.slice(0, 4).map((i) => <AlertCard key={i.id} item={i} />)}</div>}
         </Async>
+        <p className="mt-2 text-sm"><Link to="/residuos" className="font-semibold text-accent underline underline-offset-2">Recolección de residuos y limpieza urbana</Link></p>
       </Section>
 
       <Async state={heritage} isEmpty={(d) => !d.some((s) => s.featured)} empty={null}>
@@ -317,6 +319,10 @@ export default function HomePage() {
         >
           {(items) => <div className="space-y-3">{items.slice(0, 3).map((i) => <NewsCard key={i.id} item={i} />)}</div>}
         </Async>
+      </Section>
+
+      <Section title="Desde Facebook" action={<SeeAll to="/noticias" label="Ver Noticias" />}>
+        <FacebookTimeline id="facebook-inicio" height={560} />
       </Section>
 
       <Section title="Agenda cultural" action={<SeeAll to="/agenda" />}>

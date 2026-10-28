@@ -54,6 +54,29 @@ export interface IngestOptions {
 /** Cuántas publicaciones recientes se comparan por similitud (acota el costo de lectura en D1). */
 const NEAR_DUPLICATE_WINDOW = 40
 
+export type Duplicate = Extract<IngestResult, { outcome: 'duplicate' }>
+
+/** Comprueba, sin escribir nada, si una publicación ya existe: id estable, URL, huella de contenido o texto muy similar. */
+export async function findDuplicate(db: D1Database, sourceId: string, raw: RawPost, title: string, body: string): Promise<{ duplicate: Duplicate | null; hash: string }> {
+  const byId = await db.prepare('SELECT id FROM posts WHERE source_id = ? AND external_id = ?').bind(sourceId, raw.externalId).first<{ id: number }>()
+  if (byId) return { duplicate: { outcome: 'duplicate', reason: 'external-id', ofPostId: byId.id }, hash: '' }
+  if (raw.url) {
+    const byUrl = await db.prepare('SELECT id FROM posts WHERE url = ? LIMIT 1').bind(raw.url).first<{ id: number }>()
+    if (byUrl) return { duplicate: { outcome: 'duplicate', reason: 'url', ofPostId: byUrl.id }, hash: '' }
+  }
+  const hash = await contentHash(`${title}
+${body}`)
+  const byHash = await db.prepare("SELECT id FROM posts WHERE content_hash = ? AND status != 'deleted' LIMIT 1").bind(hash).first<{ id: number }>()
+  if (byHash) return { duplicate: { outcome: 'duplicate', reason: 'content-hash', ofPostId: byHash.id }, hash }
+  const recent = await db
+    .prepare("SELECT id, title, body FROM posts WHERE status != 'deleted' ORDER BY published_at DESC LIMIT ?")
+    .bind(NEAR_DUPLICATE_WINDOW)
+    .all<{ id: number; title: string; body: string }>()
+  const similar = recent.results.find((p) => isNearDuplicate(`${p.title} ${p.body}`, `${title} ${body}`))
+  if (similar) return { duplicate: { outcome: 'duplicate', reason: 'near-duplicate', ofPostId: similar.id }, hash }
+  return { duplicate: null, hash }
+}
+
 /**
  * Pipeline de ingesta (idéntico para API, importación asistida y carga manual):
  * 1) deduplicar (id estable, URL, huella, similitud)  2) clasificar  3) decidir visibilidad
@@ -66,24 +89,9 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
   const title = (raw.title?.trim() || deriveTitle(body)).slice(0, 200)
 
   // ---- 1) deduplicación ----
-  const byId = await db.prepare('SELECT id FROM posts WHERE source_id = ? AND external_id = ?').bind(source.id, raw.externalId).first<{ id: number }>()
-  if (byId) return { outcome: 'duplicate', reason: 'external-id', ofPostId: byId.id }
-
-  if (raw.url) {
-    const byUrl = await db.prepare('SELECT id FROM posts WHERE url = ? LIMIT 1').bind(raw.url).first<{ id: number }>()
-    if (byUrl) return { outcome: 'duplicate', reason: 'url', ofPostId: byUrl.id }
-  }
-
-  const hash = await contentHash(`${title}\n${body}`)
-  const byHash = await db.prepare("SELECT id FROM posts WHERE content_hash = ? AND status != 'deleted' LIMIT 1").bind(hash).first<{ id: number }>()
-  if (byHash) return { outcome: 'duplicate', reason: 'content-hash', ofPostId: byHash.id }
-
-  const recent = await db
-    .prepare("SELECT id, title, body FROM posts WHERE status != 'deleted' ORDER BY published_at DESC LIMIT ?")
-    .bind(NEAR_DUPLICATE_WINDOW)
-    .all<{ id: number; title: string; body: string }>()
-  const similar = recent.results.find((p) => isNearDuplicate(`${p.title} ${p.body}`, `${title} ${body}`))
-  if (similar) return { outcome: 'duplicate', reason: 'near-duplicate', ofPostId: similar.id }
+  const dup = await findDuplicate(db, source.id, raw, title, body)
+  if (dup.duplicate) return dup.duplicate
+  const hash = dup.hash
 
   // ---- 2) clasificación ----
   const result = classifier.classify({ title, body })

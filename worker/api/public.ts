@@ -93,11 +93,12 @@ export function publicRoutes(r: Router, features: Features): void {
   // Alertas vigentes: SOLO las confirmadas por una persona y no vencidas.
   r.get('/api/public/alerts', async (ctx) => {
     const rows = await ctx.env.DB.prepare(
-      `SELECT id, kind, severity, priority, title, body, source_url, starts_at, expires_at FROM alerts
+      `SELECT id, kind, severity, priority, title, body, source_url, starts_at, expires_at,
+              (SELECT group_concat(category_id) FROM post_categories pc WHERE pc.post_id = alerts.post_id) AS cats FROM alerts
        WHERE confirmation = 'confirmed' AND starts_at <= ? AND (expires_at IS NULL OR expires_at > ?) ORDER BY priority DESC, starts_at DESC`,
     )
       .bind(ctx.now.toISOString(), ctx.now.toISOString())
-      .all<{ id: number; kind: string; severity: 'info' | 'urgente'; priority: number; title: string; body: string; source_url: string | null; starts_at: string; expires_at: string | null }>()
+      .all<{ id: number; kind: string; severity: 'info' | 'urgente'; priority: number; title: string; body: string; source_url: string | null; starts_at: string; expires_at: string | null; cats: string | null }>()
     return etagJson(
       ctx,
       rows.results.map((a) => ({
@@ -110,6 +111,7 @@ export function publicRoutes(r: Router, features: Features): void {
         source: { label: 'Comuna de Río Seco', url: a.source_url ?? undefined },
         kind: a.kind,
         priority: a.priority,
+        categories: a.cats ? a.cats.split(',') : [],
       })),
     )
   })

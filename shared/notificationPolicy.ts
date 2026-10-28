@@ -7,7 +7,7 @@ export const MAX_NOTIFY_AGE_HOURS = 6
 export const MAX_NOTIFY_PER_SYNC = 3
 
 /** Categorías cuyo aviso lo da la ALERTA (confirmada por una persona), no la noticia: evita avisar dos veces lo mismo. */
-export const ALERT_CAPABLE: CategoryId[] = ['agua', 'energia', 'calles', 'meteorologica']
+export const ALERT_CAPABLE: CategoryId[] = ['agua', 'energia', 'calles', 'residuos', 'meteorologica']
 
 export interface NotifiablePost {
   status: 'draft' | 'pending' | 'published' | 'rejected' | 'deleted'

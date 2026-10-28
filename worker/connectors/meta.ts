@@ -3,7 +3,11 @@ import type { Env } from '../env'
 import type { RawPost, SourceRow } from '../ingest'
 import type { FetchContext, FetchResult, Readiness, SourceConnector } from './types'
 
-export const DEFAULT_GRAPH_VERSION = 'v23.0' // configurable con META_GRAPH_VERSION; verificar la versión vigente en Meta for Developers
+/**
+ * Versión de la Graph API. Verificada en el registro de cambios de Meta (octubre de 2026): v26.0 es la más reciente (29/07/2026),
+ * v25.0 está disponible hasta 29/07/2028 y v23.0 hasta 08/10/2027. Se usa v25.0 (estable); se puede cambiar con META_GRAPH_VERSION.
+ */
+export const DEFAULT_GRAPH_VERSION = 'v25.0'
 
 const graphBase = (env: Env) => `https://graph.facebook.com/${env.META_GRAPH_VERSION || DEFAULT_GRAPH_VERSION}`
 const cfg = (s: SourceRow): Record<string, unknown> => {

@@ -101,6 +101,11 @@ export async function enqueueAlertNotification(db: D1Database, alertId: number, 
     const already = await db.prepare("SELECT 1 AS x FROM notification_log WHERE dedupe_key = ? AND state != 'suppressed'").bind(dedupeKey('post', a.post_id)).first()
     if (already) decision = { send: false, reason: 'ya avisado por la noticia' }
   }
+  // Un aviso de servicio que nace de una publicación de residuos también llega a quien eligió ese tema.
+  if (decision.send && a.post_id) {
+    const waste = await db.prepare("SELECT 1 AS x FROM post_categories WHERE post_id = ? AND category_id = 'residuos'").bind(a.post_id).first()
+    if (waste) decision = { send: true, topics: [...new Set([...decision.topics, 'residuos' as const])] }
+  }
   return insertLog(db, now, { type: 'alert', id: a.id, topics: decision.send ? decision.topics : [], urgent: a.severity === 'urgente', title: `⚠ ${a.title}`, body: truncate(a.body, 120), url: `/alertas/${a.id}` }, decision)
 }
 

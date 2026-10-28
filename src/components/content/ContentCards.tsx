@@ -48,13 +48,20 @@ export function NewsCard({ item, expanded = false }: { item: NewsItem; expanded?
   )
 }
 
-const SEVERITY = { info: 'info', aviso: 'warning', urgente: 'danger' } as const
+/** Urgente · Interrupción de un servicio (agua, energía, calles, recolección…) · Aviso informativo. */
+export function alertClass(item: AlertItem): { label: string; tone: 'danger' | 'warning' | 'info' } {
+  if (item.severity === 'urgente') return { label: 'Urgente', tone: 'danger' }
+  if (item.kind && ['agua', 'energia', 'calles'].includes(item.kind)) return { label: 'Interrupción de servicio', tone: 'warning' }
+  if (item.categories?.includes('residuos') || (item.kind === 'comunicado' && item.categories?.includes('residuos'))) return { label: 'Interrupción de servicio', tone: 'warning' }
+  return { label: 'Aviso informativo', tone: 'info' }
+}
 
 export function AlertCard({ item }: { item: AlertItem }) {
+  const c = alertClass(item)
   return (
     <Card className="animate-rise space-y-2" role="article">
       <div className="flex items-center gap-2">
-        <Badge tone={SEVERITY[item.severity]}>{item.severity}</Badge>
+        <Badge tone={c.tone}>{c.label}</Badge>
         <time className="text-xs text-muted-foreground" dateTime={item.publishedAt}>
           {formatDateTime(item.publishedAt)}
         </time>

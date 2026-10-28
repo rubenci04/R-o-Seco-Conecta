@@ -86,11 +86,12 @@ describe('Noticias dinámicas', () => {
     const user = userEvent.setup()
     renderWith({ getNews: async (q) => (calls.push(q), all.filter((n) => !q?.before || n.publishedAt < q.before).slice(0, q?.limit ?? 20)) })
     await screen.findByRole('heading', { name: 'Noticia 1' })
-    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(NEWS_PAGE_SIZE)
+    // El bloque de Facebook (un título propio) se suma a las notas del feed.
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(NEWS_PAGE_SIZE + 1)
     await user.click(screen.getByRole('button', { name: 'Cargar más noticias' }))
     await screen.findByRole('heading', { name: 'Noticia 20' })
     expect(calls.at(-1)?.before).toBe(all[NEWS_PAGE_SIZE - 1].publishedAt)
-    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(20)
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(21)
     expect(screen.queryByRole('button', { name: 'Cargar más noticias' })).toBeNull() // última página: no hay más
   })
   it('si falla «Cargar más» muestra el error y conserva lo ya cargado', async () => {

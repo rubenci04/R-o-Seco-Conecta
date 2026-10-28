@@ -330,7 +330,7 @@ describe('migraciones y esquema D1', () => {
   it('la semilla solo carga categorías y fuentes: sin radios, horarios, publicaciones ni usuarios', () => {
     const db = freshDb()
     const count = (t: string) => (db.raw.prepare(`SELECT COUNT(*) n FROM ${t}`).get() as { n: number }).n
-    expect([count('categories'), count('sources')]).toEqual([12, 3])
+    expect([count('categories'), count('sources')]).toEqual([13, 3])
     for (const t of ['radios', 'bus_localities', 'bus_services', 'posts', 'alerts', 'events', 'obituaries', 'admins', 'admin_sessions', 'push_subscriptions', 'notification_log']) expect(count(t), t).toBe(0)
   })
   it('el esquema admite borradores, fuente editorial y lugar de evento por id textual; rechaza estados inválidos', () => {

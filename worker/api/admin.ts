@@ -1,13 +1,14 @@
 import { isCategoryId } from '../../shared/categories'
 import { can } from '../../shared/permissions'
 import { assertCsrf, clearCookie, hashPassword, login, logout, readCookie, requirePermission, SESSION_COOKIE, sessionCookie, SESSION_HOURS, verifyPassword } from '../auth'
-import { sha256Hex } from '../../shared/text'
+import { defaultClassifier } from '../../shared/classifier'
+import { deriveTitle, sha256Hex } from '../../shared/text'
 import { buildAssistedPost } from '../connectors/assisted'
 import { defaultConnectors } from '../connectors/meta'
 import { SYSTEM_ACTOR } from '../env'
 import { historyStatement } from '../history'
 import { actorOf, HttpError, httpUrl, isoDate, json, Router, str, type Ctx } from '../http'
-import { ingestPost, type SourceRow } from '../ingest'
+import { findDuplicate, ingestPost, type SourceRow } from '../ingest'
 import { enqueueAlertNotification, enqueuePostNotification, processNotifications } from '../notify'
 import { createVapidSender, pushConfigured } from '../push'
 import { syncSource, type SyncDeps } from '../sync'
@@ -168,6 +169,39 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     if (result.outcome === 'duplicate') throw new HttpError(409, `Ya importada (${result.reason}) como #${result.ofPostId}`)
     if (result.status === 'published') await enqueuePost(ctx, result.postId)
     return json(result, { status: 201 })
+  })
+
+  // Vista previa de importación asistida: clasifica y busca duplicados SIN guardar nada.
+  r.post('/api/admin/posts/import-preview', async (ctx) => {
+    requirePermission(ctx, 'content:write')
+    const b = await ctx.body()
+    if (!Array.isArray(b.items) || b.items.length === 0 || b.items.length > 20) throw new HttpError(400, 'Enviá entre 1 y 20 publicaciones')
+    const out = []
+    for (const it of b.items as Array<Record<string, unknown>>) {
+      try {
+        const { sourceId, raw } = await buildAssistedPost({ url: str(it.url, 'url', { max: 2048 }), text: str(it.text, 'text', { max: 20_000 }), publishedAt: it.publishedAt ? String(it.publishedAt) : undefined }, ctx.now)
+        const title = deriveTitle(raw.body).slice(0, 200)
+        const dup = await findDuplicate(ctx.env.DB, sourceId, raw, title, raw.body.trim())
+        const c = defaultClassifier.classify({ title, body: raw.body })
+        out.push({
+          ok: true,
+          platform: sourceId === 'instagram-comuna' ? 'instagram' : 'facebook',
+          url: raw.url,
+          title,
+          publishedAt: raw.publishedAt,
+          duplicate: dup.duplicate ? { reason: dup.duplicate.reason, ofPostId: dup.duplicate.ofPostId } : null,
+          categories: c.categories,
+          alert: c.alert,
+          obituary: c.obituary ? { nameSuggestion: c.obituary.nameSuggestion } : null,
+          needsReview: c.needsReview,
+          // Dónde quedaría: los posibles obituarios y lo dudoso esperan a una persona; lo demás se publica.
+          outcome: dup.duplicate ? 'duplicado' : c.obituary ? 'revision-obituario' : 'publicada',
+        })
+      } catch (e) {
+        out.push({ ok: false, error: e instanceof HttpError ? e.message : 'No se pudo analizar' })
+      }
+    }
+    return json({ items: out })
   })
 
   async function setCategories(ctx: Ctx, postId: number, ids: string[], admin: { id: number; email: string }) {
@@ -437,14 +471,37 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
   })
 
   // ---------------------------------------------------- conectores y sincronización
+  // Estado de sincronización por fuente: credenciales, última comprobación/éxito, próxima, publicaciones incorporadas y última corrida.
   r.get('/api/admin/sources', async (ctx) => {
     requirePermission(ctx, 'sources:read')
-    const rows = await ctx.env.DB.prepare('SELECT * FROM sources ORDER BY id').all<SourceRow>()
+    const [rows, counts, runs] = await Promise.all([
+      ctx.env.DB.prepare('SELECT * FROM sources ORDER BY id').all<SourceRow>(),
+      ctx.env.DB.prepare("SELECT source_id, COUNT(*) AS n FROM posts WHERE status != 'deleted' GROUP BY source_id").all<{ source_id: string; n: number }>(),
+      ctx.env.DB.prepare('SELECT source_id, started_at, outcome, fetched, inserted, duplicates FROM sync_runs WHERE id IN (SELECT MAX(id) FROM sync_runs GROUP BY source_id)').all<{ source_id: string; started_at: string; outcome: string; fetched: number; inserted: number; duplicates: number }>(),
+    ])
     return json(
       rows.results.map((s) => {
         const connector = s.kind === 'manual' ? null : (deps.connectors ?? defaultConnectors)[s.kind]
         const readiness = connector?.readiness(ctx.env, s) ?? { ready: s.kind === 'manual', missing: [] }
-        return { ...s, readiness, automatic: s.mode === 'api' && s.enabled === 1 && readiness.ready }
+        const run = runs.results.find((r) => r.source_id === s.id)
+        return {
+          id: s.id,
+          name: s.name,
+          kind: s.kind,
+          mode: s.mode,
+          enabled: !!s.enabled,
+          status: s.status,
+          readiness,
+          automatic: s.mode === 'api' && s.enabled === 1 && readiness.ready,
+          pollIntervalSeconds: s.poll_interval_seconds,
+          consecutiveFailures: s.consecutive_failures,
+          lastSuccessAt: s.last_success_at,
+          lastCheckedAt: s.last_checked_at,
+          nextAttemptAt: s.next_attempt_at,
+          lastError: s.last_error,
+          importedPosts: counts.results.find((c) => c.source_id === s.id)?.n ?? 0,
+          lastRun: run ? { startedAt: run.started_at, outcome: run.outcome, fetched: run.fetched, inserted: run.inserted, duplicates: run.duplicates } : null,
+        }
       }),
     )
   })

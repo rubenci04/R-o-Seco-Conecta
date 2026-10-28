@@ -15,6 +15,7 @@ export const TOPIC_INFO: Record<PushTopic, TopicInfo> = {
   agua: { label: 'Cortes de agua', description: 'Interrupciones del suministro de agua.', group: 'importantes' },
   energia: { label: 'Cortes de electricidad', description: 'Interrupciones del servicio eléctrico.', group: 'importantes' },
   calles: { label: 'Calles cortadas', description: 'Cortes de calles, rutas y desvíos.', group: 'importantes' },
+  residuos: { label: 'Recolección de residuos y limpieza', description: 'Suspensiones, cambios de recorrido, reprogramaciones y campañas de limpieza.', group: 'importantes' },
   meteorologica: { label: 'Alertas meteorológicas', description: 'Avisos por tormentas, calor, frío y otros fenómenos.', group: 'importantes' },
   institucional: { label: 'Noticias institucionales', description: 'Comunicados y novedades de la Comuna.', group: 'novedades' },
   eventos: { label: 'Eventos y festividades', description: 'Fiestas, actos y celebraciones del pueblo.', group: 'novedades' },
@@ -27,7 +28,7 @@ export const TOPIC_INFO: Record<PushTopic, TopicInfo> = {
 }
 
 /** Orden de presentación. */
-export const TOPIC_ORDER: PushTopic[] = ['urgente', 'agua', 'energia', 'calles', 'meteorologica', 'institucional', 'eventos', 'cultura', 'deportes', 'educacion', 'salud', 'otros', 'obituarios']
+export const TOPIC_ORDER: PushTopic[] = ['urgente', 'agua', 'energia', 'calles', 'residuos', 'meteorologica', 'institucional', 'eventos', 'cultura', 'deportes', 'educacion', 'salud', 'otros', 'obituarios']
 
 /** Configuración inicial sencilla: solo avisos importantes. Nunca incluye obituarios ni «todo». */
 export const PRESETS: Record<'importantes' | 'comuna', { label: string; topics: PushTopic[] }> = {

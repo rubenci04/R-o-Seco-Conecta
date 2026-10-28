@@ -87,9 +87,20 @@ export const RULES: Rule[] = [
     strong: [re('\\b(calle cortada|calles cortadas|corte de calle|corte de ruta|ruta cortada|desvio de transito)\\b')],
   },
   {
+    id: 'residuos',
+    // Un servicio (recolección/limpieza) más un cambio o campaña en la MISMA oración. «Basura» suelta no alcanza.
+    context: [
+      [re('\\b(recoleccion|recolector\\w*|camion recolector|basura|residuos|limpieza urbana|servicio de limpieza|higiene urbana)\\b'), re('\\b(suspend\\w+|suspension|reprogram\\w+|modific\\w+|cambio\\w*|no pasara|no habra|no se realizara|sin servicio|desvio|nuevo horario|nuevo recorrido|recorrido|horario|campana|jornada|dias de)\\b')],
+    ],
+    strong: [re('\\b(recoleccion de (residuos|basura)|camion recolector|residuos domiciliarios|recoleccion suspendida|recoleccion reprogramada|cambio de recorrido|servicio de limpieza|limpieza urbana|jornada de limpieza)\\b')],
+    weak: [re('\\b(basura|residuos|basural\\w*|contenedor\\w*|reciclaje|higiene urbana)\\b')],
+  },
+  {
     id: 'meteorologica',
     context: [
       [re('\\b(alerta|aviso|pronostico|advertencia)\\b'), re('\\b(meteorolog\\w+|tormenta\\w*|granizo|lluvia\\w*|viento\\w*|temporal\\w*|ola de calor|ola de frio|helada\\w*|smn|servicio meteorologico|inundacion\\w*|crecida\\w*)\\b')],
+      // Un fenómeno concreto que provoca un cambio de servicio («se suspende … por las intensas lluvias»).
+      [re('\\b(tormenta\\w*|temporal\\w*|granizo|lluvias? intensas?|intensas? lluvias?|ola de calor|ola de frio|helada\\w*)\\b'), re('\\b(suspend\\w+|suspension|sin clases|cancel\\w+|anegad\\w+|precaucion|afecta\\w*|reprogram\\w+)\\b')],
     ],
     strong: [re('\\b(alerta meteorologica|alerta por tormenta|alerta por lluvias|alerta por vientos|servicio meteorologico nacional|smn)\\b')],
     weak: [re('\\b(tormenta|granizo|temporal|lluvias intensas)\\b')],
@@ -106,11 +117,12 @@ export const RULES: Rule[] = [
   },
   {
     id: 'cultura',
-    strong: [re('\\b(folclore|folklore|muestra de arte|taller de (arte|musica|danza|teatro|artesanias?)|biblioteca|museo|ballet|artesanos|payada)\\b')],
+    strong: [re('\\b(folclore|folklore|pesebre\\w*|muestra de arte|taller de (arte|musica|danza|teatro|artesanias?)|biblioteca|museo|ballet|artesanos|payada)\\b')],
     weak: [re('\\b(cultura|cultural|musica|danza|teatro|arte|coro|pintura|tradicion\\w*|poesia|libro)\\b')],
   },
   {
     id: 'educacion',
+    context: [[re('\\b(clases|escuela\\w*|colegio\\w*|establecimientos? educativos?|jardin\\w*)\\b'), re('\\b(suspend\\w+|suspension|sin clases|se suspenden|reprogram\\w+)\\b')]],
     strong: [re('\\b(inscripciones? (abiertas|escolares)|ciclo lectivo|acto escolar|dia del maestro|jardin de infantes|escuela n[°o]?\\s?\\d+)\\b')],
     weak: [re('\\b(escuela|colegio|clases|docente\\w*|alumnos|estudiantes|educacion|aula|primaria|secundaria|capacitacion|beca\\w*)\\b')],
   },
@@ -122,7 +134,7 @@ export const RULES: Rule[] = [
   {
     id: 'obituarios',
     strong: [
-      re('\\b(fallecio|fallecimiento|falleci\\w+|velatorio|sepelio|inhumacion|cortejo funebre|misa de cuerpo presente|q\\.?e\\.?p\\.?d|descanse en paz|nuestras condolencias|profundo pesar|lamentamos el fallecimiento|despedimos)\\b'),
+      re('\\b(fallecio|fallecimiento|falleci\\w+|velatorio|sepelio|inhumacion|cortejo funebre|misa de cuerpo presente|q\\.?e\\.?p\\.?d|descanse en paz|nuestras condolencias|profundo pesar|lamentamos el fallecimiento|despedimos|partio a la casa del padre|con inmenso dolor|con profundo dolor|participan con dolor|participamos con dolor|sus restos|camara ardiente|en paz descanse|dolorosa perdida|acompanamos a (su|la) familia|el pueblo llora)\\b'),
     ],
   },
 ]
@@ -132,7 +144,10 @@ const RESOLVED = re('\\b(se restablecio|restablecido|restablecimiento|normalizad
 const DRILL = re('\\b(simulacro|capacitacion sobre|charla sobre|ejercicio de prueba)\\b')
 const URGENCY_MARKER = re('\\b(urgente|inmediat\\w+|emergencia|evacua\\w*|alerta roja|alerta naranja|nivel rojo|nivel naranja|peligro|riesgo|extrema|extremo|no circular|evitar circular|maxima precaucion|resguardense|refugiense)\\b')
 const SEVERE_LEVEL = re('\\b(alerta roja|alerta naranja|nivel rojo|nivel naranja)\\b')
-const FUNERAL_CONTEXT = re('\\b(fallecio|fallecimiento|falleci\\w+|velatorio|sepelio|inhumacion|q\\.?e\\.?p\\.?d|descanse en paz|condolencias|pesar)\\b')
+const FUNERAL_CONTEXT = re('\\b(fallecio|fallecimiento|falleci\\w+|velatorio|sepelio|inhumacion|q\\.?e\\.?p\\.?d|descanse en paz|en paz descanse|condolencias|pesar|casa del padre|camara ardiente|sus restos|con inmenso dolor|dolorosa perdida)\\b')
+/** Cambio o interrupción de un servicio de residuos (no una recolección habitual). */
+const WASTE_SUBJECT = re('\\b(recoleccion|recolector\\w*|camion recolector|basura|residuos|servicio de limpieza|limpieza urbana)\\b')
+const WASTE_INTERRUPTION = re('\\b(suspend\\w+|suspension|reprogram\\w+|no pasara|no habra|no se realizara|sin servicio|cambio de recorrido|cambio de dia|nuevo recorrido)\\b')
 
 const ALERT_KIND_BY_CATEGORY: Partial<Record<CategoryId, AlertKind>> = {
   agua: 'agua',
@@ -224,6 +239,10 @@ export class RuleClassifier implements Classifier {
   private proposeAlert(norm: string, categories: CategoryProposal[]): AlertProposal | null {
     if (DRILL.test(norm)) return null
     const resolved = RESOLVED.test(norm)
+    // Interrupción de la recolección: aviso de servicio PROPUESTO (nunca urgente por sí solo; una persona lo confirma).
+    if (!resolved && categories.some((c) => c.id === 'residuos') && sentences(norm).some((x) => WASTE_SUBJECT.test(x) && WASTE_INTERRUPTION.test(x))) {
+      return { kind: 'comunicado', severity: 'info', priority: 1, reason: 'interrupción o cambio del servicio de recolección', suggestedHours: 24 }
+    }
     const candidate = categories.find((c) => ALERT_KIND_BY_CATEGORY[c.id] && c.confidence >= 0.55)
     if (!candidate) {
       // Comunicado importante: solo con marcador de urgencia Y categoría institucional fuerte; nunca una palabra aislada.

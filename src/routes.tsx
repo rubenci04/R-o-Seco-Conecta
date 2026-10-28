@@ -23,6 +23,7 @@ const AlertDetailPage = lazy(() => import('@/pages/DetailPages').then((m) => ({ 
 const ObituaryDetailPage = lazy(() => import('@/pages/DetailPages').then((m) => ({ default: m.ObituaryDetailPage })))
 const SettingsPage = lazy(() => import('@/pages/NotificationPages').then((m) => ({ default: m.SettingsPage })))
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationPages').then((m) => ({ default: m.NotificationSettingsPage })))
+const WastePage = lazy(() => import('@/pages/WastePage'))
 const ComunaPage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.ComunaPage })))
 const MorePage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.MorePage })))
 const AboutPage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default: m.AboutPage })))
@@ -51,6 +52,7 @@ export function AppRoutes() {
         <Route path="noticias/:id" element={<NewsDetailPage />} />
         <Route path="alertas" element={<AlertsPage />} />
         <Route path="alertas/:id" element={<AlertDetailPage />} />
+        <Route path="residuos" element={<WastePage />} />
         <Route path="radios" element={<RadiosPage />} />
         <Route path="agenda" element={<AgendaPage />} />
         <Route path="obituarios" element={<ObituariesPage />} />

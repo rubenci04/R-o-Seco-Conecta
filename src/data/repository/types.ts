@@ -1,4 +1,5 @@
 import type { EmergencyNumber, HeritageSection, Place } from '@/domain/community'
+import type { WasteInfo } from '@/domain/waste'
 import type { AlertItem, EventItem, Holiday, NewsItem, Obituary, Radio, TransportData } from '@/domain/types'
 
 /**
@@ -28,4 +29,5 @@ export interface DataRepository {
   getPlaces(): Promise<Place[]>
   getEmergencyNumbers(): Promise<EmergencyNumber[]>
   getHeritage(): Promise<HeritageSection[]>
+  getWaste(): Promise<WasteInfo>
 }

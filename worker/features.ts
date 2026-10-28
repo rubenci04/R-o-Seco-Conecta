@@ -8,8 +8,8 @@ export interface Features {
   push: boolean
   staticModules: boolean
   syncSources: boolean
-  /** Sincronización automática programada (cron) con Meta. Sigue desactivada hasta el Sprint 06. */
+  /** Sincronización automática programada (cron) con Meta. Solo toca fuentes habilitadas (enabled=1, modo api) Y con credenciales: hoy no hay ninguna, así que el ciclo no hace ninguna llamada a Meta. */
   scheduledSync: boolean
 }
 
-export const PRODUCTION_FEATURES: Features = { push: true, staticModules: false, syncSources: true, scheduledSync: false }
+export const PRODUCTION_FEATURES: Features = { push: true, staticModules: false, syncSources: true, scheduledSync: true }

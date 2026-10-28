@@ -230,6 +230,6 @@ describe('fuentes: estado honesto de Facebook e Instagram', () => {
     expect(screen.getByText('Nunca')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Sincronizar ahora' })).toBeDisabled() // sin credenciales no se puede sincronizar
     expect(screen.getByText('Sin errores registrados.')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Importar una publicación por enlace' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Importar publicaciones de Facebook o Instagram' })).toBeInTheDocument()
   })
 })

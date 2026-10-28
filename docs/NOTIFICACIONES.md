@@ -10,7 +10,7 @@ Notificaciones **reales** en el celular o la computadora del vecino cuando se pu
 Panel → publicar noticia / confirmar alerta
         └─ reglas editoriales (shared/notificationPolicy.ts)  → notification_log (clave única = sin duplicados)
               └─ ctx.waitUntil: primera tanda inmediata ─┐
-              └─ cron cada 5 min: continúa lotes y reintentos ─┴→ notification_deliveries (una fila por aviso+dispositivo)
+              └─ cron cada minuto: continúa lotes y reintentos ─┴→ notification_deliveries (una fila por aviso+dispositivo)
                         └─ POST cifrado al servicio push (FCM / Mozilla / Apple / Windows) → el navegador muestra el aviso
 ```
 
@@ -72,9 +72,9 @@ Cargan `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY_JWK`. `VAPID_SUBJECT` (URL públi
 
 Límites relevantes: ≈50 subrequests y **10 ms de CPU por invocación**, 100 000 solicitudes/día, D1 100 000 escrituras/día.
 
-- Cron `*/5 * * * *` = 288 ejecuciones/día; sin avisos pendientes consulta una sola fila de D1.
+- Cron `* * * * *` (desde el Sprint 06) = 1440 ejecuciones/día; sin avisos pendientes ni fuentes habilitadas solo hace dos lecturas de D1.
 - **Lote de 12 dispositivos por invocación** (`PUSH_BATCH_SIZE`). El cifrado cuesta ≈0,3–0,45 ms por mensaje (medido en Node; se reutiliza una clave efímera por invocación). En workerd real **todavía no está medido**: después del primer envío real hay que mirar el `cpuTime` en Observability; si hubiera errores «Exceeded CPU», bajar el lote.
-- Consecuencia: la primera tanda sale al instante (al publicar) y el resto cada 5 minutos → ≈ 12 dispositivos cada 5 min, es decir **100 suscriptores se completan en ≈ 40 min**. Las alertas urgentes se atienden primero. Si la audiencia crece, las opciones son: Workers de pago (CPU 30 s; subir el lote a 40) o encadenar tandas (pendiente, requiere verificar llamadas del Worker a sí mismo).
+- Consecuencia: la primera tanda sale al instante (al publicar) y el resto cada minuto → ≈ 12 dispositivos por minuto, es decir **100 suscriptores se completan en ≈ 9 min**. Las alertas urgentes se atienden primero. Si la audiencia crece, las opciones son: Workers de pago (CPU 30 s; subir el lote a 40) o encadenar tandas (pendiente, requiere verificar llamadas del Worker a sí mismo).
 - Escrituras D1 por aviso ≈ 1 + dispositivos × 2: con 500 suscriptores y 10 avisos al día ≈ 10 000 escrituras.
 - Tope de 5000 dispositivos activos.
 

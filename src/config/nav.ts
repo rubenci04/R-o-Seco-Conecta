@@ -1,4 +1,4 @@
-import { Bell, Building2, Bus, CalendarDays, Flower2, House, Info, Landmark, MapPinned, Map, Menu, Newspaper, Radio, Settings, type LucideIcon } from 'lucide-react'
+import { Bell, Building2, Bus, CalendarDays, Flower2, House, Info, Landmark, MapPinned, Map, Menu, Newspaper, Radio, Settings, Trash2, type LucideIcon } from 'lucide-react'
 
 export interface NavItem {
   to: string
@@ -17,6 +17,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/mapa', label: 'Explorá Río Seco', short: 'Mapa', icon: Map, description: 'Mapa con lugares de interés' },
   { to: '/noticias', label: 'Noticias', icon: Newspaper, description: 'Novedades con fuente y fecha' },
   { to: '/alertas', label: 'Alertas', icon: Bell, description: 'Avisos importantes' },
+  { to: '/residuos', label: 'Residuos', icon: Trash2, description: 'Recolección y limpieza urbana' },
   { to: '/radios', label: 'Radios', icon: Radio, description: 'Emisoras de la zona' },
   { to: '/agenda', label: 'Agenda', icon: CalendarDays, description: 'Eventos, festividades y actividades' },
   { to: '/obituarios', label: 'Obituarios', icon: Flower2, description: 'Comunicados verificados' },

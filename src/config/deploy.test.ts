@@ -25,8 +25,8 @@ describe('despliegue dinámico: wrangler.jsonc', () => {
     expect(db.database_id).not.toBe('00000000-0000-0000-0000-000000000000')
     expect(existsSync(db.migrations_dir)).toBe(true)
   })
-  it('el cron es solo de notificaciones (cada 5 min) y no hay secretos ni variables sensibles en el archivo', () => {
-    expect(cfg.triggers).toEqual({ crons: ['*/5 * * * *'] })
+  it('el cron (cada minuto) solo trabaja si hay envíos pendientes o una fuente habilitada con credenciales y no hay secretos ni variables sensibles en el archivo', () => {
+    expect(cfg.triggers).toEqual({ crons: ['* * * * *'] })
     expect(Object.keys(cfg.vars)).toEqual(['VAPID_SUBJECT']) // contacto público; las claves VAPID son secretos de Cloudflare
     expect(cfg.vars.VAPID_SUBJECT).toMatch(/^https:\/\//)
     expect(JSON.stringify(cfg).toLowerCase().replace(/vapid_subject/g, '')).not.toMatch(/token|secret|password|private|vapid|api[_-]?key/)
@@ -59,7 +59,7 @@ describe('el Worker solo atiende /api/*; lo demás lo sirven los assets (fallbac
     }
   })
   it('las funciones preparadas pero no activas están apagadas en producción', () => {
-    expect(PRODUCTION_FEATURES).toEqual({ push: true, staticModules: false, syncSources: true, scheduledSync: false })
+    expect(PRODUCTION_FEATURES).toEqual({ push: true, staticModules: false, syncSources: true, scheduledSync: true })
   })
 })
 

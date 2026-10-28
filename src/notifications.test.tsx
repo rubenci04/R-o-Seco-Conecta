@@ -50,11 +50,11 @@ describe('Configuración → Mis notificaciones', () => {
     for (const off of [/Noticias institucionales/, /Eventos y festividades/, /Cultura/, /Actividades deportivas/, /Educación/, /Salud/, /Otras novedades/, /Obituarios/]) expect(checked(off), String(off)).toBe(false)
   })
 
-  it('ofrece los 13 temas, incluidos los obituarios en un grupo aparte y de elección expresa', async () => {
+  it('ofrece los 14 temas, incluidos los obituarios en un grupo aparte y de elección expresa', async () => {
     mocked.getPushStatus.mockResolvedValue({ kind: 'off', permissionGranted: false })
     renderAt('/configuracion/notificaciones')
     await screen.findByRole('button', { name: /Activar notificaciones/ })
-    expect(screen.getAllByRole('checkbox')).toHaveLength(13)
+    expect(screen.getAllByRole('checkbox')).toHaveLength(14)
     expect(screen.getByText(/Solo los recibís si los elegís vos/)).toBeInTheDocument()
   })
 

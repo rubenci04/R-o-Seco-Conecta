@@ -194,7 +194,7 @@ describe('suscripciones: validación, propiedad y baja', () => {
     const h = await harness(await vapidEnv())
     const cfg = (await h.call('GET', '/api/public/push/config')).json
     expect(cfg.enabled).toBe(true)
-    expect(cfg.topics.map((t: { id: string }) => t.id)).toEqual(['urgente', 'agua', 'energia', 'calles', 'meteorologica', 'institucional', 'eventos', 'cultura', 'deportes', 'educacion', 'salud', 'otros', 'obituarios'])
+    expect(cfg.topics.map((t: { id: string }) => t.id)).toEqual(['urgente', 'agua', 'energia', 'calles', 'residuos', 'meteorologica', 'institucional', 'eventos', 'cultura', 'deportes', 'educacion', 'salud', 'otros', 'obituarios'])
     expect(JSON.stringify(cfg)).not.toContain('"d"')
     expect(JSON.stringify(cfg)).not.toContain(JSON.parse(h.env.VAPID_PRIVATE_KEY_JWK!).d)
   })

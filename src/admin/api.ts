@@ -121,6 +121,10 @@ export interface SourceInfo {
   lastCheckedAt: string | null
   nextAttemptAt: string | null
   lastError: string | null
+  pollIntervalSeconds?: number
+  consecutiveFailures?: number
+  importedPosts?: number
+  lastRun?: { startedAt: string; outcome: string; fetched: number; inserted: number; duplicates: number } | null
 }
 export interface Dashboard {
   posts: { published: number; draft: number; pending: number; rejected: number; withdrawn: number; needsReview: number }

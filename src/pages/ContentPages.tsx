@@ -3,6 +3,7 @@ import { Bell, CalendarDays, Flower2, Newspaper } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { AlertCard, EventCard, NewsCard, ObituaryCard } from '@/components/content/ContentCards'
+import { FacebookTimeline } from '@/components/community/FacebookTimeline'
 import { ExternalLink } from '@/components/shared/ExternalLink'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { Async, EmptyState } from '@/components/shared/States'
@@ -91,6 +92,11 @@ export function NewsPage() {
         </ul>
       </nav>
       <UpdatedAt state={state} />
+      {!category && (
+        <div className="mb-5">
+          <FacebookTimeline id="facebook-noticias" />
+        </div>
+      )}
       <Async
         state={state}
         isEmpty={(d) => d.length === 0}

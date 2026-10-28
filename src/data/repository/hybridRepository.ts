@@ -28,4 +28,5 @@ export class HybridRepository implements DataRepository {
   getPlaces = () => this.local.getPlaces()
   getEmergencyNumbers = () => this.local.getEmergencyNumbers()
   getHeritage = () => this.local.getHeritage()
+  getWaste = () => this.local.getWaste()
 }

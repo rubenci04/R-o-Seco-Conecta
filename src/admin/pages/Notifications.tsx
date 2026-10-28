@@ -224,7 +224,7 @@ export function NotificationsAdmin() {
           <TestDevices />
           <Card className="mt-4 space-y-2">
             <CardTitle>Procesar pendientes</CardTitle>
-            <p className="text-sm text-muted-foreground">Un cron cada 5 minutos continúa los envíos y los reintentos. Este botón solo adelanta esa tarea; no crea avisos nuevos.</p>
+            <p className="text-sm text-muted-foreground">Un cron cada minuto continúa los envíos y los reintentos. Este botón solo adelanta esa tarea; no crea avisos nuevos.</p>
             {act.message && <Notice tone={act.message.tone}>{act.message.text}</Notice>}
             <Button size="sm" variant="outline" disabled={act.busy} onClick={() => void act.run(async () => { await api.post('/notifications/process'); reload() }, 'Se procesó una tanda de envíos.')}>Procesar ahora</Button>
           </Card>

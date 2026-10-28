@@ -186,3 +186,42 @@ test('mi cuenta y panel: la contraseña exige 12 caracteres; el panel no se desb
   await page.goto('/admin')
   await expect(page.getByText('Estado de las fuentes')).toBeVisible()
 })
+
+test('importación asistida: varias publicaciones con vista previa, duplicados y clasificación de residuos', async ({ page, request }, info) => {
+  const t = Date.now()
+  // Palabras únicas por ejecución: dos corridas sobre la misma base no deben tomarse por texto casi idéntico.
+  const uniq = [1, 2, 3, 4, 5, 6].map((n) => `k${t}${n}`).join(' ')
+  await login(page)
+  await page.goto('/admin/fuentes')
+  await page.getByRole('button', { name: 'Varias a la vez' }).click()
+  const bulk = [
+    `https://www.facebook.com/ComunaDeRioSeco/posts/${t}1`,
+    'Fecha: 2026-10-28 09:30',
+    `Se suspende la recolección de residuos de hoy por las intensas lluvias (prueba ${tag(info.project.name)} ${uniq}).`,
+    '---',
+    `https://www.facebook.com/ComunaDeRioSeco/posts/${t}2`,
+    `Con inmenso dolor comunicamos que partió a la casa del Padre una vecina de prueba ${t}. Sus restos serán velados en su domicilio ${uniq}.`,
+  ].join('\n')
+  await page.getByLabel('Publicaciones').fill(bulk)
+  await page.getByRole('button', { name: 'Analizar y ver vista previa' }).click()
+  const preview = page.getByRole('region', { name: 'Vista previa de la importación' })
+  await expect(preview.getByText('Se publicará')).toBeVisible()
+  await expect(preview.getByText(/Recolección de residuos y limpieza urbana \(\d+ %\)/)).toBeVisible()
+  await expect(preview.getByText(/Una persona deberá confirmarlo antes de notificar/)).toBeVisible()
+  await expect(preview.getByText('Quedará en revisión (posible obituario)')).toBeVisible()
+  expect((await request.get('/api/public/feed')).status()).toBe(200) // la vista previa no guardó nada
+  await page.getByRole('button', { name: /Confirmar e importar 2 publicaciones/ }).click()
+  await expect(page.getByText('Importación terminada.')).toBeVisible()
+
+  // La suspensión se ve en el feed y en el filtro de residuos (una sola publicación); el obituario NO se publica solo.
+  const feed = (await (await request.get('/api/public/feed?limite=50')).json()) as Array<{ title: string; body?: string; categories: string[] }>
+  const waste = feed.filter((p) => p.title.includes('Se suspende la recolección') && p.categories.includes('residuos'))
+  expect(waste.length).toBeGreaterThanOrEqual(1)
+  expect(feed.some((p) => p.body?.includes('vecina de prueba ' + t))).toBe(false)
+  // Y los mismos textos ahora figuran como duplicados.
+  await page.getByRole('button', { name: 'Varias a la vez' }).click()
+  await page.getByLabel('Publicaciones').fill(bulk.split('\n---\n')[0])
+  await page.getByRole('button', { name: 'Analizar y ver vista previa' }).click()
+  await expect(page.getByText('Duplicada: se omite')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Confirmar e importar 0 publicaciones/ })).toBeDisabled()
+})

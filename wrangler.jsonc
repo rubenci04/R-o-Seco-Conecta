@@ -19,10 +19,10 @@
       "migrations_dir": "migrations"
     }
   ],
-  // Cron cada 5 minutos: continúa lotes grandes de notificaciones, reintenta envíos fallidos y limpia datos viejos.
-  // NO sincroniza Facebook/Instagram (`scheduledSync` sigue desactivado hasta el Sprint 06). Sin avisos pendientes
-  // solo consulta una fila de D1 (≈288 consultas/día).
-  "triggers": { "crons": ["*/5 * * * *"] },
+  // Cron cada minuto: continúa lotes de notificaciones y reintentos (12 envíos por tanda por el límite de CPU del plan gratuito)
+  // y, SOLO si hay una fuente habilitada con credenciales, la consulta incrementalmente. Sin fuentes habilitadas solo hace
+  // dos lecturas de D1 por ejecución y NO llama a Meta. (Ejecutarla cada minuto no garantiza que Meta entregue datos nuevos cada minuto.)
+  "triggers": { "crons": ["* * * * *"] },
   // Contacto VAPID (RFC 8292): URL pública, no secreta. Los servicios push la usan para contactar al operador.
   "vars": { "VAPID_SUBJECT": "https://rio-seco-conecta.rea-04.workers.dev" },
   "observability": { "enabled": true }

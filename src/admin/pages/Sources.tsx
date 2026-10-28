@@ -1,12 +1,12 @@
-import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
-import { formatTucuman, localInputToIso, nowLocalInput } from '@/lib/tucuman'
+import { formatTucuman } from '@/lib/tucuman'
 import { api, type SourceInfo } from '../api'
 import { canEdit, isAdmin, useAuth } from '../auth'
-import { Field, Notice, PageTitle, TextArea, TextInput, useAction, useAdminData } from '../ui'
+import { Notice, PageTitle, useAction, useAdminData } from '../ui'
+import { ImportPosts } from './ImportPosts'
 
 const STATUS: Record<string, string> = {
   'not-configured': 'Sin credenciales',
@@ -27,46 +27,6 @@ interface SyncRun {
   duplicates: number
   error: string | null
   retry_after: string | null
-}
-
-function ImportByLink({ onDone }: { onDone: () => void }) {
-  const act = useAction()
-  const [f, setF] = useState({ url: '', text: '', publishedAt: nowLocalInput() })
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
-    const r = await act.run(
-      () => api.post<{ postId: number; status: string }>('/posts/import-link', { url: f.url, text: f.text, publishedAt: localInputToIso(f.publishedAt) || undefined }),
-      'Publicación importada. Revisala en «Noticias».',
-    )
-    if (r) {
-      setF({ url: '', text: '', publishedAt: nowLocalInput() })
-      onDone()
-    }
-  }
-  return (
-    <Card className="space-y-3">
-      <CardTitle>Importar una publicación por enlace</CardTitle>
-      <p className="text-sm text-muted-foreground">
-        Pegá el enlace de la publicación de Facebook o Instagram de la Comuna y el texto tal como figura en ella. <strong>No se descarga nada de la red social</strong>: el sistema solo registra el enlace como
-        procedencia y evita duplicados. Pasa por la misma revisión y clasificación que cualquier noticia.
-      </p>
-      <form onSubmit={submit} className="space-y-3">
-        {act.message && <Notice tone={act.message.tone}>{act.message.text}</Notice>}
-        <Field label="Enlace de la publicación" htmlFor="imp-url">
-          <TextInput id="imp-url" type="url" required placeholder="https://www.facebook.com/…  o  https://www.instagram.com/p/…" value={f.url} onChange={(e) => setF({ ...f, url: e.target.value })} />
-        </Field>
-        <Field label="Texto de la publicación" htmlFor="imp-text">
-          <TextArea id="imp-text" required rows={6} maxLength={20000} value={f.text} onChange={(e) => setF({ ...f, text: e.target.value })} />
-        </Field>
-        <Field label="Fecha original de la publicación (Tucumán)" htmlFor="imp-date">
-          <TextInput id="imp-date" type="datetime-local" required value={f.publishedAt} onChange={(e) => setF({ ...f, publishedAt: e.target.value })} />
-        </Field>
-        <Button type="submit" disabled={act.busy}>
-          Importar
-        </Button>
-      </form>
-    </Card>
-  )
 }
 
 export function SourcesAdmin() {
@@ -107,6 +67,13 @@ export function SourcesAdmin() {
                 <div><dt className="text-xs text-muted-foreground">Última comprobación</dt><dd>{s.lastCheckedAt ? formatTucuman(s.lastCheckedAt) : '—'}</dd></div>
                 <div><dt className="text-xs text-muted-foreground">Próxima comprobación</dt><dd>{s.automatic ? (s.nextAttemptAt ? formatTucuman(s.nextAttemptAt) : 'En el próximo ciclo') : 'No programada'}</dd></div>
               </dl>
+              {s.kind !== 'manual' && (
+                <p className="text-sm text-muted-foreground">
+                  Publicaciones incorporadas: <strong>{s.importedPosts ?? 0}</strong>
+                  {s.lastRun ? ` · Última corrida: ${STATUS[s.lastRun.outcome] ?? s.lastRun.outcome} (${s.lastRun.fetched} leídas, ${s.lastRun.inserted} nuevas, ${s.lastRun.duplicates} repetidas)` : ' · Todavía no hubo corridas'}
+                  {s.pollIntervalSeconds ? ` · Se consulta cada ${s.pollIntervalSeconds} s si está habilitada y con credenciales` : ''}
+                </p>
+              )}
               {s.lastError && <p className="text-sm text-danger">Último error: {s.lastError}</p>}
               {isAdmin(admin) && s.kind !== 'manual' && (
                 <Button size="sm" variant="outline" disabled={act.busy || !s.readiness.ready} onClick={() => void sync(s.id)}>
@@ -118,7 +85,7 @@ export function SourcesAdmin() {
         ))}
       </ul>
 
-      {canEdit(admin) && <ImportByLink onDone={() => { reload(); runs.reload() }} />}
+      {canEdit(admin) && <ImportPosts onDone={() => { reload(); runs.reload() }} />}
 
       <Card className="mt-4 space-y-2">
         <CardTitle>Errores de sincronización recientes</CardTitle>

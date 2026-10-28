@@ -53,6 +53,10 @@ export default function ServicesPage() {
     <>
       <PageHeader icon={Landmark} title="Servicios y lugares útiles" subtitle="Datos documentados, con su fuente. Lo que falta, figura como pendiente." />
 
+      <Button asChild variant="outline" className="mb-3">
+        <Link to="/residuos">Recolección de residuos y limpieza urbana</Link>
+      </Button>
+
       <Button asChild variant="outline" className="mb-5">
         <Link to={category ? `/mapa?capas=${layerParamForCategory(category)}` : "/mapa"}>
           <Map className="size-4" aria-hidden />
