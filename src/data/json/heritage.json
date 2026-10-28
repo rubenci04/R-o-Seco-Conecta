@@ -1,0 +1,115 @@
+[
+  {
+    "id": "historia",
+    "title": "Historia de Río Seco",
+    "summary": "Una comunidad con identidad histórica, industrial, cultural y religiosa.",
+    "icon": "landmark",
+    "claims": [
+      {
+        "kind": "documentado",
+        "text": "Según Cadena 3, Río Seco es un pueblo que «nació a la par de un ingenio».",
+        "source": { "label": "Cadena 3 · Río Seco, la capital del pesebre, está en Tucumán", "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912", "date": "2023-12-08" }
+      },
+      { "kind": "equipo", "text": "El equipo de Río Seco Conecta describe al pueblo como una comunidad de fuerte identidad histórica, industrial, cultural y religiosa." },
+      { "kind": "pendiente", "text": "Fundación, hitos y personajes: falta documentación." }
+    ],
+    "pendingDetails": ["Fecha y circunstancias de la fundación", "Línea de tiempo con fuentes", "Fotografías históricas y reseñas cedidas por la Comuna"]
+  },
+  {
+    "id": "ingenio",
+    "title": "El ingenio y su importancia histórica",
+    "summary": "El ingenio azucarero está en el origen del pueblo.",
+    "icon": "factory",
+    "claims": [
+      {
+        "kind": "documentado",
+        "text": "La nota de Cadena 3 señala que el pueblo nació junto a un ingenio.",
+        "source": { "label": "Cadena 3", "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912", "date": "2023-12-08" }
+      },
+      { "kind": "pendiente", "text": "Nombre del ingenio, años de actividad y su impacto en la comunidad: falta documentación." }
+    ],
+    "pendingDetails": ["Nombre y período de funcionamiento", "Testimonios de familias del ingenio", "Fotografías de archivo"]
+  },
+  {
+    "id": "clubes-deporte",
+    "title": "Los clubes y el deporte local",
+    "summary": "Los clubes son espacios de encuentro y de identidad del pueblo.",
+    "icon": "trophy",
+    "claims": [{ "kind": "pendiente", "text": "Todavía no relevamos los clubes ni disciplinas: no publicamos nombres sin documentación." }],
+    "pendingDetails": ["Listado de clubes con dirección y contacto", "Disciplinas y torneos", "Historia de cada institución"]
+  },
+  {
+    "id": "iglesia-tradiciones",
+    "title": "La iglesia y las tradiciones",
+    "summary": "La vida religiosa acompaña las tradiciones de Río Seco.",
+    "icon": "church",
+    "claims": [
+      { "kind": "equipo", "text": "El equipo del proyecto destaca la dimensión religiosa de la comunidad." },
+      { "kind": "pendiente", "text": "Advocación, historia del templo y fiestas patronales: falta documentación." }
+    ],
+    "pendingDetails": ["Historia de la iglesia", "Calendario de celebraciones religiosas", "Horarios de misas (confirmados por la parroquia)"]
+  },
+  {
+    "id": "plaza-espacios",
+    "title": "La plaza y espacios comunitarios",
+    "summary": "Lugares de reunión y de celebración del pueblo.",
+    "icon": "trees",
+    "claims": [{ "kind": "pendiente", "text": "Todavía no relevamos los espacios comunitarios con datos verificados." }],
+    "pendingDetails": ["Ubicación y descripción de la plaza", "Otros espacios de uso comunitario", "Fotografías oficiales"]
+  },
+  {
+    "id": "desfiles-17-agosto",
+    "title": "Los desfiles del 17 de agosto",
+    "summary": "Una cita anual de la comunidad.",
+    "icon": "flag",
+    "claims": [
+      { "kind": "equipo", "text": "Según el equipo del proyecto, cada 17 de agosto se realizan desfiles en Río Seco." },
+      { "kind": "pendiente", "text": "Recorrido, instituciones participantes y programa: falta documentación." }
+    ],
+    "pendingDetails": ["Programa y recorrido", "Instituciones participantes", "Fotografías de ediciones anteriores"]
+  },
+  {
+    "id": "tradicion-pesebres",
+    "title": "Río Seco y la tradición de los pesebres",
+    "summary": "Conocido como la capital del pesebre en Tucumán.",
+    "icon": "star",
+    "featured": true,
+    "claims": [
+      {
+        "kind": "documentado",
+        "text": "Cadena 3 titula su nota «Río Seco, la capital del pesebre, está en Tucumán» y habla de una tradición «de mucho tiempo».",
+        "source": { "label": "Cadena 3 · Redacción (08/12/2023)", "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912", "date": "2023-12-08" }
+      },
+      { "kind": "equipo", "text": "Según el equipo del proyecto, la tradición comienza alrededor del 8 de diciembre, con la preparación y presentación de pesebres en las casas." },
+      { "kind": "pendiente", "text": "Origen de la tradición y evolución a lo largo de los años: falta documentación." }
+    ],
+    "pendingDetails": ["Origen e historia de la tradición", "Fotografías oficiales de pesebres", "Reseñas y relatos de vecinos"]
+  },
+  {
+    "id": "mejores-pesebres",
+    "title": "La elección de los mejores pesebres",
+    "summary": "Se elige el mejor pesebre, casa por casa y por barrios.",
+    "icon": "award",
+    "claims": [
+      {
+        "kind": "documentado",
+        "text": "Según Cadena 3, todos los años se elige casa por casa cuál es el mejor pesebre.",
+        "source": { "label": "Cadena 3", "url": "https://www.cadena3.com/noticia/turno-noche/rio-seco-la-capital-del-pesebre-esta-en-tucuman_375912", "date": "2023-12-08" }
+      },
+      { "kind": "equipo", "text": "El equipo del proyecto indica que la elección se realiza por barrios y por domicilios." },
+      { "kind": "pendiente", "text": "Criterios, jurado, premios y ganadores por año: falta documentación." }
+    ],
+    "pendingDetails": ["Bases y criterios de la elección", "Ganadores por edición (con año)", "Fotografías de los pesebres premiados"]
+  },
+  {
+    "id": "festival-pesebres",
+    "title": "El festival artístico de los pesebres",
+    "summary": "La celebración culmina con actividades y un festival.",
+    "icon": "music",
+    "claims": [
+      { "kind": "equipo", "text": "Según el equipo del proyecto, la celebración culmina con actividades y un festival que ha contado con artistas reconocidos." },
+      { "kind": "pendiente", "text": "Ediciones, años y artistas participantes: no se publican nombres sin documentación." }
+    ],
+    "pendingDetails": ["Cartelera por edición (con fuente)", "Fechas y lugar del festival", "Material cedido por la Comuna"]
+  }
+]

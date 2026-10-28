@@ -1,0 +1,957 @@
+{
+  "generatedFromFetchAt": "2026-10-28T13:41:20.030Z",
+  "pagesImported": 40,
+  "totalServices": {
+    "weekday": 835,
+    "saturday": 532,
+    "sunday": 532
+  },
+  "perPage": [
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/acheral/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Acheral",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/aguilares/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Aguilares",
+      "imported": {
+        "weekday": 40,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 40,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 40,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/alberdi/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Alberdi",
+      "imported": {
+        "weekday": 11,
+        "saturday": 9,
+        "sunday": 9
+      },
+      "declared": {
+        "weekday": 11,
+        "saturday": 9,
+        "sunday": 9
+      },
+      "faqUniqueTimes": {
+        "weekday": 11,
+        "saturday": 9,
+        "sunday": 9
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/arcadia/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Arcadia",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/caceres/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Cáceres",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/concepcion/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Concepción",
+      "imported": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "declared": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "faqUniqueTimes": {
+        "weekday": 44,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "matchesDeclared": true,
+      "faqDifferences": [
+        {
+          "dayType": "weekday",
+          "services": 45,
+          "faqTimes": 44,
+          "repeatedDepartures": [
+            "15:25"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/famailla/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Famaillá",
+      "imported": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "declared": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "faqUniqueTimes": {
+        "weekday": 45,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "matchesDeclared": true,
+      "faqDifferences": [
+        {
+          "dayType": "weekday",
+          "services": 46,
+          "faqTimes": 45,
+          "repeatedDepartures": [
+            "12:45"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/fronterita/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Fronterita",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/la-cocha/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "La Cocha",
+      "imported": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "declared": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "faqUniqueTimes": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/leon-rouges/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Leon Rouges",
+      "imported": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "declared": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "faqUniqueTimes": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/los-pizarro/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Los Pizarro",
+      "imported": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "declared": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "faqUniqueTimes": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/lules/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Lules",
+      "imported": {
+        "weekday": 5,
+        "saturday": 4,
+        "sunday": 4
+      },
+      "declared": {
+        "weekday": 5,
+        "saturday": 4,
+        "sunday": 4
+      },
+      "faqUniqueTimes": {
+        "weekday": 5,
+        "saturday": 4,
+        "sunday": 4
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/monteros/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Monteros",
+      "imported": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "declared": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "faqUniqueTimes": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/nueva-baviera/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Nueva Baviera",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-huacra/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Río Huacra",
+      "imported": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "declared": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "faqUniqueTimes": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/acheral",
+      "direction": "from-rio-seco",
+      "locality": "Acheral",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/aguilares",
+      "direction": "from-rio-seco",
+      "locality": "Aguilares",
+      "imported": {
+        "weekday": 37,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 37,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 37,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/alberdi",
+      "direction": "from-rio-seco",
+      "locality": "Alberdi",
+      "imported": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "declared": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "faqUniqueTimes": {
+        "weekday": 10,
+        "saturday": 8,
+        "sunday": 8
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/arcadia",
+      "direction": "from-rio-seco",
+      "locality": "Arcadia",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/caceres",
+      "direction": "from-rio-seco",
+      "locality": "Cáceres",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/concepcion",
+      "direction": "from-rio-seco",
+      "locality": "Concepción",
+      "imported": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "declared": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "faqUniqueTimes": {
+        "weekday": 45,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "matchesDeclared": true,
+      "faqDifferences": [
+        {
+          "dayType": "weekday",
+          "services": 46,
+          "faqTimes": 45,
+          "repeatedDepartures": [
+            "13:30"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/famailla",
+      "direction": "from-rio-seco",
+      "locality": "Famaillá",
+      "imported": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "declared": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "faqUniqueTimes": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/fronterita",
+      "direction": "from-rio-seco",
+      "locality": "Fronterita",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/la-cocha",
+      "direction": "from-rio-seco",
+      "locality": "La Cocha",
+      "imported": {
+        "weekday": 7,
+        "saturday": 7,
+        "sunday": 7
+      },
+      "declared": {
+        "weekday": 7,
+        "saturday": 7,
+        "sunday": 7
+      },
+      "faqUniqueTimes": {
+        "weekday": 7,
+        "saturday": 7,
+        "sunday": 7
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/leon-rouges",
+      "direction": "from-rio-seco",
+      "locality": "Leon Rouges",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/los-pizarro",
+      "direction": "from-rio-seco",
+      "locality": "Los Pizarro",
+      "imported": {
+        "weekday": 1,
+        "saturday": 2,
+        "sunday": 2
+      },
+      "declared": {
+        "weekday": 1,
+        "saturday": 2,
+        "sunday": 2
+      },
+      "faqUniqueTimes": {
+        "weekday": 1,
+        "saturday": 2,
+        "sunday": 2
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/lules",
+      "direction": "from-rio-seco",
+      "locality": "Lules",
+      "imported": {
+        "weekday": 4,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "declared": {
+        "weekday": 4,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "faqUniqueTimes": {
+        "weekday": 4,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/monteros",
+      "direction": "from-rio-seco",
+      "locality": "Monteros",
+      "imported": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "declared": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "faqUniqueTimes": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/nueva-baviera",
+      "direction": "from-rio-seco",
+      "locality": "Nueva Baviera",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/rio-huacra",
+      "direction": "from-rio-seco",
+      "locality": "Río Huacra",
+      "imported": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "declared": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "faqUniqueTimes": {
+        "weekday": 3,
+        "saturday": 3,
+        "sunday": 3
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/san-miguel-de-tucuman",
+      "direction": "from-rio-seco",
+      "locality": "San Miguel de Tucumán",
+      "imported": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "declared": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "faqUniqueTimes": {
+        "weekday": 45,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/santa-ana",
+      "direction": "from-rio-seco",
+      "locality": "Santa Ana",
+      "imported": {
+        "weekday": 2,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": 2,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 2,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/santa-lucia",
+      "direction": "from-rio-seco",
+      "locality": "Santa Lucía",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/sargento-moya",
+      "direction": "from-rio-seco",
+      "locality": "Sargento Moya",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/rio-seco/villa-quinteros",
+      "direction": "from-rio-seco",
+      "locality": "Villa Quinteros",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/san-miguel-de-tucuman/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "San Miguel de Tucumán",
+      "imported": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "declared": {
+        "weekday": 46,
+        "saturday": 29,
+        "sunday": 29
+      },
+      "faqUniqueTimes": {
+        "weekday": 44,
+        "saturday": 28,
+        "sunday": 28
+      },
+      "matchesDeclared": true,
+      "faqDifferences": [
+        {
+          "dayType": "weekday",
+          "services": 46,
+          "faqTimes": 44,
+          "repeatedDepartures": [
+            "11:45",
+            "23:00"
+          ]
+        },
+        {
+          "dayType": "saturday",
+          "services": 29,
+          "faqTimes": 28,
+          "repeatedDepartures": [
+            "23:00"
+          ]
+        },
+        {
+          "dayType": "sunday",
+          "services": 29,
+          "faqTimes": 28,
+          "repeatedDepartures": [
+            "23:00"
+          ]
+        }
+      ]
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/santa-ana/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Santa Ana",
+      "imported": {
+        "weekday": 2,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": 2,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 2,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/santa-lucia/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Santa Lucía",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/sargento-moya/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Sargento Moya",
+      "imported": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "declared": {
+        "weekday": null,
+        "saturday": null,
+        "sunday": null
+      },
+      "faqUniqueTimes": {
+        "weekday": 0,
+        "saturday": 0,
+        "sunday": 0
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    },
+    {
+      "page": "https://colectivostucuman.com.ar/horarios/villa-quinteros/rio-seco",
+      "direction": "to-rio-seco",
+      "locality": "Villa Quinteros",
+      "imported": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "declared": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "faqUniqueTimes": {
+        "weekday": 41,
+        "saturday": 25,
+        "sunday": 25
+      },
+      "matchesDeclared": true,
+      "faqDifferences": []
+    }
+  ],
+  "routesWithoutServices": [
+    "Cáceres → Río Seco",
+    "Fronterita → Río Seco",
+    "Nueva Baviera → Río Seco",
+    "Río Seco → Cáceres",
+    "Río Seco → Fronterita",
+    "Río Seco → Nueva Baviera",
+    "Río Seco → Santa Lucía",
+    "Río Seco → Sargento Moya",
+    "Santa Lucía → Río Seco",
+    "Sargento Moya → Río Seco"
+  ],
+  "mismatches": []
+}

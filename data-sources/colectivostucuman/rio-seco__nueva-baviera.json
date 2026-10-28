@@ -1,0 +1,122 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/rio-seco/nueva-baviera",
+ "origin": "rio-seco",
+ "destination": "nueva-baviera",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Común S-N",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Río Seco",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s1",
+      "city": "Monteros",
+      "commentary": "B° Ñuñorco"
+     },
+     {
+      "id": "r0s2",
+      "city": "Fronterita",
+      "commentary": "Ingenio"
+     },
+     {
+      "id": "r0s3",
+      "city": "Acheral",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s4",
+      "city": "Nueva Baviera",
+      "commentary": "$undefined"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": []
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Río Seco",
+  "initialDestination": "Nueva Baviera",
+  "prices": [],
+  "suggestedDestinations": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Arcadia",
+   "Concepción",
+   "Famaillá",
+   "La Cocha",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Lules",
+   "Monteros",
+   "Río Huacra",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Villa Quinteros"
+  ]
+ },
+ "summary": {
+  "declared": {
+   "weekday": null,
+   "saturday": null,
+   "sunday": null
+  },
+  "faq": {
+   "weekday": [],
+   "saturday": [],
+   "sunday": []
+  },
+  "renderedCards": 0
+ }
+}

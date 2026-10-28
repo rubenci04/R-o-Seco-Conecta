@@ -1,0 +1,12 @@
+node_modules
+dist
+dev-dist
+.wrangler
+.dev.vars
+.env
+.env.*
+playwright-report
+test-results
+*.local
+.claude/settings.local.json
+*.jwk

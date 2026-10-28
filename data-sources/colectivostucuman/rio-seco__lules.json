@@ -1,0 +1,390 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/rio-seco/lules",
+ "origin": "rio-seco",
+ "destination": "lules",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Común S-N",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Río Seco",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s1",
+      "city": "Monteros",
+      "commentary": "B° Ñuñorco"
+     },
+     {
+      "id": "r0s2",
+      "city": "Fronterita",
+      "commentary": "Ingenio"
+     },
+     {
+      "id": "r0s3",
+      "city": "Acheral",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s4",
+      "city": "Nueva Baviera",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s5",
+      "city": "Famaillá",
+      "commentary": "Centro"
+     },
+     {
+      "id": "r0s6",
+      "city": "Lules",
+      "commentary": "Arco"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": [
+     {
+      "id": "r0t0",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "04:45"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "05:05"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "05:30"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "05:50"
+       }
+      ]
+     },
+     {
+      "id": "r0t1",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "04:45"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "05:05"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "05:30"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "05:50"
+       }
+      ]
+     },
+     {
+      "id": "r0t2",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "04:45"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "05:05"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "05:30"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "05:50"
+       }
+      ]
+     },
+     {
+      "id": "r0t3",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "05:25"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "05:45"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "06:10"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "06:30"
+       }
+      ]
+     },
+     {
+      "id": "r0t4",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "14:15"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "14:35"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "15:00"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "15:20"
+       }
+      ]
+     },
+     {
+      "id": "r0t5",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "14:20"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "14:40"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "15:05"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "15:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t6",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "14:20"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "14:40"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "15:05"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "15:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t7",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "15:40"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "16:00"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "16:25"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "16:45"
+       }
+      ]
+     },
+     {
+      "id": "r0t8",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "15:50"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "16:10"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "16:35"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "16:55"
+       }
+      ]
+     },
+     {
+      "id": "r0t9",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "15:50"
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "16:10"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "16:35"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "16:55"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Río Seco",
+  "initialDestination": "Lules",
+  "prices": [],
+  "suggestedDestinations": "$undefined"
+ },
+ "summary": {
+  "declared": {
+   "weekday": 4,
+   "saturday": 3,
+   "sunday": 3
+  },
+  "faq": {
+   "weekday": [
+    "04:45",
+    "05:25",
+    "14:15",
+    "15:40"
+   ],
+   "saturday": [
+    "04:45",
+    "14:20",
+    "15:50"
+   ],
+   "sunday": [
+    "04:45",
+    "14:20",
+    "15:50"
+   ]
+  },
+  "renderedCards": 4
+ }
+}

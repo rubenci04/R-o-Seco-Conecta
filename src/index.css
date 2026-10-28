@@ -1,0 +1,127 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Identidad Río Seco: celeste y blanco (letras del cartel, #398fca en el logo), con naranja como acento
+ * complementario y azul noche como contraste. Los celestes de texto/botones se oscurecen para cumplir WCAG AA.
+ */
+:root {
+  --background: #f4f9fd;
+  --foreground: #0f1b27;
+  --card: #ffffff;
+  --muted: #e7f0f8;
+  --muted-foreground: #46596b;
+  --border: #cfe0ee;
+  --brand: #398fca; /* celeste del logo: decorativo, no para texto pequeño */
+  --primary: #1769a8;
+  --primary-foreground: #ffffff;
+  --accent: #14588c;
+  --accent-soft: #dcecf8;
+  --orange: #b73b08; /* naranja complementario */
+  --orange-foreground: #ffffff;
+  --orange-soft: #ffe8d2;
+  --warning: #8f4300;
+  --warning-soft: #ffe8d2;
+  --danger: #a3261e;
+  --danger-soft: #fbe0dc;
+  --night: #0e1b2a;
+  --ring: #1769a8;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0b131b;
+  --foreground: #eaf3fa;
+  --card: #13202c;
+  --muted: #1a2a38;
+  --muted-foreground: #9db3c5;
+  --border: #27394a;
+  --brand: #5ab0ec;
+  --primary: #5ab0ec;
+  --primary-foreground: #04111c;
+  --accent: #86c6f3;
+  --accent-soft: #112b3f;
+  --orange: #ff8a3d;
+  --orange-foreground: #1d0c00;
+  --orange-soft: #3a2412;
+  --warning: #ffb26b;
+  --warning-soft: #3a2412;
+  --danger: #ff9c92;
+  --danger-soft: #451a16;
+  --night: #0e1b2a;
+  --ring: #86c6f3;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-orange: var(--orange);
+  --color-orange-foreground: var(--orange-foreground);
+  --color-orange-soft: var(--orange-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-night: var(--night);
+  --color-ring: var(--ring);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: ui-rounded, 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-rise,
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

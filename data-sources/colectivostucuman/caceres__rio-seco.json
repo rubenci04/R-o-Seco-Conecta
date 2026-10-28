@@ -1,0 +1,102 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/caceres/rio-seco",
+ "origin": "caceres",
+ "destination": "rio-seco",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Común S-N",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Cáceres",
+      "commentary": "Entrada"
+     },
+     {
+      "id": "r0s1",
+      "city": "Santa Lucía",
+      "commentary": "Iglesia"
+     },
+     {
+      "id": "r0s2",
+      "city": "Río Seco",
+      "commentary": "$undefined"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": []
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Cáceres",
+  "initialDestination": "Río Seco",
+  "prices": [],
+  "suggestedDestinations": [
+   "Famaillá",
+   "Lules",
+   "Monteros",
+   "San Miguel de Tucumán",
+   "Sargento Moya"
+  ]
+ },
+ "summary": {
+  "declared": {
+   "weekday": null,
+   "saturday": null,
+   "sunday": null
+  },
+  "faq": {
+   "weekday": [],
+   "saturday": [],
+   "sunday": []
+  },
+  "renderedCards": 0
+ }
+}

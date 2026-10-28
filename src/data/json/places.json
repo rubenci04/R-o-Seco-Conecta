@@ -1,0 +1,49 @@
+[
+  {
+    "id": "comisaria-rio-seco",
+    "name": "Comisaría de Río Seco",
+    "category": "policia",
+    "address": "Av. Himno Patrio s/n, Río Seco",
+    "phone": "03863-471081",
+    "description": "Figura en el listado de comisarías de la Unidad Regional Oeste de la Policía de Tucumán.",
+    "links": [{ "label": "Listado de comisarías (Policía de Tucumán)", "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm" }],
+    "sources": [{ "label": "Policía de Tucumán · Comisarías Unidad Regional Oeste", "url": "https://www.policiadetucuman.gov.ar/comisarias_oeste.htm", "date": "2026-10-28" }],
+    "verifiedAt": "2026-10-28",
+    "pending": ["hours"],
+    "dataNote": "Dirección y teléfono tal como los publica la Policía de Tucumán. La página no indica fecha de actualización ni horarios."
+  },
+  {
+    "id": "caps-rio-seco",
+    "name": "CAPS Río Seco",
+    "category": "salud",
+    "address": "Av. Himno Patrio s/n, Río Seco",
+    "description": "Centro de Atención Primaria de la Salud de Río Seco.",
+    "links": [{ "label": "Documento del Ministerio de Salud Pública (referencia inicial)", "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf" }],
+    "sources": [{ "label": "Referencia aportada por el equipo del proyecto", "url": "https://msptucuman.gov.ar/wordpress/wp-content/uploads/2025/10/1614-SPS-25-4o-parte.pdf" }],
+    "pending": ["phone", "hours"],
+    "dataNote": "Dirección aportada por el equipo del proyecto. El documento enlazado es un escaneo de la zona Sur (Graneros, Lamadrid, Taco Ralo…) y no menciona Río Seco, por lo que NO confirma este dato: falta verificarlo con el Ministerio de Salud o el propio CAPS."
+  },
+  {
+    "id": "farmacia-santa-rita",
+    "name": "Farmacia Santa Rita",
+    "category": "farmacias",
+    "address": "Av. Himno Patrio 211, Río Seco",
+    "sources": [{ "label": "Ahorro Farma · Farmacias Tucumán", "url": "https://sites.google.com/view/ahorrofarmaofertas/tucum%C3%A1n", "date": "2026-10-28" }],
+    "verifiedAt": "2026-10-28",
+    "pending": ["phone", "hours"],
+    "dataNote": "Nombre y dirección según el listado de Ahorro Farma (sitio de terceros). No publica teléfono ni horarios; no confirmado por la farmacia."
+  },
+  {
+    "id": "comuna-rio-seco",
+    "name": "Comuna de Río Seco",
+    "category": "comuna",
+    "description": "Gobierno local. Publica sus novedades en redes sociales.",
+    "links": [
+      { "label": "Facebook de la Comuna", "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/" },
+      { "label": "Instagram de la Comuna", "url": "https://www.instagram.com/comunaderioseco/" }
+    ],
+    "sources": [{ "label": "Redes oficiales de la Comuna", "url": "https://www.facebook.com/p/Comuna-De-Rio-Seco-61553018412844/" }],
+    "pending": ["address", "phone", "hours"],
+    "dataNote": "Domicilio, teléfono y horarios de atención pendientes de confirmación con la Comuna."
+  }
+]

@@ -1,0 +1,106 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/fronterita/rio-seco",
+ "origin": "fronterita",
+ "destination": "rio-seco",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Común N-S",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Fronterita",
+      "commentary": "Ingenio"
+     },
+     {
+      "id": "r0s1",
+      "city": "Monteros",
+      "commentary": "B° Ñuñorco"
+     },
+     {
+      "id": "r0s2",
+      "city": "Leon Rouges",
+      "commentary": "$undefined",
+      "isEstimated": true
+     },
+     {
+      "id": "r0s3",
+      "city": "Río Seco",
+      "commentary": "$undefined"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": []
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Fronterita",
+  "initialDestination": "Río Seco",
+  "prices": [],
+  "suggestedDestinations": [
+   "Famaillá",
+   "Lules",
+   "San Miguel de Tucumán"
+  ]
+ },
+ "summary": {
+  "declared": {
+   "weekday": null,
+   "saturday": null,
+   "sunday": null
+  },
+  "faq": {
+   "weekday": [],
+   "saturday": [],
+   "sunday": []
+  },
+  "renderedCards": 0
+ }
+}

@@ -1,0 +1,12 @@
+[
+  { "date": "01-01", "name": "Año Nuevo", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "03-24", "name": "Día Nacional de la Memoria por la Verdad y la Justicia", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "04-02", "name": "Día del Veterano y de los Caídos en la Guerra de Malvinas", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "05-01", "name": "Día del Trabajador", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "05-25", "name": "Día de la Revolución de Mayo", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "06-20", "name": "Paso a la Inmortalidad del General Manuel Belgrano", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "07-09", "name": "Día de la Independencia", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "09-24", "name": "Batalla de Tucumán", "scope": "provincial", "source": "Feriado provincial de Tucumán" },
+  { "date": "12-08", "name": "Inmaculada Concepción de María", "scope": "nacional", "source": "Ley 27.399" },
+  { "date": "12-25", "name": "Navidad", "scope": "nacional", "source": "Ley 27.399" }
+]

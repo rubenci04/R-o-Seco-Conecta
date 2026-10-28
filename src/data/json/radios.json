@@ -1,0 +1,16 @@
+[
+  {
+    "id": "activa-1031",
+    "name": "Radio Activa",
+    "frequency": "103.1 FM",
+    "siteUrl": "https://www.activa1031.fmmiradio.com/",
+    "tagline": "Sitio oficial de la emisora"
+  },
+  {
+    "id": "sudamericana-893",
+    "name": "Radio Sudamericana",
+    "frequency": "89.3 FM",
+    "siteUrl": "https://www.sudamericana893.com.ar/radio.php",
+    "tagline": "Sitio oficial de la emisora"
+  }
+]

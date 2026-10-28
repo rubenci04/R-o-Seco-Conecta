@@ -1,0 +1,2663 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/rio-seco/concepcion",
+ "origin": "rio-seco",
+ "destination": "concepcion",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Común N-S",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Río Seco",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s1",
+      "city": "Santa Lucía",
+      "commentary": "Iglesia"
+     },
+     {
+      "id": "r0s2",
+      "city": "Cáceres",
+      "commentary": "Entrada"
+     },
+     {
+      "id": "r0s3",
+      "city": "Sargento Moya",
+      "commentary": "$undefined"
+     },
+     {
+      "id": "r0s4",
+      "city": "Concepción",
+      "commentary": "Plaza"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": [
+     {
+      "id": "r0t0",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:00"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "13:15"
+       }
+      ]
+     },
+     {
+      "id": "r0t1",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:30"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "13:45"
+       }
+      ]
+     },
+     {
+      "id": "r0t2",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:45"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "14:00"
+       }
+      ]
+     },
+     {
+      "id": "r0t3",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:45"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "14:00"
+       }
+      ]
+     },
+     {
+      "id": "r0t4",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:55"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "14:10"
+       }
+      ]
+     },
+     {
+      "id": "r0t5",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "14:05"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "14:20"
+       }
+      ]
+     },
+     {
+      "id": "r0t6",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "14:05"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "14:20"
+       }
+      ]
+     },
+     {
+      "id": "r0t7",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "00:45"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:00"
+       }
+      ]
+     },
+     {
+      "id": "r0t8",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "00:45"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:00"
+       }
+      ]
+     },
+     {
+      "id": "r0t9",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "00:45"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:00"
+       }
+      ]
+     },
+     {
+      "id": "r0t10",
+      "dayType": "weekday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "01:15"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:30"
+       }
+      ]
+     },
+     {
+      "id": "r0t11",
+      "dayType": "saturday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "01:15"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:30"
+       }
+      ]
+     },
+     {
+      "id": "r0t12",
+      "dayType": "sunday",
+      "tags": [
+       "Común"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "01:15"
+       },
+       {
+        "routeStopId": "r0s4",
+        "arrivalTime": "01:30"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "r1",
+    "profileId": "c0",
+    "name": "Semirápido N-S",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r1s0",
+      "city": "Río Seco",
+      "commentary": "$undefined",
+      "isEstimated": true
+     },
+     {
+      "id": "r1s1",
+      "city": "Arcadia",
+      "commentary": "$undefined",
+      "isEstimated": true
+     },
+     {
+      "id": "r1s2",
+      "city": "Concepción",
+      "commentary": "Terminal"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": [
+     {
+      "id": "r1t0",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "06:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "06:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "06:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t1",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "06:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "06:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "06:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t2",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "06:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "06:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "06:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t3",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t4",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t5",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t6",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t7",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t8",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "07:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "07:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "07:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t9",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "08:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "08:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "08:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t10",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "08:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "08:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "08:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t11",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "08:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "08:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "08:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t12",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "08:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "08:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "08:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t13",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t14",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t15",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t16",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t17",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t18",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "09:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "09:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "09:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t19",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "10:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "10:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "10:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t20",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "10:20",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "10:27",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "10:30"
+       }
+      ]
+     },
+     {
+      "id": "r1t21",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "10:20",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "10:27",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "10:30"
+       }
+      ]
+     },
+     {
+      "id": "r1t22",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "10:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "10:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "10:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t23",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t24",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t25",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t26",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t27",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t28",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "11:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t29",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "11:50",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "11:57",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:00"
+       }
+      ]
+     },
+     {
+      "id": "r1t30",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t31",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t32",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t33",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t34",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "12:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t35",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:50",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "12:57",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:00"
+       }
+      ]
+     },
+     {
+      "id": "r1t36",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "12:55",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:02",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:05"
+       }
+      ]
+     },
+     {
+      "id": "r1t37",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:15",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:22",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:25"
+       }
+      ]
+     },
+     {
+      "id": "r1t38",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:15",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:22",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:25"
+       }
+      ]
+     },
+     {
+      "id": "r1t39",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:15",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:22",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:25"
+       }
+      ]
+     },
+     {
+      "id": "r1t40",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:30",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:37",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:40"
+       }
+      ]
+     },
+     {
+      "id": "r1t41",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t42",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "13:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t43",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "13:50",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "13:57",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "14:00"
+       }
+      ]
+     },
+     {
+      "id": "r1t44",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "14:15",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "14:22",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "14:25"
+       }
+      ]
+     },
+     {
+      "id": "r1t45",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "14:20",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "14:27",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "14:30"
+       }
+      ]
+     },
+     {
+      "id": "r1t46",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "14:20",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "14:27",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "14:30"
+       }
+      ]
+     },
+     {
+      "id": "r1t47",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "14:45",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "14:52",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "14:55"
+       }
+      ]
+     },
+     {
+      "id": "r1t48",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "15:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "15:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "15:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t49",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "15:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "15:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "15:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t50",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "15:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "15:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "15:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t51",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "15:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "15:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "15:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t52",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "16:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "16:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "16:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t53",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "16:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "16:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "16:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t54",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "16:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "16:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "16:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t55",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "17:20",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "17:27",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "17:30"
+       }
+      ]
+     },
+     {
+      "id": "r1t56",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "17:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "17:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "17:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t57",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "18:05",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "18:12",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "18:15"
+       }
+      ]
+     },
+     {
+      "id": "r1t58",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "18:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "18:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "18:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t59",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "18:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "18:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "18:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t60",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "18:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "18:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "18:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t61",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "18:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "18:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "18:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t62",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t63",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t64",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t65",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t66",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t67",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "19:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t68",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "20:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "20:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "20:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t69",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "20:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "20:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "20:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t70",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "20:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "20:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "20:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t71",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "20:30",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "20:37",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "20:40"
+       }
+      ]
+     },
+     {
+      "id": "r1t72",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "20:50",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "20:57",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "21:00"
+       }
+      ]
+     },
+     {
+      "id": "r1t73",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "21:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "21:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t74",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "21:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "21:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t75",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "21:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "21:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t76",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "21:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "21:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t77",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:55",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:02",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:05"
+       }
+      ]
+     },
+     {
+      "id": "r1t78",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:55",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:02",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:05"
+       }
+      ]
+     },
+     {
+      "id": "r1t79",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "21:55",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:02",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:05"
+       }
+      ]
+     },
+     {
+      "id": "r1t80",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "22:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t81",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "22:25",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:32",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:35"
+       }
+      ]
+     },
+     {
+      "id": "r1t82",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "22:25",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:32",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:35"
+       }
+      ]
+     },
+     {
+      "id": "r1t83",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "22:45",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "22:52",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "22:55"
+       }
+      ]
+     },
+     {
+      "id": "r1t84",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "23:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "23:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "23:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t85",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "23:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "23:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "23:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t86",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "23:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "23:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "23:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t87",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "23:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "23:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "23:50"
+       }
+      ]
+     },
+     {
+      "id": "r1t88",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "00:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "00:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "00:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t89",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "00:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "00:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "00:20"
+       }
+      ]
+     },
+     {
+      "id": "r1t90",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r1s0",
+        "arrivalTime": "00:10",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s1",
+        "arrivalTime": "00:17",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r1s2",
+        "arrivalTime": "00:20"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Río Seco",
+  "initialDestination": "Concepción",
+  "prices": [],
+  "suggestedDestinations": "$undefined"
+ },
+ "summary": {
+  "declared": {
+   "weekday": 46,
+   "saturday": 29,
+   "sunday": 29
+  },
+  "faq": {
+   "weekday": [
+    "06:40",
+    "07:10",
+    "07:40",
+    "08:10",
+    "08:40",
+    "09:10",
+    "09:40",
+    "10:10",
+    "10:40",
+    "11:10",
+    "11:40",
+    "11:50",
+    "12:10",
+    "12:50",
+    "12:55",
+    "13:00",
+    "13:15",
+    "13:30",
+    "13:50",
+    "13:55",
+    "14:15",
+    "14:45",
+    "15:10",
+    "15:40",
+    "16:40",
+    "17:20",
+    "17:40",
+    "18:05",
+    "18:10",
+    "18:40",
+    "19:10",
+    "19:40",
+    "20:10",
+    "20:30",
+    "20:50",
+    "21:10",
+    "21:40",
+    "21:55",
+    "22:10",
+    "22:45",
+    "23:10",
+    "23:40",
+    "00:10",
+    "00:45",
+    "01:15"
+   ],
+   "saturday": [
+    "06:40",
+    "07:10",
+    "07:40",
+    "08:10",
+    "09:10",
+    "09:40",
+    "10:20",
+    "11:10",
+    "11:40",
+    "12:10",
+    "12:40",
+    "13:15",
+    "13:40",
+    "13:45",
+    "14:05",
+    "14:20",
+    "15:40",
+    "16:40",
+    "18:10",
+    "19:10",
+    "19:40",
+    "20:10",
+    "21:10",
+    "21:55",
+    "22:25",
+    "23:10",
+    "00:10",
+    "00:45",
+    "01:15"
+   ],
+   "sunday": [
+    "06:40",
+    "07:10",
+    "07:40",
+    "08:10",
+    "09:10",
+    "09:40",
+    "10:20",
+    "11:10",
+    "11:40",
+    "12:10",
+    "12:40",
+    "13:15",
+    "13:40",
+    "13:45",
+    "14:05",
+    "14:20",
+    "15:40",
+    "16:40",
+    "18:10",
+    "19:10",
+    "19:40",
+    "20:10",
+    "21:10",
+    "21:55",
+    "22:25",
+    "23:10",
+    "00:10",
+    "00:45",
+    "01:15"
+   ]
+  },
+  "renderedCards": 46
+ }
+}

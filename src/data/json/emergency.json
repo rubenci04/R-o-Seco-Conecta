@@ -1,0 +1,4 @@
+[
+  { "id": "emergencias", "label": "Emergencias", "phone": "911", "note": "Número de emergencias de uso nacional en Argentina." },
+  { "id": "salud", "label": "Emergencias médicas", "phone": "107", "note": "Número nacional de emergencias médicas; confirmar cobertura en la zona." }
+]

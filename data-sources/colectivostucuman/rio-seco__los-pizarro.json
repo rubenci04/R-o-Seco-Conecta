@@ -1,0 +1,332 @@
+{
+ "url": "https://colectivostucuman.com.ar/horarios/rio-seco/los-pizarro",
+ "origin": "rio-seco",
+ "destination": "los-pizarro",
+ "fetchedAt": "2026-10-28T13:41:20.030Z",
+ "props": {
+  "cities": [
+   "Acheral",
+   "Aguilares",
+   "Alberdi",
+   "Alpachiri",
+   "Alto Verde",
+   "Arcadia",
+   "Cáceres",
+   "Concepción",
+   "El Molino",
+   "El Remate",
+   "Famaillá",
+   "Fronterita",
+   "La Calera",
+   "La Cocha",
+   "La Madrid",
+   "La Trinidad",
+   "Leon Rouges",
+   "Los Pizarro",
+   "Los Sarmientos",
+   "Lules",
+   "Medinas",
+   "Monteagudo",
+   "Montebello",
+   "Monteros",
+   "Nueva Baviera",
+   "Piedra Grande",
+   "Río Colorado",
+   "Río Huacra",
+   "Río Seco",
+   "San Carlos",
+   "San Miguel de Tucumán",
+   "Santa Ana",
+   "Santa Lucía",
+   "Sargento Moya",
+   "Villa Quinteros"
+  ],
+  "routes": [
+   {
+    "id": "r0",
+    "profileId": "c0",
+    "name": "Semirápido N-S",
+    "displayName": "$undefined",
+    "color": "#ff6900",
+    "isActive": true,
+    "stops": [
+     {
+      "id": "r0s0",
+      "city": "Río Seco",
+      "commentary": "$undefined",
+      "isEstimated": true
+     },
+     {
+      "id": "r0s1",
+      "city": "Arcadia",
+      "commentary": "$undefined",
+      "isEstimated": true
+     },
+     {
+      "id": "r0s2",
+      "city": "Concepción",
+      "commentary": "Terminal"
+     },
+     {
+      "id": "r0s3",
+      "city": "Aguilares",
+      "commentary": "Terminal"
+     },
+     {
+      "id": "r0s4",
+      "city": "Santa Ana",
+      "commentary": "Terminal"
+     },
+     {
+      "id": "r0s5",
+      "city": "Alberdi",
+      "commentary": "Terminal"
+     },
+     {
+      "id": "r0s6",
+      "city": "La Cocha",
+      "commentary": "Terminal"
+     },
+     {
+      "id": "r0s7",
+      "city": "Los Pizarro",
+      "commentary": "Comisaría"
+     }
+    ],
+    "estimatedStops": "$undefined",
+    "disabledSegments": [],
+    "alerts": [],
+    "trips": [
+     {
+      "id": "r0t0",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "13:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s2",
+        "arrivalTime": "13:50"
+       },
+       {
+        "routeStopId": "r0s3",
+        "arrivalTime": "14:15"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "14:40"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "15:10"
+       },
+       {
+        "routeStopId": "r0s7",
+        "arrivalTime": "15:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t1",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "13:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "13:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s2",
+        "arrivalTime": "13:50"
+       },
+       {
+        "routeStopId": "r0s3",
+        "arrivalTime": "14:15"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "14:40"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "15:10"
+       },
+       {
+        "routeStopId": "r0s7",
+        "arrivalTime": "15:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t2",
+      "dayType": "weekday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s2",
+        "arrivalTime": "19:50"
+       },
+       {
+        "routeStopId": "r0s3",
+        "arrivalTime": "20:15"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "20:40"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "21:10"
+       },
+       {
+        "routeStopId": "r0s7",
+        "arrivalTime": "21:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t3",
+      "dayType": "saturday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s2",
+        "arrivalTime": "19:50"
+       },
+       {
+        "routeStopId": "r0s3",
+        "arrivalTime": "20:15"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "20:40"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "21:10"
+       },
+       {
+        "routeStopId": "r0s7",
+        "arrivalTime": "21:25"
+       }
+      ]
+     },
+     {
+      "id": "r0t4",
+      "dayType": "sunday",
+      "tags": [
+       "Semirápido"
+      ],
+      "price": "$undefined",
+      "stopTimes": [
+       {
+        "routeStopId": "r0s0",
+        "arrivalTime": "19:40",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s1",
+        "arrivalTime": "19:47",
+        "isEstimated": true
+       },
+       {
+        "routeStopId": "r0s2",
+        "arrivalTime": "19:50"
+       },
+       {
+        "routeStopId": "r0s3",
+        "arrivalTime": "20:15"
+       },
+       {
+        "routeStopId": "r0s5",
+        "arrivalTime": "20:40"
+       },
+       {
+        "routeStopId": "r0s6",
+        "arrivalTime": "21:10"
+       },
+       {
+        "routeStopId": "r0s7",
+        "arrivalTime": "21:25"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "companies": {
+   "c0": "Exprebus"
+  },
+  "initialOrigin": "Río Seco",
+  "initialDestination": "Los Pizarro",
+  "prices": [],
+  "suggestedDestinations": "$undefined"
+ },
+ "summary": {
+  "declared": {
+   "weekday": 1,
+   "saturday": 2,
+   "sunday": 2
+  },
+  "faq": {
+   "weekday": [
+    "19:40"
+   ],
+   "saturday": [
+    "13:40",
+    "19:40"
+   ],
+   "sunday": [
+    "13:40",
+    "19:40"
+   ]
+  },
+  "renderedCards": 1
+ }
+}
