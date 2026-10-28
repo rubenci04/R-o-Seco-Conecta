@@ -15,6 +15,7 @@ export const formatDateTime = (iso: string) =>
     month: 'long',
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
   }).format(new Date(iso))
 
 /** AAAA-MM-DD (fecha civil, sin zona) → "28 oct 2026" */

@@ -31,12 +31,21 @@ export const pwaOptions: Partial<VitePWAOptions> = {
     navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
     // El código del mapa (Leaflet, ~365 KB) NO se precachea: solo se guarda tras abrir el mapa por primera vez.
-    globIgnores: ['**/PlacesMap-*.{js,css}'],
+    globIgnores: ['**/PlacesMap-*.{js,css}', '**/AdminApp-*.js'],
+    // Nunca interceptar la API con el fallback de navegación de la PWA.
+    navigateFallbackDenylist: [/^\/api\//],
     runtimeCaching: [
       {
         urlPattern: ({ url, sameOrigin }: { url: URL; sameOrigin: boolean }) => sameOrigin && /\/assets\/PlacesMap-[^/]+\.(js|css)$/.test(url.pathname),
         handler: 'CacheFirst',
         options: { cacheName: 'rio-seco-map-code', expiration: { maxEntries: 4 } },
+      },
+      // Lectura sin conexión de noticias, alertas, agenda y obituarios: red primero, y la última respuesta como respaldo (24 h).
+      // La API administrativa (/api/admin) NUNCA se guarda.
+      {
+        urlPattern: ({ url, sameOrigin }: { url: URL; sameOrigin: boolean }) => sameOrigin && url.pathname.startsWith('/api/public/'),
+        handler: 'NetworkFirst',
+        options: { cacheName: 'rio-seco-api', networkTimeoutSeconds: 4, expiration: { maxEntries: 30, maxAgeSeconds: 24 * 3600 } },
       },
       // Las teselas de OpenStreetMap NO se guardan (política de uso: sin descargas masivas ni mapas offline).
     ],

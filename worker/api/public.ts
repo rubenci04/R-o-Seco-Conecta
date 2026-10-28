@@ -1,10 +1,7 @@
 import { CATEGORY_IDS, isCategoryId, isPushTopic } from '../../shared/categories'
 import { truncate } from '../../shared/text'
 import type { Features } from '../features'
-import { HttpError, json, Router, str, type Ctx } from '../http'
-
-/** Revalida rápido (el contenido editorial debe verse enseguida) pero evita golpear D1 en cada visita. */
-const CACHE = { 'cache-control': 'public, max-age=15, stale-while-revalidate=60' }
+import { etagJson, HttpError, json, Router, str, type Ctx } from '../http'
 
 interface PostRow {
   id: number
@@ -61,7 +58,7 @@ export function publicRoutes(r: Router, features: Features): void {
 
   r.get('/api/public/categories', async (ctx) => {
     const rows = await ctx.env.DB.prepare('SELECT id, name, description FROM categories ORDER BY sort_order').all()
-    return json(rows.results, { headers: CACHE })
+    return etagJson(ctx, rows.results)
   })
 
   // Feed general (todas las publicaciones visibles) o filtrado por una categoría. Paginado por fecha (`antes`).
@@ -89,7 +86,7 @@ export function publicRoutes(r: Router, features: Features): void {
       .bind(...binds, limit)
       .all<PostRow>()
     const cats = await categoriesFor(ctx, rows.results.map((p) => p.id))
-    return json(rows.results.map((p) => postDto(p, cats.get(p.id) ?? [])), { headers: CACHE })
+    return etagJson(ctx, rows.results.map((p) => postDto(p, cats.get(p.id) ?? [])))
   })
 
   // Alertas vigentes: SOLO las confirmadas por una persona y no vencidas.
@@ -100,7 +97,8 @@ export function publicRoutes(r: Router, features: Features): void {
     )
       .bind(ctx.now.toISOString(), ctx.now.toISOString())
       .all<{ id: number; kind: string; severity: 'info' | 'urgente'; priority: number; title: string; body: string; source_url: string | null; starts_at: string; expires_at: string | null }>()
-    return json(
+    return etagJson(
+      ctx,
       rows.results.map((a) => ({
         id: String(a.id),
         title: a.title,
@@ -112,7 +110,6 @@ export function publicRoutes(r: Router, features: Features): void {
         kind: a.kind,
         priority: a.priority,
       })),
-      { headers: CACHE },
     )
   })
 
@@ -122,7 +119,8 @@ export function publicRoutes(r: Router, features: Features): void {
       `SELECT id, name, death_date, message, service_info, source_url, approved_at, rectification FROM obituaries
        WHERE state = 'approved' ORDER BY approved_at DESC LIMIT 100`,
     ).all<{ id: number; name: string; death_date: string | null; message: string | null; service_info: string | null; source_url: string | null; approved_at: string; rectification: string | null }>()
-    return json(
+    return etagJson(
+      ctx,
       rows.results.map((o) => ({
         id: String(o.id),
         name: o.name,
@@ -133,7 +131,6 @@ export function publicRoutes(r: Router, features: Features): void {
         verified: true,
         rectification: o.rectification ?? undefined,
       })),
-      { headers: CACHE },
     )
   })
 
@@ -144,7 +141,8 @@ export function publicRoutes(r: Router, features: Features): void {
     )
       .bind(new Date(ctx.now.getTime() - 24 * 3_600_000).toISOString())
       .all<{ id: number; title: string; description: string | null; starts_at: string; place_text: string | null; category: string; source_label: string; source_url: string }>()
-    return json(
+    return etagJson(
+      ctx,
       rows.results.map((e) => ({
         id: String(e.id),
         title: e.title,
@@ -154,7 +152,6 @@ export function publicRoutes(r: Router, features: Features): void {
         category: e.category,
         source: { label: e.source_label, url: e.source_url },
       })),
-      { headers: CACHE },
     )
   })
 
@@ -162,11 +159,11 @@ export function publicRoutes(r: Router, features: Features): void {
     // Contratos preparados, NO activos en producción: lugares, radios y transporte siguen en JSON validado.
     r.get('/api/public/radios', async (ctx) => {
       const rows = await ctx.env.DB.prepare('SELECT id, name, frequency, site_url, tagline FROM radios WHERE active = 1 ORDER BY name').all<{ id: string; name: string; frequency: string; site_url: string; tagline: string | null }>()
-      return json(rows.results.map((x) => ({ id: x.id, name: x.name, frequency: x.frequency, siteUrl: x.site_url, tagline: x.tagline ?? undefined })), { headers: CACHE })
+      return etagJson(ctx, rows.results.map((x) => ({ id: x.id, name: x.name, frequency: x.frequency, siteUrl: x.site_url, tagline: x.tagline ?? undefined })))
     })
     r.get('/api/public/places', async (ctx) => {
       const rows = await ctx.env.DB.prepare('SELECT id, kind, name, address, phone, hours, url, notes FROM places WHERE active = 1 ORDER BY kind, name').all()
-      return json(rows.results, { headers: CACHE })
+      return etagJson(ctx, rows.results)
     })
     r.get('/api/public/transport', async (ctx) => {
       const db = ctx.env.DB
@@ -176,7 +173,8 @@ export function publicRoutes(r: Router, features: Features): void {
         db.prepare('SELECT id, name, locality_id FROM bus_stops ORDER BY name').all<{ id: string; name: string; locality_id: string }>(),
         db.prepare('SELECT * FROM bus_services ORDER BY departure').all<Record<string, string | number | null>>(),
       ])
-      return json(
+      return etagJson(
+        ctx,
         {
           companies: companies.results,
           localities: localities.results.map((l) => ({ id: l.id, name: l.name, status: l.status, referenceUrl: l.reference_url ?? undefined })),
@@ -200,7 +198,6 @@ export function publicRoutes(r: Router, features: Features): void {
             exceptions: JSON.parse(String(s.exceptions_json)),
           })),
         },
-        { headers: CACHE },
       )
     })
   }

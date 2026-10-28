@@ -9,12 +9,7 @@
     <meta name="theme-color" content="#0b6b97" />
     <meta name="description" content="Información comunitaria de Río Seco, Tucumán: colectivos, noticias, radios y agenda. Aplicación independiente, no oficial." />
     <title>Río Seco Conecta</title>
-    <script>
-      try {
-        var t = localStorage.getItem('rsc-theme');
-        if (t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-      } catch (e) {}
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

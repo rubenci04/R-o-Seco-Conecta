@@ -14,6 +14,7 @@ const opt = (name, def) => {
   return i >= 0 ? args[i + 1] : def
 }
 const remote = args.includes('--remote')
+const persistTo = opt('persist-to') // solo para entornos locales de prueba aislados
 const email = (opt('email') ?? '').trim().toLowerCase()
 const name = opt('name', email)
 const role = opt('role', 'admin')
@@ -44,13 +45,15 @@ const q = (s) => `'${String(s).replace(/'/g, "''")}'`
 
 const sql =
   `INSERT INTO admins (email, display_name, role, password_hash, created_at) VALUES (${q(email)}, ${q(name)}, ${q(role)}, ${q(stored)}, ${q(new Date().toISOString())}) ` +
-  `ON CONFLICT(email) DO UPDATE SET password_hash = excluded.password_hash, role = excluded.role, display_name = excluded.display_name, active = 1, failed_attempts = 0, locked_until = NULL;`
+  `ON CONFLICT(email) DO UPDATE SET password_hash = excluded.password_hash, role = excluded.role, display_name = excluded.display_name, active = 1, failed_attempts = 0, locked_until = NULL; ` +
+  // Recuperación de acceso: al restablecer la contraseña se invalidan todas las sesiones existentes de esa cuenta.
+  `DELETE FROM admin_sessions WHERE admin_id IN (SELECT id FROM admins WHERE email = ${q(email)});`
 
 const dir = mkdtempSync(path.join(tmpdir(), 'rsc-admin-'))
 const file = path.join(dir, 'create-admin.sql')
 try {
   writeFileSync(file, sql, { mode: 0o600 })
-  execFileSync('npx', ['wrangler', 'd1', 'execute', 'rio-seco-conecta', remote ? '--remote' : '--local', '--file', file], { stdio: 'inherit', shell: true })
+  execFileSync('npx', ['wrangler', 'd1', 'execute', 'DB', remote ? '--remote' : '--local', ...(persistTo ? ['--persist-to', persistTo] : []), '--file', file], { stdio: 'inherit', shell: true })
   console.log(`Administrador ${email} (${role}) listo en la base ${remote ? 'REMOTA' : 'local'}.`)
 } finally {
   rmSync(dir, { recursive: true, force: true })

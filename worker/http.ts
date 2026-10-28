@@ -36,6 +36,19 @@ export const json = (data: unknown, init: ResponseInit = {}): Response =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...(init.headers ?? {}) },
   })
 
+/**
+ * Respuesta pública con ETag: el navegador siempre revalida (lo publicado se ve al instante) y, si no cambió,
+ * recibe 304 sin cuerpo. Así no hay un retraso de caché tras publicar y se ahorra ancho de banda.
+ */
+export async function etagJson(ctx: Ctx, data: unknown): Promise<Response> {
+  const body = JSON.stringify(data)
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body))
+  const etag = '"' + [...new Uint8Array(digest)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('') + '"'
+  const headers = { etag, 'cache-control': 'public, no-cache' }
+  if (ctx.req.headers.get('if-none-match') === etag) return new Response(null, { status: 304, headers })
+  return new Response(body, { headers: { 'content-type': 'application/json; charset=utf-8', ...headers } })
+}
+
 export const actorOf = (admin: AdminSession): Actor => ({ id: admin.id, label: admin.email })
 
 interface Route {

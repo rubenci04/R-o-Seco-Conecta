@@ -16,13 +16,15 @@
     "deploy": "npm run build && wrangler deploy",
     "admin:create": "node scripts/create-admin.mjs",
     "vapid:generate": "node scripts/generate-vapid.mjs",
-    "db:migrate:local": "wrangler -c wrangler.worker.jsonc d1 migrations apply rio-seco-conecta --local",
-    "db:migrate:remote": "wrangler -c wrangler.worker.jsonc d1 migrations apply rio-seco-conecta --remote",
-    "deploy:worker": "npm run build && wrangler deploy -c wrangler.worker.jsonc",
     "schedules:fetch": "tsx scripts/import-schedules/fetch.ts",
     "schedules:import": "tsx scripts/import-schedules/index.ts",
     "brand:build": "tsx scripts/brand/build-assets.ts",
-    "brand:palette": "tsx scripts/brand/palette.ts"
+    "brand:palette": "tsx scripts/brand/palette.ts",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:backup": "node scripts/backup-d1.mjs",
+    "build:e2e": "vite build --mode e2e --outDir dist-e2e",
+    "preview:e2e": "vite preview --outDir dist-e2e --port 4173"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.5.0",

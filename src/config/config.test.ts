@@ -57,16 +57,18 @@ describe('PWA y mapa: sin teselas en caché y sin precargar Leaflet', () => {
   it('el código del mapa no se precachea y solo se guarda tras usarse', () => {
     expect(pwaOptions.workbox?.globIgnores).toContain('**/PlacesMap-*.{js,css}')
     const rules = pwaOptions.workbox?.runtimeCaching ?? []
-    expect(rules).toHaveLength(1)
+    expect(rules).toHaveLength(2) // código del mapa + lectura sin conexión de la API pública
     const url = (u: string) => ({ url: new URL(u), sameOrigin: new URL(u).origin === 'https://app.test' })
     const match = rules[0].urlPattern as (c: { url: URL; sameOrigin: boolean }) => boolean
     expect(match(url('https://app.test/assets/PlacesMap-abc123.js'))).toBe(true)
     expect(match(url('https://app.test/assets/PlacesMap-abc123.css'))).toBe(true)
   })
   it('ninguna regla del service worker captura las teselas de OpenStreetMap', () => {
-    const match = (pwaOptions.workbox?.runtimeCaching ?? [])[0].urlPattern as (c: { url: URL; sameOrigin: boolean }) => boolean
-    expect(match({ url: new URL('https://tile.openstreetmap.org/15/12345/23456.png'), sameOrigin: false })).toBe(false)
-    expect(match({ url: new URL('https://tile.openstreetmap.org/assets/PlacesMap-x.js'), sameOrigin: false })).toBe(false)
+    for (const rule of pwaOptions.workbox?.runtimeCaching ?? []) {
+      const match = rule.urlPattern as (c: { url: URL; sameOrigin: boolean }) => boolean
+      expect(match({ url: new URL('https://tile.openstreetmap.org/15/12345/23456.png'), sameOrigin: false })).toBe(false)
+      expect(match({ url: new URL('https://tile.openstreetmap.org/api/public/feed'), sameOrigin: false })).toBe(false)
+    }
     expect(JSON.stringify(pwaOptions.workbox)).not.toContain('tile.openstreetmap')
   })
   it('el service worker generado no menciona teselas ni precachea el chunk del mapa', () => {

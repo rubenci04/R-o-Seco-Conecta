@@ -1,13 +1,15 @@
-import { lazy } from 'react'
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 import { AppShell } from '@/components/layout/AppShell'
-import { EmptyState } from '@/components/shared/States'
+import { EmptyState, LoadingState } from '@/components/shared/States'
 import { Compass } from 'lucide-react'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
 const BusesPage = lazy(() => import('@/pages/BusesPage'))
 const HeritagePage = lazy(() => import('@/pages/HeritagePages'))
 const HeritageDetailPage = lazy(() => import('@/pages/HeritagePages').then((m) => ({ default: m.HeritageDetailPage })))
+// El panel administrativo es un módulo aparte (carga diferida): el público no descarga nada de él.
+const AdminApp = lazy(() => import('@/admin/AdminApp'))
 const MapPage = lazy(() => import('@/pages/MapPage'))
 const PlaceDetailPage = lazy(() => import('@/pages/PlaceDetailPage'))
 const ServicesPage = lazy(() => import('@/pages/ServicesPage'))
@@ -23,6 +25,14 @@ const AboutPage = lazy(() => import('@/pages/InfoPages').then((m) => ({ default:
 export function AppRoutes() {
   return (
     <Routes>
+      <Route
+        path="admin/*"
+        element={
+          <Suspense fallback={<div className="p-6"><LoadingState /></div>}>
+            <AdminApp />
+          </Suspense>
+        }
+      />
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
         <Route path="colectivos" element={<BusesPage />} />
