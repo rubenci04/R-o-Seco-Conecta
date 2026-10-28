@@ -92,7 +92,10 @@ export async function ingestPost(db: D1Database, raw: RawPost, opts: IngestOptio
   // ---- 3) visibilidad ----
   // Posibles obituarios y fuentes no confiables quedan ocultos hasta que una persona los apruebe.
   const status: 'published' | 'pending' | 'draft' = isObituary ? 'pending' : opts.draft ? 'draft' : !source.trusted ? 'pending' : 'published'
-  const reviewState = result.needsReview || status === 'pending' ? 'needs_review' : origin === 'manual' ? 'approved' : 'unreviewed'
+  // Una nota publicada por la redacción cuenta como revisada (la persona la escribió y la vio publicada); la duda de clasificación
+  // solo se marca en borradores, lo importado automáticamente y los posibles obituarios (que siempre pasan por la cola).
+  const reviewState =
+    status === 'pending' ? 'needs_review' : origin === 'manual' && status === 'published' ? 'approved' : result.needsReview ? 'needs_review' : origin === 'manual' ? 'approved' : 'unreviewed'
 
   // ---- 4) persistencia ----
   const nowIso = now.toISOString()

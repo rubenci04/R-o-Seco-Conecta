@@ -99,6 +99,24 @@ describe('`verified`: distingue la revisión editorial de la mera importación',
   })
 })
 
+describe('revisión editorial de lo publicado por la redacción', () => {
+  it('una nota de la redacción sin categorías elegidas y de baja confianza igual queda verificada al publicarse', async () => {
+    const h = await prod()
+    const cookie = await h.loginAs('editor')
+    await h.call('POST', '/api/admin/posts', { cookie, body: { title: 'Aviso general', body: TEXT.saludo, status: 'published' } })
+    const [n] = (await h.call('GET', '/api/public/feed')).json
+    expect(n).toMatchObject({ verified: true, origin: 'manual' })
+  })
+  it('un borrador de baja confianza queda para revisar la clasificación, y al publicarlo pasa a verificado', async () => {
+    const h = await prod()
+    const cookie = await h.loginAs('editor')
+    const id = (await h.call('POST', '/api/admin/posts', { cookie, body: { body: TEXT.saludo, status: 'draft' } })).json.postId
+    expect((h.db.raw.prepare('SELECT review_state FROM posts WHERE id = ?').get(id) as { review_state: string }).review_state).toBe('needs_review')
+    await h.call('POST', `/api/admin/posts/${id}/publish`, { cookie })
+    expect(((await h.call('GET', '/api/public/feed')).json as { verified: boolean }[])[0].verified).toBe(true)
+  })
+})
+
 describe('borradores, publicación y retiro', () => {
   it('un borrador no es público; publicarlo lo muestra; retirarlo lo oculta; se puede republicar', async () => {
     const h = await prod()
