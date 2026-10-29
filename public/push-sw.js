@@ -93,7 +93,8 @@ self.addEventListener('activate', (event) => {
   if (!rsIsUpdate) return
   event.waitUntil(
     self.clients
-      .matchAll({ type: 'window', includeUncontrolled: true })
+      .claim() // sin tomar el control antes, navigate() rechaza las ventanas que aún controla la versión anterior
+      .then(() => self.clients.matchAll({ type: 'window' }))
       .then((windows) => Promise.all(windows.map((w) => ('navigate' in w ? w.navigate(w.url).catch(() => undefined) : undefined)))),
   )
 })
