@@ -18,11 +18,18 @@ export function PhotoGallery({ ids, columns = 'sm:grid-cols-3' }: { ids: string[
         ))}
       </ul>
       <figcaption className="text-xs text-muted-foreground">
-        {hasPhotos ? (photos.length > 1 ? 'Fotografías' : 'Fotografía') : 'Imagen'} {hasAi && hasPhotos ? 'e ilustración (no es una fotografía documental) ' : hasAi ? '(ilustración generada con IA, no es una fotografía documental) ' : ''}aportada{hasPhotos && photos.length > 1 ? 's' : ''} por el equipo, de la página pública de la Comuna. Fuente:{' '}
-        <ExternalLink href={PHOTO_SOURCE.url} className="text-accent underline">
-          {PHOTO_SOURCE.label}
-        </ExternalLink>
-        .
+        {!hasPhotos ? (
+          'Ilustración generada con IA aportada por el equipo, con su marca original. No es una fotografía documental ni se le atribuye un autor.'
+        ) : (
+          <>
+            {photos.length > 1 ? 'Fotografías' : 'Fotografía'}
+            {hasAi ? ' (la ilustración generada con IA no es una fotografía documental)' : ''} aportada{photos.length > 1 ? 's' : ''} por el equipo, de la página pública de la Comuna. Fuente:{' '}
+            <ExternalLink href={PHOTO_SOURCE.url} className="text-accent underline">
+              {PHOTO_SOURCE.label}
+            </ExternalLink>
+            .
+          </>
+        )}
       </figcaption>
     </figure>
   )
