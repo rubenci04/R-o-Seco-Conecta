@@ -16,7 +16,7 @@ describe('Acerca de: administración y versión', () => {
 describe('fotografías', () => {
   it('cada foto tiene texto alternativo, dimensiones y la fuente visible', () => {
     render(<PhotoGallery ids={Object.keys(PHOTOS)} />)
-    expect(screen.getAllByRole('img')).toHaveLength(7)
+    expect(screen.getAllByRole('img')).toHaveLength(8)
     for (const img of screen.getAllByRole('img')) expect(img.getAttribute('alt')).toBeTruthy()
     expect(screen.getByRole('link', { name: /Facebook de la Comuna de Río Seco/ })).toBeInTheDocument()
   })

@@ -24,18 +24,20 @@ function renderAt(path: string, overrides: Partial<DataRepository> = {}) {
 const alert = (over: Partial<AlertItem> = {}): AlertItem => ({ id: '1', title: 'Aviso', body: 'Texto', severity: 'info', publishedAt: '2026-10-28T12:00:00.000Z', source: { label: 'Comuna' }, ...over })
 
 describe('cronología oficial de Facebook (widget)', () => {
-  it('Noticias: no carga nada de Facebook hasta que la persona lo pide, avisa quién provee el contenido y enlaza la página original', async () => {
+  it('Noticias: el widget se muestra abierto por defecto, avisa quién provee el contenido y enlaza la página original', async () => {
+    window.localStorage.clear()
     renderAt('/noticias', { getNews: async () => [] })
     expect(await screen.findByText(/Contenido proporcionado por Facebook/)).toBeInTheDocument()
-    expect(document.querySelector('iframe')).toBeNull()
+    expect(document.querySelector('iframe')).not.toBeNull()
     const original = screen.getAllByRole('link', { name: /Abrir la página de la Comuna en Facebook/ })[0]
     expect(original).toHaveAttribute('href', LINKS.comuna.facebook)
   })
 
-  it('al pedirlo, carga el widget oficial de ESTA página, diferido, con cronología y sin cabecera de portada', async () => {
+  it('carga el widget oficial de ESTA página, con cronología; se oculta y la preferencia se recuerda', async () => {
+    window.localStorage.clear()
     const user = userEvent.setup()
     renderAt('/noticias', { getNews: async () => [] })
-    await user.click(await screen.findByRole('button', { name: 'Ver publicaciones de Facebook' }))
+    await screen.findByRole('button', { name: 'Ocultar publicaciones' })
     const frame = document.querySelector('iframe')!
     expect(frame).not.toBeNull()
     const src = new URL(frame.getAttribute('src')!)
@@ -46,6 +48,11 @@ describe('cronología oficial de Facebook (widget)', () => {
     expect(frame).toHaveAttribute('title', expect.stringMatching(/Comuna de Río Seco/))
     // Si el navegador bloquea el contenido de Facebook, la persona conserva el enlace directo.
     expect(screen.getByText(/bloqueando el contenido de Facebook/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Ocultar publicaciones' }))
+    expect(document.querySelector('iframe')).toBeNull()
+    expect(window.localStorage.getItem('rsc.facebook.hidden')).toBe('1')
+    await user.click(screen.getByRole('button', { name: 'Mostrar publicaciones' }))
+    expect(document.querySelector('iframe')).not.toBeNull()
   })
 
   it('no aparece al filtrar por una categoría, y el bloque es distinto del feed propio', async () => {

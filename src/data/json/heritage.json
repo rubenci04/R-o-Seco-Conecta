@@ -66,7 +66,7 @@
       { "kind": "equipo", "text": "Según el equipo del proyecto, cada 17 de agosto se realizan desfiles en Río Seco." },
       { "kind": "pendiente", "text": "Recorrido, instituciones participantes y programa: falta documentación." }
     ],
-    "pendingDetails": ["Programa y recorrido", "Instituciones participantes", "Fotografías de ediciones anteriores"]
+    "pendingDetails": ["Programa y recorrido", "Instituciones participantes", "Fecha y edición de cada fotografía"]
   },
   {
     "id": "tradicion-pesebres",

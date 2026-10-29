@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 // Widget oficial de Facebook y página de residuos (PWA estática, datos locales). El widget real se verificó a mano en un
 // navegador real; acá se comprueba el comportamiento de la aplicación SIN depender de que Facebook responda.
 
-test('Noticias: no se contacta a Facebook hasta que la persona lo pide; luego se incrusta el widget oficial', async ({ page }) => {
+test('Noticias: el widget oficial se muestra abierto por defecto, se puede ocultar y la preferencia se recuerda', async ({ page }) => {
   const toFacebook: string[] = []
   await page.route('https://www.facebook.com/**', (route) => {
     toFacebook.push(route.request().url())
@@ -11,20 +11,24 @@ test('Noticias: no se contacta a Facebook hasta que la persona lo pide; luego se
   })
   await page.goto('/noticias')
   await expect(page.getByText(/Contenido proporcionado por Facebook/)).toBeVisible()
-  expect(toFacebook).toHaveLength(0)
-  await page.getByRole('button', { name: 'Ver publicaciones de Facebook' }).click()
   const frame = page.locator('iframe[title*="Facebook"]')
   await expect(frame).toBeVisible()
   await expect.poll(() => toFacebook.length).toBeGreaterThan(0)
   expect(toFacebook[0]).toContain('/plugins/page.php')
   expect(decodeURIComponent(toFacebook[0])).toContain('Comuna-De-Rio-Seco-61553018412844')
+  await page.getByRole('button', { name: 'Ocultar publicaciones' }).click()
+  await expect(frame).toHaveCount(0)
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Mostrar publicaciones' })).toBeVisible()
+  await expect(frame).toHaveCount(0)
+  await page.getByRole('button', { name: 'Mostrar publicaciones' }).click()
+  await expect(frame).toBeVisible()
   await expect(page.getByRole('link', { name: /Abrir la página de la Comuna en Facebook/ }).first()).toHaveAttribute('href', /facebook\.com\/p\/Comuna-De-Rio-Seco/)
 })
 
 test('si Facebook está bloqueado o no responde, queda el aviso y el enlace directo (sin cronología falsa)', async ({ page }) => {
   await page.route('https://www.facebook.com/**', (route) => route.abort())
   await page.goto('/noticias')
-  await page.getByRole('button', { name: 'Ver publicaciones de Facebook' }).click()
   await expect(page.getByText(/bloqueando el contenido de Facebook|no respondió/)).toBeVisible()
   await expect(page.getByRole('link', { name: /Abrir la página de la Comuna en Facebook/ }).first()).toBeVisible()
 })

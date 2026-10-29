@@ -1,6 +1,8 @@
 import { MapPin } from 'lucide-react'
 import { Link, useParams } from 'react-router'
+import { PhotoGallery } from '@/components/community/PhotoGallery'
 import { PlaceCard } from '@/components/community/PlaceCard'
+import { PLACE_PHOTOS } from '@/config/photos'
 import { ExternalLink } from '@/components/shared/ExternalLink'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { Async, EmptyState } from '@/components/shared/States'
@@ -30,6 +32,7 @@ export default function PlaceDetailPage() {
           <>
             <PageHeader icon={MapPin} title="Ficha del lugar" subtitle="Datos con su fuente y estado de verificación." />
             <PlaceCard place={p} headingLink={false} />
+            {PLACE_PHOTOS[p.id] && <div className="mt-4"><PhotoGallery ids={PLACE_PHOTOS[p.id]} columns="sm:grid-cols-2" /></div>}
             {p.location && (
               <Card className="mt-4 space-y-1 text-sm">
                 <p className="font-semibold">Ubicación en el mapa</p>
