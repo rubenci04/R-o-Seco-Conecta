@@ -20,6 +20,10 @@ export interface LinkOnlyInput {
   categories: string[]
   /** La persona vio el contenido y confirma título y categorías. */
   reviewed: boolean
+  /** Imágenes que entregó una fuente autorizada. */
+  media?: string[]
+  /** 'api' cuando la publicación llegó de la API autorizada (sin texto): queda pendiente de clasificación editorial. */
+  origin?: 'api' | 'assisted'
 }
 
 export type LinkOnlyResult = { outcome: 'inserted'; postId: number; status: 'published' | 'draft' | 'pending' } | Duplicate
@@ -43,10 +47,11 @@ export async function ingestLinkOnly(
   const insert = await db
     .prepare(
       `INSERT INTO posts (source_id, external_id, url, title, body, media_json, published_at, imported_at, origin, content_hash, status, review_state, classifier, created_by, link_only, date_verified, historical, content_type)
-       VALUES (?,?,?,?, '', '[]', ?,?, 'assisted', ?,?,?, NULL, ?, 1, ?, ?, ?)`,
+       VALUES (?,?,?,?, '', ?, ?,?, ?, ?,?,?, NULL, ?, 1, ?, ?, ?)`,
     )
     .bind(
-      input.sourceId, input.externalId, input.url, input.title.slice(0, 200), input.publishedAt ?? nowIso, nowIso, hash, opts.status, input.reviewed ? 'approved' : 'unreviewed',
+      input.sourceId, input.externalId, input.url, input.title.slice(0, 200), JSON.stringify(input.media ?? []), input.publishedAt ?? nowIso, nowIso, input.origin ?? 'assisted', hash, opts.status,
+      input.reviewed ? 'approved' : input.origin === 'api' ? 'needs_review' : 'unreviewed',
       opts.actor.id, input.publishedAt ? 1 : 0, opts.historical ? 1 : 0, input.contentType,
     )
     .run()

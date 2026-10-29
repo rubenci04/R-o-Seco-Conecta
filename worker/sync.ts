@@ -3,7 +3,8 @@ import { defaultConnectors } from './connectors/meta'
 import type { SourceConnector } from './connectors/types'
 import { SYSTEM_ACTOR, type Env } from './env'
 import { ingestPost, type SourceRow } from './ingest'
-import { enrichLinkOnly, findLinkCard } from './linkOnly'
+import { parsePostLink } from '../shared/dedupe'
+import { enrichLinkOnly, findLinkCard, ingestLinkOnly } from './linkOnly'
 import { enqueuePostNotification } from './notify'
 
 /** Publicaciones procesadas por fuente y ciclo: mantiene cada invocación dentro del límite de consultas del plan gratuito. */
@@ -15,6 +16,9 @@ export interface SyncDeps {
   random?: () => number
 }
 
+/** Primera sincronización: se recuperan primero las publicaciones de los últimos días (sin notificar: son históricas). */
+export const INITIAL_BACKFILL_DAYS = 7
+
 export interface SourceSyncReport {
   sourceId: string
   outcome: 'success' | 'rate-limited' | 'auth-error' | 'permission-missing' | 'error' | 'skipped'
@@ -23,6 +27,8 @@ export interface SourceSyncReport {
   duplicates: number
   /** Tarjetas registradas solo con enlace que se completaron con el texto obtenido de la fuente. */
   completed?: number
+  /** Publicaciones sin texto (imagen/video) conservadas como tarjetas pendientes de clasificación. */
+  mediaOnly?: number
   detail?: string
 }
 
@@ -54,7 +60,7 @@ export async function syncSource(env: Env, source: SourceRow, now: Date, deps: S
 
   const started = nowIso
   try {
-    const result = await connector.fetchNew({ env, source, since: source.cursor, fetchImpl: deps.fetchImpl ?? fetch, limit: 25 })
+    const result = await connector.fetchNew({ env, source, since: source.cursor ?? addSeconds(nowIso, -INITIAL_BACKFILL_DAYS * 86400), fetchImpl: deps.fetchImpl ?? fetch, limit: 25 })
     const ordered = [...result.posts].sort((a, b) => a.publishedAt.localeCompare(b.publishedAt))
     // Primero las más antiguas: el cursor avanza hasta donde se procesó y el resto queda para el próximo ciclo.
     const batch = ordered.slice(0, MAX_POSTS_PER_RUN)
@@ -67,6 +73,23 @@ export async function syncSource(env: Env, source: SourceRow, now: Date, deps: S
         const e = await enrichLinkOnly(env.DB, card, { text: raw.body, title: raw.title, publishedAt: raw.publishedAt }, { actor: SYSTEM_ACTOR, now })
         if (e.outcome === 'enriched') report.completed = (report.completed ?? 0) + 1
         else report.duplicates++
+        cursor = !cursor || raw.publishedAt > cursor ? raw.publishedAt : cursor
+        continue
+      }
+      // Sin texto (imagen, aviso gráfico o video): se conserva la tarjeta con su enlace y multimedia, sin analizar ni inventar contenido;
+      // queda «pendiente de clasificación» para que una persona la revise. Nunca genera alertas ni obituarios.
+      if (!raw.body.trim()) {
+        const link = raw.url ? parsePostLink(raw.url) : null
+        const kind = raw.contentType === 'video' ? 'Video' : raw.contentType === 'foto' ? 'Imagen' : 'Publicación'
+        const m = await ingestLinkOnly(
+          env.DB,
+          { sourceId: source.id, externalId: raw.externalId, url: link?.canonicalUrl ?? raw.url ?? source.url ?? '', title: `${kind} de la Comuna de Río Seco (sin texto)`, contentType: raw.contentType === 'foto' || raw.contentType === 'video' ? (raw.contentType === 'foto' ? 'foto' : 'video') : 'publicacion', publishedAt: raw.publishedAt, categories: [], reviewed: false, media: raw.media, origin: 'api' },
+          { actor: SYSTEM_ACTOR, now, status: 'published' },
+        )
+        if (m.outcome === 'inserted') {
+          inserted.push(m.postId)
+          report.mediaOnly = (report.mediaOnly ?? 0) + 1
+        } else report.duplicates++
         cursor = !cursor || raw.publishedAt > cursor ? raw.publishedAt : cursor
         continue
       }

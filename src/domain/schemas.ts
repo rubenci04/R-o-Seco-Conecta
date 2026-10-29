@@ -93,6 +93,8 @@ export const newsItemSchema = z.object({
   rectifiedAt: isoDateTime.optional(),
   /** Tarjeta de una publicación externa creada solo con el enlace: no hay texto propio. */
   linkOnly: z.boolean().optional(),
+  /** Imágenes entregadas por la fuente autorizada (direcciones de la CDN de Meta, pueden vencer). */
+  media: z.array(z.string()).optional(),
   /** false = `publishedAt` es la fecha de registro, no la de publicación original. */
   dateVerified: z.boolean().optional(),
   historical: z.boolean().optional(),

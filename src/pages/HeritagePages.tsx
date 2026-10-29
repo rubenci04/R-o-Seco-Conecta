@@ -1,5 +1,6 @@
 import { Award, BadgeCheck, CircleHelp, Church, Factory, Flag, ImageOff, Landmark, Music, Star, Trees, Trophy, Users, type LucideIcon } from 'lucide-react'
 import { Link, useParams } from 'react-router'
+import { PhotoGallery } from '@/components/community/PhotoGallery'
 import { ExternalLink } from '@/components/shared/ExternalLink'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { Async, EmptyState } from '@/components/shared/States'
@@ -36,6 +37,10 @@ export default function HeritagePage() {
         Esta sección se construye con la comunidad. Cada dato indica si está <strong>documentado</strong>, si es un <strong>aporte del equipo a confirmar</strong> o
         si está <strong>pendiente</strong>. No inventamos años, nombres ni ediciones.
       </Card>
+      <section aria-labelledby="fotos-pueblo" className="mb-6 space-y-2">
+        <h2 id="fotos-pueblo" className="font-display text-xl font-bold">Fotos de la Comuna</h2>
+        <PhotoGallery ids={['desfile1', 'desfile2', 'desfile3', 'desfile4', 'desfile5', 'parroquia', 'guardia-urbana']} columns="sm:grid-cols-4" />
+      </section>
       <Async state={state} isEmpty={(d) => d.length === 0} empty={<EmptyState icon={Landmark} title="Sin contenido cargado" />}>
         {(sections) => (
           <ul className="grid gap-3 sm:grid-cols-2">

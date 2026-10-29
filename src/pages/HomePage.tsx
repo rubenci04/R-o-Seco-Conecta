@@ -18,6 +18,7 @@ import type { Holiday, TransportData } from '@/domain/types'
 import { DEFAULT_QUERY, queryToParams, swapDirection, type BusQuery } from '@/features/transport/query'
 import { findNext } from '@/features/transport/search'
 import { formatClock, getLocalParts } from '@/features/transport/time'
+import { PhotoGallery } from '@/components/community/PhotoGallery'
 import { formatLongDate, greetingFor } from '@/lib/format'
 import { useFavorites } from '@/services/favorites'
 import { useNow } from '@/services/useNow'
@@ -319,6 +320,10 @@ export default function HomePage() {
         >
           {(items) => <div className="space-y-3">{items.slice(0, 3).map((i) => <NewsCard key={i.id} item={i} />)}</div>}
         </Async>
+      </Section>
+
+      <Section title="Fotos de la Comuna" action={<SeeAll to="/pueblo" label="Ver más" />}>
+        <PhotoGallery ids={['desfile1', 'parroquia', 'guardia-urbana']} />
       </Section>
 
       <Section title="Desde Facebook" action={<SeeAll to="/noticias" label="Ver Noticias" />}>

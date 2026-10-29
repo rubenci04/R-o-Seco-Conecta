@@ -197,7 +197,7 @@ describe('D · conectores y sincronización', () => {
     expect(s.last_success_at).toBe(NOW.toISOString())
     expect(s.cursor).toBe('2026-10-28T14:45:00.000Z')
     expect(urls[0]).not.toContain('tok')
-    expect(urls[0]).not.toContain('since=')
+    expect(urls[0]).toContain('since=') // primera corrida: solo los últimos 7 días
 
     // Segundo ciclo: usa `since` y no duplica.
     const second = await syncSource(h.env, await sourceOf(h.db, 'facebook-comuna'), new Date(NOW.getTime() + 60_000), {
@@ -281,7 +281,7 @@ describe('D · conectores y sincronización', () => {
     expect(decodeURIComponent(calledUrl)).toContain('business_discovery.username(comunaderioseco)')
     expect(bd.posts.map((p) => p.externalId)).toEqual(['b'])
     const own = await ig.fetchNew({ env, limit: 25, since: null, source: src({}), fetchImpl: (async () => jsonRes({ data: [{ id: 'c', caption: 'hola', timestamp: '2026-10-28T12:00:00+0000' }, { id: 'd', timestamp: '2026-10-28T12:00:00+0000' }] })) as never })
-    expect(own.posts.map((p) => p.externalId)).toEqual(['c']) // sin texto no se importa
+    expect(own.posts.map((p) => p.externalId)).toEqual(['c', 'd']) // sin texto igual se conserva (body vacío)
     expect(new FacebookPageConnector().readiness({} as never, { config_json: '{}' } as SourceRow).ready).toBe(false)
   })
   it('un conector que falla de forma inesperada queda registrado como error genérico', async () => {

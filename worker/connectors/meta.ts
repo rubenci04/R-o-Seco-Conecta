@@ -92,6 +92,23 @@ interface FbPost {
   created_time: string
   permalink_url?: string
   full_picture?: string
+  status_type?: string
+  attachments?: { data?: Array<{ type?: string; media_type?: string; media?: { image?: { src?: string } }; subattachments?: { data?: Array<{ media?: { image?: { src?: string } } }> } }> }
+}
+
+/** Tipo de contenido según los metadatos de la API (no según el texto). */
+function fbContentType(p: FbPost): string {
+  const a = p.attachments?.data?.[0]
+  const t = `${a?.media_type ?? ''} ${a?.type ?? ''} ${p.status_type ?? ''}`.toLowerCase()
+  if (/video|reel/.test(t)) return 'video'
+  if (/photo|album|image/.test(t) || p.full_picture) return 'foto'
+  return 'publicacion'
+}
+
+/** Imágenes que la API entrega para la publicación (direcciones temporales de la CDN de Meta). */
+function fbMedia(p: FbPost): string[] {
+  const urls = [p.full_picture, ...(p.attachments?.data ?? []).flatMap((a) => [a.media?.image?.src, ...(a.subattachments?.data ?? []).map((s) => s.media?.image?.src)])]
+  return [...new Set(urls.filter((u): u is string => !!u))].slice(0, 6)
 }
 
 /**
@@ -111,12 +128,12 @@ export class FacebookPageConnector implements SourceConnector {
 
   async fetchNew(ctx: FetchContext): Promise<FetchResult> {
     const pageId = String(cfg(ctx.source).pageId || ctx.env.META_FACEBOOK_PAGE_ID)
-    const params = new URLSearchParams({ fields: 'id,message,created_time,permalink_url,full_picture', limit: String(ctx.limit) })
+    const params = new URLSearchParams({ fields: 'id,message,created_time,permalink_url,full_picture,status_type,attachments{media_type,type,media,subattachments}', limit: String(ctx.limit) })
     if (ctx.since) params.set('since', String(Math.floor(new Date(ctx.since).getTime() / 1000) + 1))
     const { data, headers } = await graphGet<{ data: FbPost[] }>(ctx, `${graphBase(ctx.env)}/${encodeURIComponent(pageId)}/published_posts?${params}`, ctx.env.META_PAGE_ACCESS_TOKEN!)
     const posts: RawPost[] = (data.data ?? [])
-      .filter((p) => p.message?.trim())
-      .map((p) => ({ externalId: p.id, url: p.permalink_url ?? null, body: p.message!, publishedAt: new Date(p.created_time).toISOString(), media: p.full_picture ? [p.full_picture] : [] }))
+      // Se conservan también las publicaciones sin texto (imagen, aviso gráfico, video): body vacío = pendiente de clasificación editorial.
+      .map((p) => ({ externalId: p.id, url: p.permalink_url ?? null, body: p.message?.trim() ?? '', publishedAt: new Date(p.created_time).toISOString(), media: fbMedia(p), contentType: fbContentType(p) }))
     return { posts, throttleSeconds: throttleFor(headers) }
   }
 }
@@ -182,11 +199,11 @@ export class InstagramConnector implements SourceConnector {
     }
 
     const posts: RawPost[] = media
-      .filter((m) => m.caption?.trim())
       .map((m) => ({
         externalId: m.id,
         url: m.permalink ?? null,
-        body: m.caption!,
+        body: m.caption?.trim() ?? '',
+        contentType: m.media_type === 'VIDEO' ? 'video' : m.media_type ? 'foto' : 'publicacion',
         publishedAt: new Date(m.timestamp).toISOString(),
         media: [m.media_url ?? m.thumbnail_url].filter((x): x is string => !!x),
       }))

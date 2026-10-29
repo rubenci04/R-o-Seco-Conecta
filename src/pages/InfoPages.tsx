@@ -1,3 +1,4 @@
+import { PhotoGallery } from '@/components/community/PhotoGallery'
 import { Building2, Camera, Info, Users } from 'lucide-react'
 import { Link } from 'react-router'
 import { ExternalLink } from '@/components/shared/ExternalLink'
@@ -17,6 +18,9 @@ export function ComunaPage() {
           reproduce su contenido automáticamente: te llevamos a los canales originales.
         </p>
       </Card>
+      <Section title="Fotos">
+        <PhotoGallery ids={['desfile5', 'guardia-urbana']} columns="sm:grid-cols-2" />
+      </Section>
       <Section title="Canales oficiales">
         <div className="grid gap-3 sm:grid-cols-2">
           <Card className="space-y-2">
@@ -88,6 +92,16 @@ export function AboutPage() {
             No hay cuentas, rastreadores ni publicidad. Tus rutas favoritas y la preferencia de tema (claro/oscuro) se guardan solo en tu
             dispositivo. Los enlaces externos abren sitios de terceros con sus propias políticas. En el mapa, tu ubicación se pide solo si tocás «Mi ubicación»
             y no se guarda ni se envía a ningún servidor; el mapa base se pide a OpenStreetMap, que puede ver tu dirección IP como cualquier sitio web.
+          </p>
+        </Card>
+        <Card className="space-y-2 text-sm">
+          <CardTitle>Versión de la aplicación</CardTitle>
+          <p>
+            Versión instalada: <strong data-testid="build-commit">{__BUILD_COMMIT__}</strong> (compilada el {new Date(__BUILD_TIME__).toLocaleDateString('es-AR')}). Si tras una actualización ves algo
+            distinto de lo esperado, cerrá y volvé a abrir la aplicación.
+          </p>
+          <p>
+            <a href="/admin" className="text-accent underline">Administración</a> (acceso solo para el equipo editorial; requiere iniciar sesión).
           </p>
         </Card>
         <Card className="space-y-2 text-sm">

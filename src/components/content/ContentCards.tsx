@@ -48,6 +48,17 @@ export function NewsCard({ item, expanded = false }: { item: NewsItem; expanded?
           <strong>Rectificación:</strong> {item.rectification}
         </p>
       )}
+      {item.media?.[0] && (
+        <img
+          src={item.media[0]}
+          alt="Imagen de la publicación original"
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={(e) => (e.currentTarget.style.display = 'none')}
+          className="max-h-96 w-full rounded-xl bg-muted object-contain"
+        />
+      )}
       {item.linkOnly && (
         <p className="text-sm text-muted-foreground">
           Esta tarjeta enlaza a una publicación de la fuente oficial. La redacción no analizó su texto y {unverifiedDate ? 'no se conoce su fecha original: ' : ''}

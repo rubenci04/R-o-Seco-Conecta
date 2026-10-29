@@ -337,3 +337,38 @@ describe('recorrido del editor: enlace → texto → clasificación → obituari
     expect((await h.call('GET', '/api/public/feed')).json).toHaveLength(2)
   })
 })
+
+describe('Graph API simulada: publicaciones con imagen o video sin texto', () => {
+  it('el conector conserva tipo y multimedia; la sincronización crea tarjetas pendientes de clasificar, sin alertas, obituarios ni avisos', async () => {
+    const h = await harness(await vapidEnv(), { pushFetch: vi.fn() as never })
+    h.db.exec("UPDATE sources SET enabled = 1, mode = 'api', config_json = '{\"pageId\":\"123\"}' WHERE id = 'facebook-comuna'")
+    const env = { ...h.env, META_PAGE_ACCESS_TOKEN: 'token-de-prueba' }
+    const urls: string[] = []
+    const fetchImpl = (async (u: string) => {
+      urls.push(String(u))
+      return new Response(JSON.stringify({ data: [
+        { id: '123_1', created_time: '2026-10-27T12:00:00+0000', permalink_url: 'https://www.facebook.com/reel/555555555555555/', attachments: { data: [{ media_type: 'video' }] } },
+        { id: '123_2', created_time: '2026-10-27T13:00:00+0000', permalink_url: 'https://www.facebook.com/123/posts/pfbid0IMG', full_picture: 'https://scontent.xx.fbcdn.net/a.jpg', attachments: { data: [{ media_type: 'photo' }] } },
+        { id: '123_3', created_time: '2026-10-27T14:00:00+0000', permalink_url: 'https://www.facebook.com/123/posts/pfbid0TXT', message: ACTO },
+      ] }), { headers: { 'content-type': 'application/json' } })
+    }) as unknown as typeof fetch
+    const src = (await h.db.prepare('SELECT * FROM sources WHERE id = ?').bind('facebook-comuna').first<SourceRow>())!
+    const r = await syncSource(env, src, NOW, { fetchImpl })
+    expect(r).toMatchObject({ outcome: 'success', fetched: 3, inserted: 3, mediaOnly: 2 })
+    expect(decodeURIComponent(urls[0])).toContain('since=') // primera corrida: últimos 7 días
+    const rows = h.db.raw.prepare('SELECT title, link_only, content_type, review_state, status, media_json, origin FROM posts ORDER BY id').all() as Array<Record<string, unknown>>
+    expect(rows[0]).toMatchObject({ link_only: 1, content_type: 'video', review_state: 'needs_review', status: 'published', origin: 'api' })
+    expect(rows[1]).toMatchObject({ link_only: 1, content_type: 'foto', media_json: '["https://scontent.xx.fbcdn.net/a.jpg"]' })
+    expect(rows[2]).toMatchObject({ link_only: 0 })
+    expect(count(h, 'SELECT COUNT(*) n FROM alerts')).toBe(0)
+    expect(count(h, 'SELECT COUNT(*) n FROM obituaries')).toBe(0)
+    expect(count(h, "SELECT COUNT(*) n FROM notification_log WHERE state != 'suppressed'")).toBe(0) // 3 en una corrida = carga histórica
+    // Segunda corrida con lo mismo: no duplica.
+    const again = await syncSource(env, (await h.db.prepare('SELECT * FROM sources WHERE id = ?').bind('facebook-comuna').first<SourceRow>())!, new Date(NOW.getTime() + 120_000), { fetchImpl })
+    expect(count(h, 'SELECT COUNT(*) n FROM posts')).toBe(3)
+    expect(again.inserted).toBe(0)
+    // El editor las ve en la vista «Por clasificar».
+    expect((await h.call('GET', '/api/admin/posts?revision=needs_review', { cookie: await h.loginAs('editor') })).json.length).toBeGreaterThanOrEqual(2)
+    expect((await h.call('GET', '/api/public/feed')).json.find((p: { linkOnly: boolean; media: string[] }) => p.media.length)).toMatchObject({ linkOnly: true })
+  })
+})
