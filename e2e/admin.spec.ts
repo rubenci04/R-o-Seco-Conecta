@@ -203,7 +203,7 @@ test('importación asistida: varias publicaciones con vista previa, duplicados y
     `Con inmenso dolor comunicamos que partió a la casa del Padre una vecina de prueba ${t}. Sus restos serán velados en su domicilio ${uniq}.`,
   ].join('\n')
   await page.getByLabel('Publicaciones').fill(bulk)
-  await page.getByRole('button', { name: 'Analizar y ver vista previa' }).click()
+  await page.getByRole('button', { name: 'Analizar publicación' }).click()
   const preview = page.getByRole('region', { name: 'Vista previa de la importación' })
   await expect(preview.getByText('Se publicará')).toBeVisible()
   await expect(preview.getByText(/Recolección de residuos y limpieza urbana \(\d+ %\)/)).toBeVisible()
@@ -211,7 +211,7 @@ test('importación asistida: varias publicaciones con vista previa, duplicados y
   await expect(preview.getByText('Quedará en revisión (posible obituario)')).toBeVisible()
   expect((await request.get('/api/public/feed')).status()).toBe(200) // la vista previa no guardó nada
   await page.getByRole('button', { name: /Confirmar e importar 2 publicaciones/ }).click()
-  await expect(page.getByText('Importación terminada.')).toBeVisible()
+  await expect(page.getByText('Guardado.', { exact: true })).toBeVisible()
 
   // La suspensión se ve en el feed y en el filtro de residuos (una sola publicación); el obituario NO se publica solo.
   const feed = (await (await request.get('/api/public/feed?limite=50')).json()) as Array<{ title: string; body?: string; categories: string[] }>
@@ -221,7 +221,7 @@ test('importación asistida: varias publicaciones con vista previa, duplicados y
   // Y los mismos textos ahora figuran como duplicados.
   await page.getByRole('button', { name: 'Varias a la vez' }).click()
   await page.getByLabel('Publicaciones').fill(bulk.split('\n---\n')[0])
-  await page.getByRole('button', { name: 'Analizar y ver vista previa' }).click()
+  await page.getByRole('button', { name: 'Analizar publicación' }).click()
   await expect(page.getByText('Duplicada: se omite')).toBeVisible()
   await expect(page.getByRole('button', { name: /Confirmar e importar 0 publicaciones/ })).toBeDisabled()
 })

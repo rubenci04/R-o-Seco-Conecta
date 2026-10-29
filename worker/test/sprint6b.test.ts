@@ -300,3 +300,40 @@ describe('con un token válido, la sincronización completa las tarjetas registr
     expect(SYSTEM_ACTOR).toBeTruthy()
   })
 })
+
+describe('recorrido del editor: enlace → texto → clasificación → obituario aprobado (datos sintéticos)', () => {
+  it('importar con enlace y texto: sin fecha confirmada queda «desconocida»; el obituario espera, y al aprobarlo está en Obituarios y en el feed', async () => {
+    const h = await harness()
+    const editor = await h.loginAs('editor')
+    // Tarjeta registrada antes solo con el enlace; luego se importa con el texto: se completa la MISMA tarjeta.
+    await h.call('POST', '/api/admin/posts/register-link', { cookie: editor, body: { url: PERMALINK, title: 'Comunicado de la Comuna', publish: true } })
+    const r = await h.call('POST', '/api/admin/posts/import-link', { cookie: editor, body: { url: PERMALINK, text: FUNERAL } })
+    expect(r.status).toBe(201)
+    expect(r.json).toMatchObject({ enriched: true, status: 'pending' })
+    expect(r.json.obituaryId).toBeTruthy()
+    expect(count(h, 'SELECT COUNT(*) n FROM posts')).toBe(1)
+    expect((await h.call('GET', '/api/public/feed')).json).toEqual([])
+    expect((await h.call('GET', '/api/public/obituaries')).json).toEqual([])
+    expect(h.db.raw.prepare('SELECT date_verified FROM posts').get()).toEqual({ date_verified: 0 })
+
+    // El editor confirma nombre y fecha; aprueba (el editor tiene permiso).
+    const id = r.json.obituaryId
+    await h.call('PATCH', `/api/admin/obituaries/${id}`, { cookie: editor, body: { name: 'Juana Pérez', deathDate: '2026-10-27' } })
+    expect((await h.call('POST', `/api/admin/obituaries/${id}/approve`, { cookie: editor })).status).toBe(200)
+    expect((await h.call('GET', '/api/public/obituaries')).json.map((o: { name: string }) => o.name)).toEqual(['Juana Pérez'])
+    const feed = (await h.call('GET', '/api/public/feed')).json
+    expect(feed).toHaveLength(1)
+    expect(feed[0].categories).toContain('obituarios')
+  })
+
+  it('una suspensión de recolección importada propone un aviso vigente; una publicación común va directo a Noticias con varias categorías', async () => {
+    const h = await harness()
+    const editor = await h.loginAs('editor')
+    const a = await h.call('POST', '/api/admin/posts/import-link', { cookie: editor, body: { url: REEL, text: 'Se suspende la recolección de residuos de hoy por las intensas lluvias. Se retomará mañana.', publishedAt: NOW.toISOString() } })
+    expect(a.json.alertId).toBeTruthy()
+    expect(h.db.raw.prepare('SELECT confirmation, expires_at > ? AS vigente FROM alerts').get(NOW.toISOString())).toEqual({ confirmation: 'proposed', vigente: 1 })
+    const b = await h.call('POST', '/api/admin/posts/import-link', { cookie: editor, body: { url: PERMALINK, text: ACTO } })
+    expect(b.json.status).toBe('published')
+    expect((await h.call('GET', '/api/public/feed')).json).toHaveLength(2)
+  })
+})

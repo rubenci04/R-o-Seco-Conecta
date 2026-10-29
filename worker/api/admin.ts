@@ -11,7 +11,7 @@ import { actorOf, HttpError, httpUrl, isoDate, json, Router, str, type Ctx } fro
 import { parsePostLink } from '../../shared/dedupe'
 import { contentTypeFromUrl, embedUrlFor, isContentType, isSensitiveCategory, type ContentType } from '../../shared/postLinks'
 import { findDuplicate, ingestPost, type SourceRow } from '../ingest'
-import { enrichLinkOnly, findLinkDuplicate, ingestLinkOnly } from '../linkOnly'
+import { enrichLinkOnly, findLinkCard, findLinkDuplicate, ingestLinkOnly } from '../linkOnly'
 import { enqueueAlertNotification, enqueuePostNotification, processNotifications } from '../notify'
 import { createVapidSender, pushConfigured } from '../push'
 import { syncSource, type SyncDeps } from '../sync'
@@ -170,6 +170,13 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
     const admin = requirePermission(ctx, 'content:write')
     const b = await ctx.body()
     const { sourceId, raw } = await buildAssistedPost({ url: str(b.url, 'url', { max: 2048 }), text: str(b.text, 'text', { max: 20_000 }), publishedAt: b.publishedAt ? String(b.publishedAt) : undefined }, ctx.now)
+    // Si esa publicación ya estaba registrada solo con el enlace, se COMPLETA esa tarjeta (no se crea otra noticia).
+    const card = await findLinkCard(ctx.env.DB, sourceId, raw)
+    if (card !== null) {
+      const e = await enrichLinkOnly(ctx.env.DB, card, { text: raw.body, publishedAt: raw.dateVerified ? raw.publishedAt : undefined }, { actor: actorOf(admin), now: ctx.now })
+      if (e.outcome !== 'enriched') throw new HttpError(409, 'Ya existe una publicación con ese texto')
+      return json({ ...e, enriched: true }, { status: 201 })
+    }
     const result = await ingestPost(ctx.env.DB, raw, { source: await getSource(ctx, sourceId), origin: 'assisted', actor: actorOf(admin), now: ctx.now })
     if (result.outcome === 'duplicate') throw new HttpError(409, `Ya importada (${result.reason}) como #${result.ofPostId}`)
     if (result.status === 'published') await enqueuePost(ctx, result.postId)
@@ -186,7 +193,8 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
       try {
         const { sourceId, raw } = await buildAssistedPost({ url: str(it.url, 'url', { max: 2048 }), text: str(it.text, 'text', { max: 20_000 }), publishedAt: it.publishedAt ? String(it.publishedAt) : undefined }, ctx.now)
         const title = deriveTitle(raw.body).slice(0, 200)
-        const dup = await findDuplicate(ctx.env.DB, sourceId, raw, title, raw.body.trim())
+        const card = await findLinkCard(ctx.env.DB, sourceId, raw)
+        const dup = card !== null ? { duplicate: null } : await findDuplicate(ctx.env.DB, sourceId, raw, title, raw.body.trim())
         const c = defaultClassifier.classify({ title, body: raw.body })
         out.push({
           ok: true,
@@ -200,6 +208,7 @@ export function adminRoutes(r: Router, deps: Deps = {}, features: Features = { p
           obituary: c.obituary ? { nameSuggestion: c.obituary.nameSuggestion } : null,
           needsReview: c.needsReview,
           // Dónde quedaría: los posibles obituarios y lo dudoso esperan a una persona; lo demás se publica.
+          completaTarjeta: card,
           outcome: dup.duplicate ? 'duplicado' : c.obituary ? 'revision-obituario' : 'publicada',
         })
       } catch (e) {

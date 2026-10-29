@@ -25,6 +25,7 @@ export async function buildAssistedPost(input: AssistedInput, now: Date): Promis
   const externalId = link.externalId ?? `url:${(await sha256Hex(link.canonicalUrl)).slice(0, 20)}`
   return {
     sourceId: link.platform === 'instagram' ? 'instagram-comuna' : 'facebook-comuna',
-    raw: { externalId, url: link.canonicalUrl, body: text, publishedAt: published.toISOString() },
+    // Sin fecha confirmada por la persona se guarda el momento de la carga y se marca como fecha NO verificada.
+    raw: { externalId, url: link.canonicalUrl, body: text, publishedAt: published.toISOString(), dateVerified: !!input.publishedAt },
   }
 }

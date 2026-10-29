@@ -2,10 +2,11 @@ import { CATEGORY_LABEL, type CategoryId } from '@shared/categories'
 import { parseAssistedBlocks, type AssistedEntry } from '@shared/assistedImport'
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
+import { Link } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle } from '@/components/ui/card'
-import { localInputToIso, nowLocalInput } from '@/lib/tucuman'
+import { localInputToIso } from '@/lib/tucuman'
 import { api } from '../api'
 import { Field, Notice, TextArea, TextInput, useAction } from '../ui'
 
@@ -22,7 +23,9 @@ interface PreviewItem {
   obituary?: { nameSuggestion: string | null } | null
   needsReview?: boolean
   outcome?: 'publicada' | 'revision-obituario' | 'duplicado'
+  completaTarjeta?: number | null
 }
+interface Saved { postId?: number; alertId?: number | null; obituaryId?: number | null }
 
 const DUP: Record<string, string> = { 'external-id': 'misma publicación', url: 'mismo enlace', 'content-hash': 'mismo texto', 'near-duplicate': 'texto casi idéntico (p. ej. Facebook e Instagram)' }
 const OUTCOME = {
@@ -43,7 +46,8 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
   const sharedUrl = params.get('url') ?? params.get('text')?.match(/https?:\/\/\S+/)?.[0] ?? ''
   const sharedText = (params.get('text') ?? '').replace(/https?:\/\/\S+/g, '').trim()
   const [mode, setMode] = useState<'una' | 'varias'>('una')
-  const [f, setF] = useState({ url: sharedUrl, text: sharedText || params.get('title') || '', publishedAt: nowLocalInput() })
+  const [f, setF] = useState({ url: sharedUrl, text: sharedText || params.get('title') || '', publishedAt: '' })
+  const [saved, setSaved] = useState<Saved[]>([])
   const [bulk, setBulk] = useState('')
   const [entries, setEntries] = useState<AssistedEntry[]>([])
   const [preview, setPreview] = useState<PreviewItem[] | null>(null)
@@ -62,7 +66,7 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
     setParseErrors(errors)
     setPreview(null)
     if (!list.length) return
-    const r = await act.run(() => api.post<{ items: PreviewItem[] }>('/posts/import-preview', { items: list }), 'Vista previa lista. Revisala antes de importar.')
+    const r = await act.run(() => api.post<{ items: PreviewItem[] }>('/posts/import-preview', { items: list }), 'Análisis listo. Revisá las categorías antes de guardar.')
     if (r) {
       setEntries(list)
       setPreview(r.items)
@@ -72,16 +76,18 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
   const confirm = async () => {
     if (!preview) return
     const done = await act.run(async () => {
+      const out: Saved[] = []
       for (const [i, p] of preview.entries()) {
         if (!p.ok || p.outcome === 'duplicado') continue
-        await api.post('/posts/import-link', { url: entries[i].url, text: entries[i].text, publishedAt: entries[i].publishedAt })
+        out.push(await api.post<Saved>('/posts/import-link', { url: entries[i].url, text: entries[i].text, publishedAt: entries[i].publishedAt }))
       }
-      return true
-    }, 'Importación terminada.')
+      return out
+    }, 'Guardado.')
     if (done) {
+      setSaved(done)
       setPreview(null)
       setBulk('')
-      setF({ url: '', text: '', publishedAt: nowLocalInput() })
+      setF({ url: '', text: '', publishedAt: '' })
       onDone()
     }
   }
@@ -109,8 +115,8 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
             <Field label="Texto de la publicación" htmlFor="imp-text">
               <TextArea id="imp-text" required rows={6} maxLength={20000} value={f.text} onChange={(e) => setF({ ...f, text: e.target.value })} />
             </Field>
-            <Field label="Fecha original de la publicación (Tucumán)" htmlFor="imp-date">
-              <TextInput id="imp-date" type="datetime-local" required value={f.publishedAt} onChange={(e) => setF({ ...f, publishedAt: e.target.value })} />
+            <Field label="Fecha original (Tucumán), solo si la confirmaste" htmlFor="imp-date" hint="Si la dejás vacía, la tarjeta dice «fecha desconocida» y no se inventa una.">
+              <TextInput id="imp-date" type="datetime-local" value={f.publishedAt} onChange={(e) => setF({ ...f, publishedAt: e.target.value })} />
             </Field>
           </>
         ) : (
@@ -118,9 +124,16 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
             <TextArea id="imp-bulk" required rows={12} value={bulk} onChange={(e) => setBulk(e.target.value)} placeholder={BULK_PLACEHOLDER} />
           </Field>
         )}
-        <Button type="submit" disabled={act.busy}>Analizar y ver vista previa</Button>
+        <Button type="submit" disabled={act.busy}>Analizar publicación</Button>
       </form>
 
+      {saved.length > 0 && (
+        <Notice>
+          Guardado. {saved.some((x) => x.obituaryId) && <><strong>Posible obituario: quedó oculto hasta que confirmes los datos.</strong> <Link className="font-semibold underline" to="/admin/obituarios">Ir a la cola de obituarios</Link>. </>}
+          {saved.some((x) => x.alertId) && <>Se propuso un aviso: <Link className="font-semibold underline" to="/admin/alertas">revisarlo y confirmarlo</Link>. </>}
+          {saved.filter((x) => x.postId).map((x) => <Link key={x.postId} className="mr-2 font-semibold underline" to={`/admin/noticias/${x.postId}`}>Ver #{x.postId}</Link>)}
+        </Notice>
+      )}
       {parseErrors.length > 0 && <Notice tone="error">{parseErrors.join(' ')}</Notice>}
 
       {preview && (
@@ -144,7 +157,8 @@ export function ImportPosts({ onDone }: { onDone: () => void }) {
                       {p.categories?.map((c) => `${CATEGORY_LABEL[c.id as CategoryId] ?? c.id} (${Math.round(c.confidence * 100)} %)`).join(', ') || '—'}
                     </p>
                     {p.alert && <p>Se propondrá un aviso ({p.alert.severity === 'urgente' ? 'urgente' : 'informativo'}): {p.alert.reason}. <strong>Una persona deberá confirmarlo antes de notificar.</strong></p>}
-                    {p.obituary && <p>Posible obituario{p.obituary.nameSuggestion ? ` (nombre sugerido: ${p.obituary.nameSuggestion})` : ''}: quedará oculto hasta que lo valides en «Obituarios».</p>}
+                    {p.obituary && <p className="font-semibold text-warning">Posible obituario: requiere confirmar los datos antes de publicar{p.obituary.nameSuggestion ? ` (nombre sugerido: ${p.obituary.nameSuggestion})` : ''}. Quedará oculto hasta que lo confirmes en «Obituarios».</p>}
+                    {p.completaTarjeta && <p>Ya estaba registrada solo con el enlace (#{p.completaTarjeta}): se completa esa tarjeta con este texto.</p>}
                   </div>
                 )}
               </li>

@@ -129,3 +129,16 @@ Pasos exactos para activarlo:
 - **Qué debe aprobar Meta**: para que **quien administra la página y tiene rol en la app** autorice, nada (modo desarrollo). La **revisión de la app (App Review)** de `pages_read_engagement` (y, según el caso, la verificación de empresa) solo hace falta para pasar la app a modo *en vivo* o leer páginas cuyo administrador no tiene rol en la app. **Page Public Content Access** exige App Review + Business Verification: no se solicitó.
 - **Qué se automatiza con un token válido**: recuperar las publicaciones recientes (fecha, texto y enlace permanente), **completar las tarjetas ya registradas por enlace** (se reconoce la misma publicación y se completa, no se duplica), clasificarlas con las reglas existentes y seguir las nuevas de forma incremental. Los posibles obituarios y avisos siguen exigiendo confirmación humana y lo histórico no notifica.
 - **Qué sigue fuera de nuestro control**: cuota de la API y vigencia del token (se detecta y se muestra «Credencial inválida o vencida»).
+
+## 10. Cargar desde el teléfono un obituario publicado por la Comuna (recorrido exacto)
+
+Requiere una cuenta de **editor** o **administrador** (ambos pueden aprobar obituarios).
+
+1. En Facebook, abrí el comunicado → **⋯ / Compartir → Copiar enlace**. Después **copiá el texto** de la publicación (mantené presionado → Seleccionar todo → Copiar).
+2. Entrá a `https://rio-seco-conecta.rea-04.workers.dev/admin` e iniciá sesión → pestaña **Fuentes**.
+3. En **Importar publicaciones**: pegá el **enlace** y el **texto**. La fecha dejala vacía si no la confirmaste (la tarjeta dirá «fecha desconocida»). Tocá **Analizar publicación**.
+4. Debe aparecer **«Posible obituario: requiere confirmar los datos antes de publicar»**. Tocá **Confirmar e importar**. Queda **oculto**: todavía no se ve en la aplicación.
+5. Tocá **Ir a la cola de obituarios** (o pestaña **Obituarios**). En la tarjeta: revisá el **nombre**, cargá la **fecha de fallecimiento** (y el servicio fúnebre si figura) y tocá **Aprobar y publicar**.
+6. Listo: aparece en **Obituarios** y en **Noticias** (con la categoría Obituarios) y se avisa solo a quienes eligieron ese tema. Si solo tenés el enlace, usá **Registrar publicación de Facebook** y completá luego el texto desde la ficha: el sistema no inventa el contenido.
+
+Lo mismo sirve para noticias comunes (se publican directo, con las categorías propuestas) y para cortes de luz/agua, tormentas o suspensión de recolección (además se **propone un aviso** que se confirma en *Alertas*). Si esa publicación ya estaba registrada solo con el enlace, se completa **esa** tarjeta, sin duplicar.
