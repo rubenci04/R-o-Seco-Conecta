@@ -77,3 +77,23 @@ self.addEventListener('notificationclick', (event) => {
 
 // Expuesto solo para las pruebas automáticas.
 self.rscPush = { parsePushPayload, safeAppPath, PUSH_FALLBACK }
+
+/*
+ * Actualización de una PWA ya instalada. Un service worker nuevo toma el control enseguida (skipWaiting + clientsClaim), pero la
+ * página que ya estaba abierta sigue ejecutando el JavaScript de la versión anterior, cuyos archivos ya no existen. Como este
+ * código llega con el service worker nuevo, es el único que puede alcanzar a esas páginas: al activarse una ACTUALIZACIÓN
+ * (había otra versión activa) recarga las ventanas abiertas. En la primera instalación no recarga nada.
+ * No toca cachés de datos, suscripciones push ni preferencias (localStorage).
+ */
+let rsIsUpdate = false
+self.addEventListener('install', () => {
+  rsIsUpdate = !!self.registration.active
+})
+self.addEventListener('activate', (event) => {
+  if (!rsIsUpdate) return
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((windows) => Promise.all(windows.map((w) => ('navigate' in w ? w.navigate(w.url).catch(() => undefined) : undefined)))),
+  )
+})
