@@ -338,6 +338,31 @@ describe('recorrido del editor: enlace → texto → clasificación → obituari
   })
 })
 
+describe('Graph API simulada: paginación e importación inicial', () => {
+  it('recorre las páginas (solo siguiendo enlaces de graph.facebook.com), guarda la fecha de conexión y no notifica la importación inicial', async () => {
+    const h = await harness(await vapidEnv(), { pushFetch: vi.fn() as never })
+    h.db.exec("UPDATE sources SET enabled = 1, mode = 'api', config_json = '{\"pageId\":\"123\"}' WHERE id = 'facebook-comuna'")
+    const env = { ...h.env, META_PAGE_ACCESS_TOKEN: 'token-de-prueba' }
+    const urls: string[] = []
+    const recent = new Date(NOW.getTime() - 3600_000).toISOString()
+    const fetchImpl = (async (u: string) => {
+      urls.push(String(u))
+      const second = String(u).includes('after=P2')
+      const body = second
+        ? { data: [{ id: '123_9', created_time: recent, permalink_url: 'https://www.facebook.com/123/posts/pfbid0P2', message: 'Charla abierta sobre huertas familiares en el salón de usos múltiples, con entrada libre.' }], paging: { next: 'https://evil.example.com/steal?after=P3' } }
+        : { data: [{ id: '123_8', created_time: '2026-10-26T12:00:00+0000', permalink_url: 'https://www.facebook.com/123/posts/pfbid0P1', message: ACTO + ' (anterior)' }], paging: { next: 'https://graph.facebook.com/v25.0/123/published_posts?after=P2' } }
+      return new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json' } })
+    }) as unknown as typeof fetch
+    const src = (await h.db.prepare('SELECT * FROM sources WHERE id = ?').bind('facebook-comuna').first<SourceRow>())!
+    const r = await syncSource(env, src, NOW, { fetchImpl })
+    expect(urls).toHaveLength(2) // la segunda página sí; el enlace a otro dominio no
+    expect(r).toMatchObject({ outcome: 'success', fetched: 2, inserted: 2 })
+    expect(count(h, "SELECT COUNT(*) n FROM notification_log WHERE state != 'suppressed'")).toBe(0)
+    const saved = h.db.raw.prepare("SELECT config_json FROM sources WHERE id = 'facebook-comuna'").get() as { config_json: string }
+    expect(JSON.parse(saved.config_json)).toMatchObject({ pageId: '123', connectedAt: NOW.toISOString() })
+  })
+})
+
 describe('Graph API simulada: publicaciones con imagen o video sin texto', () => {
   it('el conector conserva tipo y multimedia; la sincronización crea tarjetas pendientes de clasificar, sin alertas, obituarios ni avisos', async () => {
     const h = await harness(await vapidEnv(), { pushFetch: vi.fn() as never })

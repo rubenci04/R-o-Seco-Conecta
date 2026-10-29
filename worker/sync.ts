@@ -66,6 +66,15 @@ export async function syncSource(env: Env, source: SourceRow, now: Date, deps: S
     const batch = ordered.slice(0, MAX_POSTS_PER_RUN)
     let cursor = source.cursor
     const inserted: number[] = []
+    const backfillIds = new Set<number>()
+    let srcCfg: Record<string, unknown> = {}
+    try {
+      srcCfg = JSON.parse(source.config_json)
+    } catch {
+      /* configuración inválida: se trata como vacía */
+    }
+    // Momento de la primera conexión: persiste entre ciclos (la importación inicial tarda varios por el tope por ciclo).
+    const connectedAt = typeof srcCfg.connectedAt === 'string' ? srcCfg.connectedAt : source.cursor ? '' : nowIso
     for (const raw of batch) {
       // Si la persona ya había registrado esa publicación solo con el enlace, se COMPLETA esa tarjeta (no se crea otra noticia).
       const card = await findLinkCard(env.DB, source.id, raw)
@@ -88,25 +97,29 @@ export async function syncSource(env: Env, source: SourceRow, now: Date, deps: S
         )
         if (m.outcome === 'inserted') {
           inserted.push(m.postId)
+          if (raw.publishedAt <= connectedAt) backfillIds.add(m.postId)
           report.mediaOnly = (report.mediaOnly ?? 0) + 1
         } else report.duplicates++
         cursor = !cursor || raw.publishedAt > cursor ? raw.publishedAt : cursor
         continue
       }
       const r = await ingestPost(env.DB, raw, { source, origin: 'api', actor: SYSTEM_ACTOR, now })
-      if (r.outcome === 'inserted') inserted.push(r.postId)
-      else report.duplicates++
+      if (r.outcome === 'inserted') {
+        inserted.push(r.postId)
+        if (raw.publishedAt <= connectedAt) backfillIds.add(r.postId)
+      } else report.duplicates++
       cursor = !cursor || raw.publishedAt > cursor ? raw.publishedAt : cursor
     }
     report.fetched = ordered.length
     report.inserted = inserted.length
-    for (const id of inserted) await enqueuePostNotification(env.DB, id, now, inserted.length)
+    // Importación inicial: lo publicado hasta el momento de la conexión es historial y nunca se notifica.
+    for (const id of inserted) if (!backfillIds.has(id)) await enqueuePostNotification(env.DB, id, now, inserted.length)
 
     const throttle = result.throttleSeconds ? addSeconds(nowIso, result.throttleSeconds) : null
     await env.DB.prepare(
-      `UPDATE sources SET status='ok', cursor=?, last_checked_at=?, last_success_at=?, last_error=NULL, consecutive_failures=0, next_attempt_at=? WHERE id=?`,
+      `UPDATE sources SET status='ok', cursor=?, last_checked_at=?, last_success_at=?, last_error=NULL, consecutive_failures=0, next_attempt_at=?, config_json=? WHERE id=?`,
     )
-      .bind(cursor, nowIso, nowIso, throttle, source.id)
+      .bind(cursor, nowIso, nowIso, throttle, JSON.stringify({ ...srcCfg, connectedAt }), source.id)
       .run()
     if (ordered.length > 0) {
       await env.DB.prepare(`INSERT INTO sync_runs (source_id, started_at, finished_at, outcome, fetched, inserted, duplicates, retry_after) VALUES (?,?,?,?,?,?,?,?)`)

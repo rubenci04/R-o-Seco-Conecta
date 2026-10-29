@@ -82,7 +82,21 @@ async function graphGet<T>(ctx: FetchContext, url: string, token: string): Promi
   return { data: body as T, headers: res.headers }
 }
 
-const throttleFor = (headers: Headers) => (parseUsageHeaders(headers).maxPercent >= THROTTLE_AT_PERCENT ? THROTTLE_SECONDS : undefined)
+/** Tope de páginas por lectura (25 publicaciones cada una). */
+export const MAX_PAGES = 8
+
+/** Solo se sigue el enlace de paginación si apunta a la Graph API (el token viaja en la cabecera). */
+export function safeNextUrl(next: string | undefined): string | undefined {
+  if (!next) return undefined
+  try {
+    const u = new URL(next)
+    return u.protocol === 'https:' && u.hostname === 'graph.facebook.com' ? u.toString() : undefined
+  } catch {
+    return undefined
+  }
+}
+
+const throttleFor =(headers: Headers) => (parseUsageHeaders(headers).maxPercent >= THROTTLE_AT_PERCENT ? THROTTLE_SECONDS : undefined)
 
 // ---------------------------------------------------------------- Facebook
 
@@ -130,8 +144,18 @@ export class FacebookPageConnector implements SourceConnector {
     const pageId = String(cfg(ctx.source).pageId || ctx.env.META_FACEBOOK_PAGE_ID)
     const params = new URLSearchParams({ fields: 'id,message,created_time,permalink_url,full_picture,status_type,attachments{media_type,type,media,subattachments}', limit: String(ctx.limit) })
     if (ctx.since) params.set('since', String(Math.floor(new Date(ctx.since).getTime() / 1000) + 1))
-    const { data, headers } = await graphGet<{ data: FbPost[] }>(ctx, `${graphBase(ctx.env)}/${encodeURIComponent(pageId)}/published_posts?${params}`, ctx.env.META_PAGE_ACCESS_TOKEN!)
-    const posts: RawPost[] = (data.data ?? [])
+    // La API entrega de la más nueva a la más antigua y en páginas: se recorren todas (con tope) para no saltar publicaciones.
+    const token = ctx.env.META_PAGE_ACCESS_TOKEN!
+    const all: FbPost[] = []
+    let headers = new Headers()
+    let url: string | undefined = `${graphBase(ctx.env)}/${encodeURIComponent(pageId)}/published_posts?${params}`
+    for (let page = 0; url && page < MAX_PAGES; page++) {
+      const r: { data: { data?: FbPost[]; paging?: { next?: string } }; headers: Headers } = await graphGet(ctx, url, token)
+      all.push(...(r.data.data ?? []))
+      headers = r.headers
+      url = safeNextUrl(r.data.paging?.next)
+    }
+    const posts: RawPost[] = all
       // Se conservan también las publicaciones sin texto (imagen, aviso gráfico, video): body vacío = pendiente de clasificación editorial.
       .map((p) => ({ externalId: p.id, url: p.permalink_url ?? null, body: p.message?.trim() ?? '', publishedAt: new Date(p.created_time).toISOString(), media: fbMedia(p), contentType: fbContentType(p) }))
     return { posts, throttleSeconds: throttleFor(headers) }

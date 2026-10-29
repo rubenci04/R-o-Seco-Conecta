@@ -2,6 +2,18 @@
 
 Estado al 29/10/2026: **no conectado**. El conector está implementado y probado solo con respuestas simuladas de la Graph API. Nada se afirma como funcionando hasta probarlo con un token válido.
 
+## Guía corta (lo único que falta es humano)
+
+1. **Pantalla**: <https://developers.facebook.com/apps> → **Crear app** → caso de uso **«Administrar todo en tu página»** (si no aparece, «Otro» → tipo «Empresa») → nombre «Río Seco Conecta». Dejar en **modo Desarrollo**.
+2. **Opción**: en *Casos de uso → Personalizar* agregar solo `pages_show_list` y `pages_read_engagement`. Nada de `pages_manage_posts` ni mensajería.
+3. **Administrador de la página** (necesita poder «Moderar» la página): *Roles de la app → Agregar personas* → su cuenta como Desarrollador/Probador → aceptar en <https://developers.facebook.com/requests>. Luego en el [Explorador de la API](https://developers.facebook.com/tools/explorer/): elegir la app, marcar los dos permisos, **Generate Access Token** y **elegir la página de la Comuna** en el diálogo.
+4. **El script necesita**: ese token de usuario en la variable `META_USER_TOKEN` y el Page ID (lo lista el mismo script).
+5. **Cargar sin exponer** (PowerShell): `$env:META_USER_TOKEN = Read-Host` (pegar el token, no se imprime en archivos ni chat) → `node scripts/meta-connect.mjs` (lista páginas) → `node scripts/meta-connect.mjs --page-id <ID>` (los guarda como secretos de Cloudflare) → `Remove-Item Env:META_USER_TOKEN`. Después, *Panel → Fuentes → Facebook → habilitar, modo API*.
+
+Fuente de los requisitos: referencia de la Graph API de Páginas (token de página de quien puede «Moderar» + `pages_read_engagement` + `pages_show_list`). La guía «Pages API» de Meta nombra a veces `pages_manage_read_engagement`: si la primera lectura real devuelve el error #10/#200, esa es la pista del permiso que falta.
+
+Importación inicial: lo publicado hasta el momento de la conexión (se guarda `connectedAt` en la fuente) nunca genera notificaciones; la lectura recorre todas las páginas de resultados.
+
 ## Permisos: mínimos y por modo
 
 | Permiso | Para qué | Modo desarrollo | Modo en vivo |
